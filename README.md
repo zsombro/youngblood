@@ -3,7 +3,7 @@
 `youngblood.js` is a simple game development framework for web browsers, written in JavaScript. The aim of this framework is to be
 simple to use and understand. The JavaScript code for a very basic setup is just a few lines of code:
 
-```
+```javascript
 <canvas id="canvas"></canvas>
 <script src="youngblood.js"></script>
 <script>
@@ -19,7 +19,7 @@ in your game is just data that is described by it's components and handled by sy
 or changed on the fly and your systems immediately respond to these changes. *However, it's crucial to understand that components don't
 contain game logic.* Defining an Entity in Youngblood.js looks like this:
 
-```
+```javascript
 var e = new Entity(); // at this point, your entity also receives a unique numeral identifier
 e.addComponent(new Position(0, 0));
 
@@ -36,7 +36,7 @@ Another very important concept in Youngblood.js is the *scene system*. Scenes ar
 separate menus, cutscenes, levels or anything that contains a very different set of game mechanics. Every game in Youngblood.js **must**
 at least one scene! Scenes are self-contained, they all have their separate set of entities and systems. Defining one is super easy:
 
-```
+```javascript
 var s = new Scene({
   sceneId: 'scene1',
   init: initFunction,
@@ -49,7 +49,7 @@ var s = new Scene({
 As of right now, systems are basically functions that will process every entity once per frame. Every entity has a function that allows
 you to check if it has a certain component. You can register them in the *init function* of your scene like this:
 
-```
+```javascript
 function movementSystem(entity) {
   if (entity.hasComponent('Position') && entity.hasComponent('Velocity')) {
     entity.Position.x += entity.Velocity.x;
