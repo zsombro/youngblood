@@ -17,7 +17,18 @@ simple to use and understand. The JavaScript code for a very basic setup is just
 Youngblood.js builds on a modern game development pattern called Entity-Component-System. The idea behind ECS is that every entity 
 in your game is just data that is described by it's components and handled by systems that you specify. Components can be added, removed
 or changed on the fly and your systems immediately respond to these changes. *However, it's crucial to understand that components don't
-contain game logic.*
+contain game logic.* Defining an Entity in Youngblood.js looks like this:
+
+```
+var e = new Entity(); // at this point, your entity also receives a unique numeral identifier
+e.addComponent(new Position(0, 0));
+
+scene.addEntity(e); // let's assume that 'scene' was defined earlier
+```
+
+It's important to note that an Entity can only hold one instance of given component, so for example, nothing can have two positions
+at the same time. Obviously if you're trying to describe a unique game mechanic that requires this possibility, you can come up with
+a custom Component that allows this.
 
 # Defining a scene
 
