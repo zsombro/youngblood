@@ -1,0 +1,30 @@
+{
+  "name": "youngblood",
+  "version": "1.0.0",
+  "description": "A simple game development framework for web browsers",
+  "main": "main.js",
+  "scripts": {
+    "test": "node main.js"
+  },
+  "keywords": [
+    "game",
+    "development",
+    "javascript",
+    "html5",
+    "canvas",
+    "2d"
+  ],
+  "author": "Berki Zoltán Zsombor",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-jshint": "^2.0.4",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-uglify": "^2.1.2",
+    "jshint": "^2.9.4"
+  }
+}

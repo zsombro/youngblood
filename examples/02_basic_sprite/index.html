@@ -1,0 +1,48 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<style>
+		  html, body {
+				width: 100%;
+				height: 100%;
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;
+		  }
+
+		  canvas {
+				display: block;
+		  }
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas"></canvas>
+		<script src="../../dist/youngblood.js"></script>
+		<script>			
+			var init = function () {
+
+				var sprite = new Image();
+				sprite.src = "sprite1.png";
+
+				var e = new Entity();
+				e.addComponent(new Position(10, 10));
+				e.addComponent(new Sprite(sprite));
+
+				this.addEntity(e);
+			}
+
+			var mainScene = new Scene({
+				sceneId: 'main',
+				init: init,
+				alwaysInitialize: true
+			});
+
+			var g = new Game(document.getElementById('canvas').getContext('2d'));
+			g.addScene(mainScene);
+
+			g.setDebugMode(true);
+			g.startRendering(60);
+		</script>
+	</body>
+</html>
