@@ -94,21 +94,21 @@ class Game {
 	}
 
 	addScene(scene) {
-		this.gameScenes[scene.name] = scene;
+		this.gameScenes[scene.sceneId] = scene;
 
 		if (this.currentScene == null)
-			this.switchToScene(scene.name);
+			this.switchToScene(scene.sceneId);
 	}
 
-	switchToScene(sceneName) {
-		if (this.gameScenes[sceneName] != null) {
-			this.currentScene = this.gameScenes[sceneName];
+	switchToScene(sceneId) {
+		if (this.gameScenes[sceneId] != null) {
+			this.currentScene = this.gameScenes[sceneId];
 
 			if (!this.currentScene.initialized || this.currentScene.alwaysInitialize)
 				this.currentScene.initCallback();
 			
 		} else {
-			this.log("Scene doesn't exist: " + sceneName);
+			this.log("Scene doesn't exist: " + sceneId);
 		}
 	}
 	

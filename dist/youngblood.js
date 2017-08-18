@@ -222,19 +222,19 @@ var Game = function () {
 	_createClass(Game, [{
 		key: 'addScene',
 		value: function addScene(scene) {
-			this.gameScenes[scene.name] = scene;
+			this.gameScenes[scene.sceneId] = scene;
 
-			if (this.currentScene == null) this.switchToScene(scene.name);
+			if (this.currentScene == null) this.switchToScene(scene.sceneId);
 		}
 	}, {
 		key: 'switchToScene',
-		value: function switchToScene(sceneName) {
-			if (this.gameScenes[sceneName] != null) {
-				this.currentScene = this.gameScenes[sceneName];
+		value: function switchToScene(sceneId) {
+			if (this.gameScenes[sceneId] != null) {
+				this.currentScene = this.gameScenes[sceneId];
 
 				if (!this.currentScene.initialized || this.currentScene.alwaysInitialize) this.currentScene.initCallback();
 			} else {
-				this.log("Scene doesn't exist: " + sceneName);
+				this.log("Scene doesn't exist: " + sceneId);
 			}
 		}
 	}, {
