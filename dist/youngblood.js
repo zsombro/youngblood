@@ -121,6 +121,16 @@ var Entity = function () {
 		value: function hasComponent(componentName) {
 			return this[componentName] != null;
 		}
+	}, {
+		key: 'hasComponents',
+		value: function hasComponents(componentArray) {
+
+			componentArray.forEach(function (element) {
+				if (!this.hasComponent(element)) return false;
+			}, this);
+
+			return true;
+		}
 	}]);
 
 	return Entity;
@@ -193,8 +203,8 @@ var Game = function () {
 					}
 				}
 
-				that.canvasContext.fillStyle = 'rgba(240, 240, 240, 1)';
-				that.canvasContext.fillRect(0, 0, that.canvasContext.width, that.canvasContext.height);
+				that.canvasContext.fillStyle = 'white';
+				that.canvasContext.fillRect(0, 0, that.canvasContext.canvas.width, that.canvasContext.canvas.height);
 
 				// render system
 				var cur;

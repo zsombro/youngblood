@@ -62,8 +62,8 @@ class Game {
 					}
 				}
 				
-				that.canvasContext.fillStyle = 'rgba(240, 240, 240, 1)';
-				that.canvasContext.fillRect(0, 0, that.canvasContext.width, that.canvasContext.height);
+				that.canvasContext.fillStyle = 'white';
+				that.canvasContext.fillRect(0, 0, that.canvasContext.canvas.width, that.canvasContext.canvas.height);
 				
 				// render system
 				var cur;
