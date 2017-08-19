@@ -51,7 +51,7 @@ you to check if it has a certain component. You can register them in the *init f
 
 ```javascript
 function movementSystem(entity) {
-  if (entity.hasComponent('Position') && entity.hasComponent('Velocity')) {
+  if (entity.hasComponents(['Position', 'Velocity'])) {
     entity.Position.x += entity.Velocity.x;
     entity.Position.y += entity.Velocity.y;
   }
