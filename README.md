@@ -53,10 +53,6 @@ before passing it to a given system. You can register them in the *init function
 
 ```javascript
 function movementSystem(entity) {
-<<<<<<< HEAD
-=======
-  if (entity.hasComponents(['Position', 'Velocity'])) {
->>>>>>> 92c97387be1dec42a1155686176b26da7cf6bad8
     entity.Position.x += entity.Velocity.x;
     entity.Position.y += entity.Velocity.y;
 }
