@@ -58,13 +58,11 @@ function movementSystem(entity) {
 }
 
 function initFunction() {
-  var movement = new System({
+  this.registerSystem({
     systemId: 'movementSystem',
     requiredComponents: ['Position', 'Velocity'],
     update: movementSystem
   });
-
-  this.registerSystem(movement);
   
   *...some more code...*
 }

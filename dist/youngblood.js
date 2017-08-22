@@ -303,11 +303,3 @@ var Scene = function () {
 
 	return Scene;
 }();
-
-var System = function System(options) {
-	_classCallCheck(this, System);
-
-	this.systemId = options.systemId || "defaultSystem";
-	this.requiredComponents = options.requiredComponents || [];
-	this.update = options.update || function () {};
-};
