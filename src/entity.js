@@ -18,10 +18,11 @@ class Entity {
 
 	hasComponents(componentArray) {
 
-		componentArray.forEach(function(element) {
-			if (!this.hasComponent(element))
+		let len = componentArray.length;
+		for (var i = 0; i < len; i++) {
+			if (!this.hasComponent(componentArray[i]))
 				return false;
-		}, this);
+		}
 
 		return true;
 	}

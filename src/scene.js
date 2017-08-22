@@ -12,12 +12,12 @@ class Scene {
 		this.systems = {};
 	}
 
-	registerSystem(systemCallback) {
-		this.systems[systemCallback.name] = systemCallback;
+	registerSystem(system) {
+		this.systems[system.systemId] = system;
 	}
 
-	unregisterSystem(systemCallback) {
-		delete this.systems[systemCallback.name];
+	unregisterSystem(system) {
+		delete this.systems[system.systemId];
 	}
 
 	addEntity(entity) {

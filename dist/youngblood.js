@@ -125,9 +125,10 @@ var Entity = function () {
 		key: 'hasComponents',
 		value: function hasComponents(componentArray) {
 
-			componentArray.forEach(function (element) {
-				if (!this.hasComponent(element)) return false;
-			}, this);
+			var len = componentArray.length;
+			for (var i = 0; i < len; i++) {
+				if (!this.hasComponent(componentArray[i])) return false;
+			}
 
 			return true;
 		}
@@ -199,7 +200,10 @@ var Game = function () {
 				// rendering requirements (this would also allow the development of a WebGL/ThreeJS plugin of sorts)
 				for (var e in that.currentScene.gameEntities) {
 					for (var s in that.currentScene.systems) {
-						that.currentScene.systems[s](that.currentScene.gameEntities[e]);
+						var entity = that.currentScene.gameEntities[e];
+						var system = that.currentScene.systems[s];
+
+						if (entity.hasComponents(system.requiredComponents)) that.currentScene.systems[s].update(entity);
 					}
 				}
 
@@ -282,13 +286,13 @@ var Scene = function () {
 
 	_createClass(Scene, [{
 		key: 'registerSystem',
-		value: function registerSystem(systemCallback) {
-			this.systems[systemCallback.name] = systemCallback;
+		value: function registerSystem(system) {
+			this.systems[system.systemId] = system;
 		}
 	}, {
 		key: 'unregisterSystem',
-		value: function unregisterSystem(systemCallback) {
-			delete this.systems[systemCallback.name];
+		value: function unregisterSystem(system) {
+			delete this.systems[system.systemId];
 		}
 	}, {
 		key: 'addEntity',
@@ -299,3 +303,11 @@ var Scene = function () {
 
 	return Scene;
 }();
+
+var System = function System(options) {
+	_classCallCheck(this, System);
+
+	this.systemId = options.systemId || "defaultSystem";
+	this.requiredComponents = options.requiredComponents || [];
+	this.update = options.update || function () {};
+};

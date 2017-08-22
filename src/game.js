@@ -58,7 +58,11 @@ class Game {
 				// rendering requirements (this would also allow the development of a WebGL/ThreeJS plugin of sorts)
 				for (var e in that.currentScene.gameEntities) {
 					for (var s in that.currentScene.systems) {
-						that.currentScene.systems[s](that.currentScene.gameEntities[e]);
+						var entity = that.currentScene.gameEntities[e];
+						var system = that.currentScene.systems[s];
+
+						if (entity.hasComponents(system.requiredComponents))
+							that.currentScene.systems[s].update(entity);
 					}
 				}
 				

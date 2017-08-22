@@ -12,6 +12,7 @@ simple to use and understand. The JavaScript code for a very basic setup is just
   g.startRendering(60);
 </script>
 ```
+This won't do anything though. Keep reading to learn how to do *actual* stuff!
 
 # Basics
 Youngblood.js builds on a modern game development pattern called Entity-Component-System. The idea behind ECS is that every entity 
@@ -46,19 +47,24 @@ var s = new Scene({
 
 # Systems
 
-As of right now, systems are basically functions that will process every entity once per frame. Every entity has a function that allows
-you to check if it has a certain component. You can register them in the *init function* of your scene like this:
+Systems are the heart of your game. They will contain the game logic that handles operations on the entities that make
+up your game. A system in Youngblood.js consists of two main things: a list of components they require and a function that will do the actual magic. When the game loops through your entities, it will check if a given entity has every component required
+before passing it to a given system. You can register them in the *init function* of your scene like this:
 
 ```javascript
 function movementSystem(entity) {
-  if (entity.hasComponent('Position') && entity.hasComponent('Velocity')) {
     entity.Position.x += entity.Velocity.x;
     entity.Position.y += entity.Velocity.y;
-  }
 }
 
 function initFunction() {
-  this.registerSystem(movementSystem);
+  var movement = new System({
+    systemId: 'movementSystem',
+    requiredComponents: ['Position', 'Velocity'],
+    update: movementSystem
+  });
+
+  this.registerSystem(movement);
   
   *...some more code...*
 }
