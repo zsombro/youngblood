@@ -12,7 +12,9 @@ class Game {
 		} catch (e) {
 			console.log('WebAudio API is not supported by this browser');
 		}
-		
+
+		this.inputService = new InputService();
+
 		this.step = null;
 		this.onKeyPress = null;
 		
@@ -22,8 +24,6 @@ class Game {
 		this.currentScene = null;
 		this.sceneEntities = {};
 		this.sceneSystems = {};
-		
-		this.pressedKeys = [];
 		
 		this.fps = 60;
 		this.startRendering = function (fps) {
@@ -62,7 +62,7 @@ class Game {
 						var system = that.currentScene.systems[s];
 
 						if (entity.hasComponents(system.requiredComponents))
-							that.currentScene.systems[s].update(entity);
+							that.currentScene.systems[s].update.call(that, entity);
 					}
 				}
 				
@@ -89,6 +89,12 @@ class Game {
 						that.canvasContext.drawImage(cur.Sprite.spriteSource,
 							cur.Position.x,
 							cur.Position.y);
+
+					}
+
+					if (that.getDebugMode()) {
+						ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+						ctx.fillText(that.inputService.pressedKeys, 40, 60);
 					}
 				}
 			}
@@ -118,6 +124,10 @@ class Game {
 	
 	setDebugMode(isDebug) {
 		Game.prototype.debugMode = isDebug;
+	}
+
+	getDebugMode() {
+		return Game.prototype.debugMode;
 	}
 	
 	log(message) {

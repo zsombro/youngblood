@@ -34,6 +34,15 @@ class Sprite extends Component {
 	}
 }
 
+class AnimatedSprite extends Component {
+	constructor(spriteSource, animationSheet) {
+		super();
+
+		this.spriteSource = spriteSource;
+		this.animationSheet = animationSheet;
+	}
+}
+
 class Box extends Component {
 	constructor(width, height, fillStyle) {
 		super();
@@ -50,5 +59,16 @@ class BoxCollider extends Component {
 		
 		this.width = width;
 		this.height = height;
+	}
+}
+
+class DirectionalInput extends Component {
+	constructor() {
+		super();
+
+		this.up = false;
+		this.down = false;
+		this.left = false;
+		this.right = false;
 	}
 }

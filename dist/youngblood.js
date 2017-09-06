@@ -65,37 +65,71 @@ var Sprite = function (_Component3) {
 	return Sprite;
 }(Component);
 
-var Box = function (_Component4) {
-	_inherits(Box, _Component4);
+var AnimatedSprite = function (_Component4) {
+	_inherits(AnimatedSprite, _Component4);
+
+	function AnimatedSprite(spriteSource, animationSheet) {
+		_classCallCheck(this, AnimatedSprite);
+
+		var _this4 = _possibleConstructorReturn(this, (AnimatedSprite.__proto__ || Object.getPrototypeOf(AnimatedSprite)).call(this));
+
+		_this4.spriteSource = spriteSource;
+		_this4.animationSheet = animationSheet;
+		return _this4;
+	}
+
+	return AnimatedSprite;
+}(Component);
+
+var Box = function (_Component5) {
+	_inherits(Box, _Component5);
 
 	function Box(width, height, fillStyle) {
 		_classCallCheck(this, Box);
 
-		var _this4 = _possibleConstructorReturn(this, (Box.__proto__ || Object.getPrototypeOf(Box)).call(this));
+		var _this5 = _possibleConstructorReturn(this, (Box.__proto__ || Object.getPrototypeOf(Box)).call(this));
 
-		_this4.width = width;
-		_this4.height = height;
-		_this4.fillStyle = fillStyle;
-		return _this4;
+		_this5.width = width;
+		_this5.height = height;
+		_this5.fillStyle = fillStyle;
+		return _this5;
 	}
 
 	return Box;
 }(Component);
 
-var BoxCollider = function (_Component5) {
-	_inherits(BoxCollider, _Component5);
+var BoxCollider = function (_Component6) {
+	_inherits(BoxCollider, _Component6);
 
 	function BoxCollider(width, height) {
 		_classCallCheck(this, BoxCollider);
 
-		var _this5 = _possibleConstructorReturn(this, (BoxCollider.__proto__ || Object.getPrototypeOf(BoxCollider)).call(this));
+		var _this6 = _possibleConstructorReturn(this, (BoxCollider.__proto__ || Object.getPrototypeOf(BoxCollider)).call(this));
 
-		_this5.width = width;
-		_this5.height = height;
-		return _this5;
+		_this6.width = width;
+		_this6.height = height;
+		return _this6;
 	}
 
 	return BoxCollider;
+}(Component);
+
+var DirectionalInput = function (_Component7) {
+	_inherits(DirectionalInput, _Component7);
+
+	function DirectionalInput() {
+		_classCallCheck(this, DirectionalInput);
+
+		var _this7 = _possibleConstructorReturn(this, (DirectionalInput.__proto__ || Object.getPrototypeOf(DirectionalInput)).call(this));
+
+		_this7.up = false;
+		_this7.down = false;
+		_this7.left = false;
+		_this7.right = false;
+		return _this7;
+	}
+
+	return DirectionalInput;
 }(Component);
 
 var Entity = function () {
@@ -156,6 +190,8 @@ var Game = function () {
 			console.log('WebAudio API is not supported by this browser');
 		}
 
+		this.inputService = new InputService();
+
 		this.step = null;
 		this.onKeyPress = null;
 
@@ -165,8 +201,6 @@ var Game = function () {
 		this.currentScene = null;
 		this.sceneEntities = {};
 		this.sceneSystems = {};
-
-		this.pressedKeys = [];
 
 		this.fps = 60;
 		this.startRendering = function (fps) {
@@ -203,7 +237,7 @@ var Game = function () {
 						var entity = that.currentScene.gameEntities[e];
 						var system = that.currentScene.systems[s];
 
-						if (entity.hasComponents(system.requiredComponents)) that.currentScene.systems[s].update(entity);
+						if (entity.hasComponents(system.requiredComponents)) that.currentScene.systems[s].update.call(that, entity);
 					}
 				}
 
@@ -225,6 +259,11 @@ var Game = function () {
 					// Render a single sprite
 					if (cur.hasComponent('Sprite') && cur.hasComponent('Position')) {
 						that.canvasContext.drawImage(cur.Sprite.spriteSource, cur.Position.x, cur.Position.y);
+					}
+
+					if (that.getDebugMode()) {
+						ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+						ctx.fillText(that.inputService.pressedKeys, 40, 60);
 					}
 				}
 			}
@@ -257,6 +296,11 @@ var Game = function () {
 			Game.prototype.debugMode = isDebug;
 		}
 	}, {
+		key: 'getDebugMode',
+		value: function getDebugMode() {
+			return Game.prototype.debugMode;
+		}
+	}, {
 		key: 'log',
 		value: function log(message) {
 			if (Game.prototype.debugMode) console.log(message);
@@ -267,6 +311,43 @@ var Game = function () {
 }();
 
 Game.prototype.debugMode = false;
+
+var InputService = function () {
+	function InputService() {
+		_classCallCheck(this, InputService);
+
+		var that = this;
+
+		this.pressedKeys = [];
+
+		window.addEventListener('keydown', function (e) {
+			if (that.pressedKeys.indexOf(e.keyCode) === -1) that.pressedKeys.push(e.keyCode);
+		}, false);
+
+		window.addEventListener('keyup', function (e) {
+			that.pressedKeys.splice(that.pressedKeys.indexOf(e.keyCode), 1);
+		}, false);
+	}
+
+	_createClass(InputService, [{
+		key: 'isPressed',
+		value: function isPressed(key) {
+			return this.pressedKeys.indexOf(key) !== -1;
+		}
+	}]);
+
+	return InputService;
+}();
+
+var SystemScope = {
+	LOCAL: 'local',
+	GLOBAL: 'global'
+};
+
+var SystemType = {
+	RENDER: 'render',
+	NONRENDER: 'nonrender'
+};
 
 var Scene = function () {
 	function Scene(options) {
@@ -279,6 +360,9 @@ var Scene = function () {
 		this.initCallback = options.init || function () {};
 
 		this.alwaysInitialize = options.alwaysInitialize || true;
+
+		this.systemScope = options.scope || SystemScope.LOCAL;
+		this.systemType = options.type || SystemType.NONRENDER;
 
 		this.gameEntities = {};
 		this.systems = {};
@@ -303,3 +387,15 @@ var Scene = function () {
 
 	return Scene;
 }();
+
+var DirectionalInputSystem = {
+	systemId: 'directionalInput',
+	requiredComponents: ['DirectionalInput'],
+	update: function update(entity) {
+
+		entity.DirectionalInput.up = this.inputService.isPressed(38);
+		entity.DirectionalInput.down = this.inputService.isPressed(40);
+		entity.DirectionalInput.left = this.inputService.isPressed(37);
+		entity.DirectionalInput.right = this.inputService.isPressed(39);
+	}
+};
