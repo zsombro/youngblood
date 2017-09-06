@@ -1,0 +1,76 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<style>
+		  html, body {
+				width: 100%;
+				height: 100%;
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;
+		  }
+
+		  canvas {
+				display: block;
+		  }
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas"></canvas>
+		<script src="../../dist/youngblood.js"></script>
+		<script>
+			var canvas = document.getElementById('canvas');
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			
+			var ctx = canvas.getContext('2d');
+
+			var g = new Game(ctx);
+			// g.setDebugMode(true);
+
+			function movementSystem(e) {
+
+				if (e.DirectionalInput.down)
+					e.Position.y += e.Velocity.y;
+
+				if (e.DirectionalInput.up)
+					e.Position.y -= e.Velocity.y;
+
+				if (e.DirectionalInput.left)
+					e.Position.x -= e.Velocity.x;
+
+				if (e.DirectionalInput.right)
+					e.Position.x += e.Velocity.x;
+			}
+
+			var init = function () {
+
+				this.registerSystem(DirectionalInputSystem);
+				this.registerSystem({
+					systemId: 'movementSystem',
+					requiredComponents: ['Position', 'Velocity'],
+					update: movementSystem
+				});
+
+				var e = new Entity();
+				e.addComponent(new Position(10, 10));
+				e.addComponent(new Velocity(1, 1));
+				e.addComponent(new Box(30, 30, 'rgb(0, 0, 0, 1)'));
+				e.addComponent(new DirectionalInput());
+
+				this.addEntity(e);
+			};
+
+			var scene = new Scene({
+				sceneId: 'main',
+				init: init,
+				alwaysInitialize: true
+			});
+			
+			g.addScene(scene);
+
+			g.startRendering(60);
+		</script>
+	</body>
+</html>
