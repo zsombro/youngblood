@@ -132,6 +132,26 @@ var DirectionalInput = function (_Component7) {
 	return DirectionalInput;
 }(Component);
 
+var InputMapping = function (_Component8) {
+	_inherits(InputMapping, _Component8);
+
+	// for eg. mapping = [ {name: 'up', code: 38} ]
+	function InputMapping(mapping) {
+		_classCallCheck(this, InputMapping);
+
+		var _this8 = _possibleConstructorReturn(this, (InputMapping.__proto__ || Object.getPrototypeOf(InputMapping)).call(this));
+
+		_this8.mapping = mapping;
+
+		for (var i = 0; i < mapping.length; i++) {
+			_this8[mapping[i].name] = false;
+		}
+		return _this8;
+	}
+
+	return InputMapping;
+}(Component);
+
 var Entity = function () {
 	function Entity() {
 		_classCallCheck(this, Entity);
@@ -397,5 +417,18 @@ var DirectionalInputSystem = {
 		entity.DirectionalInput.down = this.inputService.isPressed(40);
 		entity.DirectionalInput.left = this.inputService.isPressed(37);
 		entity.DirectionalInput.right = this.inputService.isPressed(39);
+	}
+};
+
+var InputMappingSystem = {
+	systemId: 'inputMappingSystem',
+	requiredComponents: ['InputMapping'],
+	update: function update(entity) {
+
+		var l = entity.InputMapping.mapping.length;
+		for (var i = 0; i < l; i++) {
+			var c = entity.InputMapping.mapping[i];
+			entity.InputMapping[c.name] = this.inputService.isPressed(c.code);
+		}
 	}
 };

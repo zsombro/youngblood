@@ -72,3 +72,17 @@ class DirectionalInput extends Component {
 		this.right = false;
 	}
 }
+
+class InputMapping extends Component {
+
+	// for eg. mapping = [ {name: 'up', code: 38} ]
+	constructor(mapping) {
+		super();
+
+		this.mapping = mapping;
+
+		for (var i = 0; i < mapping.length; i++) {
+			this[mapping[i].name] = false;
+		}
+	}
+}

@@ -31,22 +31,22 @@
 
 			function movementSystem(e) {
 
-				if (e.DirectionalInput.down)
-					e.Position.y += e.Velocity.y;
+				if (e.InputMapping.down)
+				e.Position.y += e.Velocity.y;
 
-				if (e.DirectionalInput.up)
+				if (e.InputMapping.up)
 					e.Position.y -= e.Velocity.y;
 
-				if (e.DirectionalInput.left)
+				if (e.InputMapping.left)
 					e.Position.x -= e.Velocity.x;
 
-				if (e.DirectionalInput.right)
+				if (e.InputMapping.right)
 					e.Position.x += e.Velocity.x;
 			}
 
 			var init = function () {
 
-				this.registerSystem(DirectionalInputSystem);
+				this.registerSystem(InputMappingSystem);
 				this.registerSystem({
 					systemId: 'movementSystem',
 					requiredComponents: ['Position', 'Velocity'],
@@ -57,7 +57,12 @@
 				e.addComponent(new Position(10, 10));
 				e.addComponent(new Velocity(1, 1));
 				e.addComponent(new Box(30, 30, 'rgb(0, 0, 0, 1)'));
-				e.addComponent(new DirectionalInput());
+				e.addComponent(new InputMapping([
+					{ name: 'up', code: 38 },
+					{ name: 'down', code: 40 },
+					{ name: 'left', code: 37 },
+					{ name: 'right', code: 39 }
+				]));
 
 				this.addEntity(e);
 			};
