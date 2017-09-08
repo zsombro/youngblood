@@ -35,11 +35,21 @@ class Sprite extends Component {
 }
 
 class AnimatedSprite extends Component {
-	constructor(spriteSource, animationSheet) {
+	constructor(spriteSource, animationSheet, options) {
 		super();
 
 		this.spriteSource = spriteSource;
 		this.animationSheet = animationSheet;
+
+		if (options === undefined)
+			var options = {};
+		
+		this.animationName = options.animationName || Object.keys(animationSheet)[0];
+		this.scale = options.scale || 1.0;
+		this.loop = options.loop || true;	
+		this.isPlaying = options.isPlaying || true;
+
+		this.currentFrame = 0;
 	}
 }
 

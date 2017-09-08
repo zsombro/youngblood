@@ -6,19 +6,12 @@ class Game {
 		
 		canvasContext.webkitImageSmoothingEnabled = false;
 		canvasContext.imageSmoothingEnabled = false; // future
-		
-		try {
-			this.audioContext == new (window.AudioContext || window.webkitAudioContext)();
-		} catch (e) {
-			console.log('WebAudio API is not supported by this browser');
-		}
 
-		this.inputService = new InputService();
-
-		this.step = null;
-		this.onKeyPress = null;
-		
-		this.songsPlaying = [];
+		// these are classes that lower level functionality to systems
+		// mostly through browser APIs
+		this.services = {};
+		this.services.inputService = new InputService();
+		this.services.audioManager = new AudioManager();
 		
 		this.gameScenes = {};
 		this.currentScene = null;
@@ -62,7 +55,7 @@ class Game {
 						var system = that.currentScene.systems[s];
 
 						if (entity.hasComponents(system.requiredComponents))
-							that.currentScene.systems[s].update.call(that, entity);
+							that.currentScene.systems[s].update.call(that.services, entity);
 					}
 				}
 				
@@ -92,9 +85,28 @@ class Game {
 
 					}
 
+					// Render an animated sprite
+					if (cur.hasComponents(['AnimatedSprite', 'Position'])) {
+						var c = cur.AnimatedSprite;
+						var f = c.animationSheet[c.animationName];
+						
+						that.canvasContext.drawImage(c.spriteSource, 
+							f.startX + c.currentFrame * f.frameWidth, f.startY, 
+							f.frameWidth, f.frameHeight,
+							cur.Position.x, cur.Position.y,
+							f.frameWidth * c.scale, f.frameHeight * c.scale);
+					
+						if (c.isPlaying) {
+							if (c.currentFrame == f.frames - 1)
+								c.currentFrame = 0;
+							else
+								c.currentFrame++;
+						}
+					}
+
 					if (that.getDebugMode()) {
 						ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-						ctx.fillText(that.inputService.pressedKeys, 40, 60);
+						ctx.fillText(that.services.inputService.pressedKeys, 40, 60);
 					}
 				}
 			}

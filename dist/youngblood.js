@@ -8,6 +8,27 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var AudioManager = function AudioManager() {
+	_classCallCheck(this, AudioManager);
+
+	try {
+		this.audioContext == new (window.AudioContext || window.webkitAudioContext)();
+
+		this.songsPlaying = [];
+
+		this.masterVolume = this.audioContext.createGain();
+
+		this.musicVolume = this.audioContext.createGain();
+		this.musicVolume.connect(this.masterVolume);
+
+		this.effectsVolume = this.audioContext.createGain();
+		this.effectsVolume.connect(this.masterVolume);
+
+		this.masterVolume.connect(this.audioContext.destination);
+	} catch (e) {
+		console.log('WebAudio API is not supported by this browser');
+	}
+};
 // Components provide entities with attributes
 // that relate to in-game functionality
 // Like entities, components are JUST DATA and not logic
@@ -68,13 +89,22 @@ var Sprite = function (_Component3) {
 var AnimatedSprite = function (_Component4) {
 	_inherits(AnimatedSprite, _Component4);
 
-	function AnimatedSprite(spriteSource, animationSheet) {
+	function AnimatedSprite(spriteSource, animationSheet, options) {
 		_classCallCheck(this, AnimatedSprite);
 
 		var _this4 = _possibleConstructorReturn(this, (AnimatedSprite.__proto__ || Object.getPrototypeOf(AnimatedSprite)).call(this));
 
 		_this4.spriteSource = spriteSource;
 		_this4.animationSheet = animationSheet;
+
+		if (options === undefined) var options = {};
+
+		_this4.animationName = options.animationName || Object.keys(animationSheet)[0];
+		_this4.scale = options.scale || 1.0;
+		_this4.loop = options.loop || true;
+		_this4.isPlaying = options.isPlaying || true;
+
+		_this4.currentFrame = 0;
 		return _this4;
 	}
 
@@ -204,18 +234,11 @@ var Game = function () {
 		canvasContext.webkitImageSmoothingEnabled = false;
 		canvasContext.imageSmoothingEnabled = false; // future
 
-		try {
-			this.audioContext == new (window.AudioContext || window.webkitAudioContext)();
-		} catch (e) {
-			console.log('WebAudio API is not supported by this browser');
-		}
-
-		this.inputService = new InputService();
-
-		this.step = null;
-		this.onKeyPress = null;
-
-		this.songsPlaying = [];
+		// these are classes that lower level functionality to systems
+		// mostly through browser APIs
+		this.services = {};
+		this.services.inputService = new InputService();
+		this.services.audioManager = new AudioManager();
 
 		this.gameScenes = {};
 		this.currentScene = null;
@@ -257,7 +280,7 @@ var Game = function () {
 						var entity = that.currentScene.gameEntities[e];
 						var system = that.currentScene.systems[s];
 
-						if (entity.hasComponents(system.requiredComponents)) that.currentScene.systems[s].update.call(that, entity);
+						if (entity.hasComponents(system.requiredComponents)) that.currentScene.systems[s].update.call(that.services, entity);
 					}
 				}
 
@@ -281,9 +304,21 @@ var Game = function () {
 						that.canvasContext.drawImage(cur.Sprite.spriteSource, cur.Position.x, cur.Position.y);
 					}
 
+					// Render an animated sprite
+					if (cur.hasComponents(['AnimatedSprite', 'Position'])) {
+						var c = cur.AnimatedSprite;
+						var f = c.animationSheet[c.animationName];
+
+						that.canvasContext.drawImage(c.spriteSource, f.startX + c.currentFrame * f.frameWidth, f.startY, f.frameWidth, f.frameHeight, cur.Position.x, cur.Position.y, f.frameWidth * c.scale, f.frameHeight * c.scale);
+
+						if (c.isPlaying) {
+							if (c.currentFrame == f.frames - 1) c.currentFrame = 0;else c.currentFrame++;
+						}
+					}
+
 					if (that.getDebugMode()) {
 						ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-						ctx.fillText(that.inputService.pressedKeys, 40, 60);
+						ctx.fillText(that.services.inputService.pressedKeys, 40, 60);
 					}
 				}
 			}
