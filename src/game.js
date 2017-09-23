@@ -104,15 +104,18 @@ class Game {
 						}
 					}
 
-					if (that.getDebugMode()) {
-						ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-						ctx.fillText(that.services.inputService.pressedKeys, 40, 60);
-					}
+					// @ifdef DEBUG
+					ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+					ctx.fillText(that.services.inputService.pressedKeys, 40, 60);
+					// @endif
+					
 				}
 			}
 		}
 		
+		// @ifdef DEBUG
 		console.log('Game object created');
+		// @endif
 	}
 
 	addScene(scene) {
@@ -130,7 +133,7 @@ class Game {
 				this.currentScene.initCallback();
 			
 		} else {
-			this.log("Scene doesn't exist: " + sceneId);
+			console.error("Scene doesn't exist: " + sceneId);
 		}
 	}
 	

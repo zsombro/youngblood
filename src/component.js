@@ -44,12 +44,21 @@ class AnimatedSprite extends Component {
 		if (options === undefined)
 			var options = {};
 		
+		// If there's no default animation set, we'll use the first one defined in the JSON object
 		this.animationName = options.animationName || Object.keys(animationSheet)[0];
 		this.scale = options.scale || 1.0;
 		this.loop = options.loop || true;	
 		this.isPlaying = options.isPlaying || true;
 
 		this.currentFrame = 0;
+	}
+}
+
+class AudioSource extends Component {
+	constructor(audioBuffer) {
+		super();
+		
+		this.audioBuffer = audioBuffer;
 	}
 }
 
@@ -69,17 +78,6 @@ class BoxCollider extends Component {
 		
 		this.width = width;
 		this.height = height;
-	}
-}
-
-class DirectionalInput extends Component {
-	constructor() {
-		super();
-
-		this.up = false;
-		this.down = false;
-		this.left = false;
-		this.right = false;
 	}
 }
 

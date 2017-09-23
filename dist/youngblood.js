@@ -8,27 +8,84 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var AudioManager = function AudioManager() {
-	_classCallCheck(this, AudioManager);
+var AssetLoader = function () {
+	function AssetLoader() {
+		_classCallCheck(this, AssetLoader);
 
-	try {
-		this.audioContext == new (window.AudioContext || window.webkitAudioContext)();
+		// asset loader uses it's own audio context to decode incoming buffers
+		this.audio = new (window.AudioContext || window.webkitAudioContext)();
 
-		this.songsPlaying = [];
-
-		this.masterVolume = this.audioContext.createGain();
-
-		this.musicVolume = this.audioContext.createGain();
-		this.musicVolume.connect(this.masterVolume);
-
-		this.effectsVolume = this.audioContext.createGain();
-		this.effectsVolume.connect(this.masterVolume);
-
-		this.masterVolume.connect(this.audioContext.destination);
-	} catch (e) {
-		console.log('WebAudio API is not supported by this browser');
+		this.imageTypes = ['.png', '.jpg', '.gif'];
+		this.objectTypes = ['.txt', 'json'];
+		this.audioTypes = ['.wav', '.mp3', '.ogg'];
 	}
-};
+
+	_createClass(AssetLoader, [{
+		key: 'addTaskList',
+		value: function addTaskList(url) {}
+	}]);
+
+	return AssetLoader;
+}();
+
+var AudioManager = function () {
+	function AudioManager() {
+		_classCallCheck(this, AudioManager);
+
+		try {
+			this.audioContext == new (window.AudioContext || window.webkitAudioContext)();
+
+			this.songsPlaying = [];
+
+			this.masterVolume = this.audioContext.createGain();
+
+			this.musicVolume = this.audioContext.createGain();
+			this.musicVolume.connect(this.masterVolume);
+
+			this.effectsVolume = this.audioContext.createGain();
+			this.effectsVolume.connect(this.masterVolume);
+
+			this.masterVolume.connect(this.audioContext.destination);
+		} catch (e) {
+			console.error('WebAudio API is not supported by this browser');
+		}
+	}
+
+	_createClass(AudioManager, [{
+		key: 'setBackgroundMusic',
+		value: function setBackgroundMusic(buffer, loop) {
+			if (this.songsPlaying.indexOf(buffer) == -1) {
+				var that = this;
+				var source = this.audioContext.createBufferSource();
+
+				source.buffer = buffer;
+				source.loop = loop || false;
+
+				source.connect(this.musicVolume);
+				source.start();
+
+				source.onended = function () {
+					if (!loop) that.songsPlaying.splice(that.songsPlaying.indexOf(buffer), 1);
+				};
+
+				this.songsPlaying.push(buffer);
+			}
+		}
+	}, {
+		key: 'playSound',
+		value: function playSound(buffer, loop) {
+			var source = this.audioContext.createBufferSource();
+			source.buffer = buffer;
+			source.loop = loop || false;
+
+			source.connect(this.effectsVolume);
+
+			source.start();
+		}
+	}]);
+
+	return AudioManager;
+}();
 // Components provide entities with attributes
 // that relate to in-game functionality
 // Like entities, components are JUST DATA and not logic
@@ -99,6 +156,7 @@ var AnimatedSprite = function (_Component4) {
 
 		if (options === undefined) var options = {};
 
+		// If there's no default animation set, we'll use the first one defined in the JSON object
 		_this4.animationName = options.animationName || Object.keys(animationSheet)[0];
 		_this4.scale = options.scale || 1.0;
 		_this4.loop = options.loop || true;
@@ -111,55 +169,52 @@ var AnimatedSprite = function (_Component4) {
 	return AnimatedSprite;
 }(Component);
 
-var Box = function (_Component5) {
-	_inherits(Box, _Component5);
+var AudioSource = function (_Component5) {
+	_inherits(AudioSource, _Component5);
+
+	function AudioSource(audioBuffer) {
+		_classCallCheck(this, AudioSource);
+
+		var _this5 = _possibleConstructorReturn(this, (AudioSource.__proto__ || Object.getPrototypeOf(AudioSource)).call(this));
+
+		_this5.audioBuffer = audioBuffer;
+		return _this5;
+	}
+
+	return AudioSource;
+}(Component);
+
+var Box = function (_Component6) {
+	_inherits(Box, _Component6);
 
 	function Box(width, height, fillStyle) {
 		_classCallCheck(this, Box);
 
-		var _this5 = _possibleConstructorReturn(this, (Box.__proto__ || Object.getPrototypeOf(Box)).call(this));
+		var _this6 = _possibleConstructorReturn(this, (Box.__proto__ || Object.getPrototypeOf(Box)).call(this));
 
-		_this5.width = width;
-		_this5.height = height;
-		_this5.fillStyle = fillStyle;
-		return _this5;
+		_this6.width = width;
+		_this6.height = height;
+		_this6.fillStyle = fillStyle;
+		return _this6;
 	}
 
 	return Box;
 }(Component);
 
-var BoxCollider = function (_Component6) {
-	_inherits(BoxCollider, _Component6);
+var BoxCollider = function (_Component7) {
+	_inherits(BoxCollider, _Component7);
 
 	function BoxCollider(width, height) {
 		_classCallCheck(this, BoxCollider);
 
-		var _this6 = _possibleConstructorReturn(this, (BoxCollider.__proto__ || Object.getPrototypeOf(BoxCollider)).call(this));
+		var _this7 = _possibleConstructorReturn(this, (BoxCollider.__proto__ || Object.getPrototypeOf(BoxCollider)).call(this));
 
-		_this6.width = width;
-		_this6.height = height;
-		return _this6;
-	}
-
-	return BoxCollider;
-}(Component);
-
-var DirectionalInput = function (_Component7) {
-	_inherits(DirectionalInput, _Component7);
-
-	function DirectionalInput() {
-		_classCallCheck(this, DirectionalInput);
-
-		var _this7 = _possibleConstructorReturn(this, (DirectionalInput.__proto__ || Object.getPrototypeOf(DirectionalInput)).call(this));
-
-		_this7.up = false;
-		_this7.down = false;
-		_this7.left = false;
-		_this7.right = false;
+		_this7.width = width;
+		_this7.height = height;
 		return _this7;
 	}
 
-	return DirectionalInput;
+	return BoxCollider;
 }(Component);
 
 var InputMapping = function (_Component8) {
@@ -316,10 +371,8 @@ var Game = function () {
 						}
 					}
 
-					if (that.getDebugMode()) {
-						ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-						ctx.fillText(that.services.inputService.pressedKeys, 40, 60);
-					}
+					ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+					ctx.fillText(that.services.inputService.pressedKeys, 40, 60);
 				}
 			}
 		}
@@ -342,7 +395,7 @@ var Game = function () {
 
 				if (!this.currentScene.initialized || this.currentScene.alwaysInitialize) this.currentScene.initCallback();
 			} else {
-				this.log("Scene doesn't exist: " + sceneId);
+				console.error("Scene doesn't exist: " + sceneId);
 			}
 		}
 	}, {
@@ -442,18 +495,6 @@ var Scene = function () {
 
 	return Scene;
 }();
-
-var DirectionalInputSystem = {
-	systemId: 'directionalInput',
-	requiredComponents: ['DirectionalInput'],
-	update: function update(entity) {
-
-		entity.DirectionalInput.up = this.inputService.isPressed(38);
-		entity.DirectionalInput.down = this.inputService.isPressed(40);
-		entity.DirectionalInput.left = this.inputService.isPressed(37);
-		entity.DirectionalInput.right = this.inputService.isPressed(39);
-	}
-};
 
 var InputMappingSystem = {
 	systemId: 'inputMappingSystem',

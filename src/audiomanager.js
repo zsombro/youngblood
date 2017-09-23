@@ -16,7 +16,37 @@ class AudioManager {
             
             this.masterVolume.connect(this.audioContext.destination);
 		} catch (e) {
-			console.log('WebAudio API is not supported by this browser');
+			console.error('WebAudio API is not supported by this browser');
 		}
+    }
+
+    setBackgroundMusic(buffer, loop) {
+        if (this.songsPlaying.indexOf(buffer) == -1) {
+            var that = this;
+            var source = this.audioContext.createBufferSource();
+            
+            source.buffer = buffer;
+            source.loop = loop || false;		
+            
+            source.connect(this.musicVolume);
+            source.start();
+            
+            source.onended = function() {
+                if (!loop)
+                    that.songsPlaying.splice(that.songsPlaying.indexOf(buffer), 1);
+            }
+            
+            this.songsPlaying.push(buffer);
+        }	
+    }
+    
+    playSound(buffer, loop) {
+        var source = this.audioContext.createBufferSource();
+        source.buffer = buffer;
+        source.loop = loop || false;
+        
+        source.connect(this.effectsVolume);
+        
+        source.start();
     }
 }
