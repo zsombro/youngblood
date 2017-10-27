@@ -9,8 +9,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var AssetLoader = function () {
-	function AssetLoader() {
+	function AssetLoader(completionCallback) {
 		_classCallCheck(this, AssetLoader);
+
+		this.completionCallback = completionCallback || function () {};
+		this.loadCounter = 0;
+		this.readyCounter = 0;
+		this.assets = {};
 
 		// asset loader uses it's own audio context to decode incoming buffers
 		this.audio = new (window.AudioContext || window.webkitAudioContext)();
@@ -21,8 +26,116 @@ var AssetLoader = function () {
 	}
 
 	_createClass(AssetLoader, [{
+		key: 'addImageTask',
+		value: function addImageTask(url, name) {
+			var that = this;
+
+			var i = new Image();
+			i.src = url;
+			i.onload = function () {
+				that.readyCounter++;
+				that.attemptCompletionCallback(that.completionCallback);
+			};
+
+			this.assets[this.deriveObjectName(url, name)] = i;
+			this.loadCounter++;
+		}
+	}, {
+		key: 'addHttpTask',
+		value: function addHttpTask(url, name) {
+			var r = new XMLHttpRequest();
+			var that = this;
+			r.onreadystatechange = function () {
+				if (r.readyState == 4 && r.status == 200) {
+					that.assets[that.deriveObjectName(url, name)] = JSON.parse(r.responseText);
+					that.readyCounter++;
+					that.attemptCompletionCallback(that.completionCallback);
+				}
+			};
+
+			r.overrideMimeType('application/json');
+			r.open('GET', url, true);
+			r.send(null);
+
+			this.loadCounter++;
+		}
+	}, {
+		key: 'addBufferTask',
+		value: function addBufferTask(url, name) {
+			var that = this;
+			var r = new XMLHttpRequest();
+			r.responseType = 'arraybuffer';
+			r.open('GET', url, true);
+
+			r.onload = function () {
+				that.audio.decodeAudioData(r.response, function (buffer) {
+					that.assets[that.deriveObjectName(url, name)] = buffer;
+					that.readyCounter++;
+					that.attemptCompletionCallback(that.completionCallback);
+				}, function () {
+					console.log("Error decoding audio");
+				});
+			};
+
+			r.send();
+
+			this.loadCounter++;
+		}
+	}, {
 		key: 'addTaskList',
-		value: function addTaskList(url) {}
+		value: function addTaskList(url) {
+			var that = this;
+			// load a list of txt files
+			var r = new XMLHttpRequest();
+			r.onreadystatechange = function () {
+				if (r.readyState == 4 && r.status == 200) {
+					var fileList = r.responseText.split('\n');
+					for (var i = 0; i < fileList.length; i++) {
+						var ext = fileList[i].indexOf('\r') == -1 ? fileList[i].slice(-4) : fileList[i].slice(-5).slice(0, -1);
+
+						if (that.imageTypes.indexOf(ext) != -1) {
+							that.addImageTask(fileList[i]);
+						}
+						if (that.objectTypes.indexOf(ext) != -1) {
+							that.addHttpTask(fileList[i]);
+						}
+						if (that.audioTypes.indexOf(ext) != -1) {
+							that.addBufferTask(fileList[i]);
+						}
+					}
+				}
+			};
+
+			r.overrideMimeType('application/json');
+			r.open('GET', url, true);
+			r.send(null);
+		}
+
+		// you can even track progress with this thing. it's kinda the point actually
+
+	}, {
+		key: 'isReady',
+		value: function isReady() {
+			if (this.loadCounter == 0) return false;else return this.readyCounter == this.loadCounter;
+		}
+	}, {
+		key: 'getProgress',
+		value: function getProgress() {
+			if (this.loadCounter != 0) return this.readyCounter / this.loadCounter * 100;else return 0;
+		}
+	}, {
+		key: 'attemptCompletionCallback',
+		value: function attemptCompletionCallback(callback) {
+			if (this.readyCounter == this.loadCounter && callback !== undefined) callback();
+		}
+	}, {
+		key: 'deriveObjectName',
+		value: function deriveObjectName(url, name) {
+			if (name === undefined) {
+				var f = url.slice(url.lastIndexOf('/') + 1);
+				return f.slice(0, f.indexOf('.'));
+			} else return name;
+		}
 	}]);
 
 	return AssetLoader;
@@ -371,8 +484,8 @@ var Game = function () {
 						}
 					}
 
-					ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-					ctx.fillText(that.services.inputService.pressedKeys, 40, 60);
+					that.canvasContext.fillStyle = 'rgba(0, 0, 0, 1)';
+					that.canvasContext.fillText(that.services.inputService.pressedKeys, 40, 60);
 				}
 			}
 		}

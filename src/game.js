@@ -105,8 +105,8 @@ class Game {
 					}
 
 					// @ifdef DEBUG
-					ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-					ctx.fillText(that.services.inputService.pressedKeys, 40, 60);
+					that.canvasContext.fillStyle = 'rgba(0, 0, 0, 1)';
+					that.canvasContext.fillText(that.services.inputService.pressedKeys, 40, 60);
 					// @endif
 					
 				}
