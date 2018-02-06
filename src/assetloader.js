@@ -111,6 +111,10 @@ class AssetLoader {
 			return 0;
 	}
 
+	getAsset(name) {
+		return this.assets[name];
+	}
+
 	attemptCompletionCallback(callback) {
 		if (this.readyCounter == this.loadCounter && callback !== undefined)
 				callback();

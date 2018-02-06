@@ -6,7 +6,7 @@ var InputMappingSystem = {
         const l = entity.InputMapping.mapping.length;
         for (var i = 0; i < l; i++) {
             let c = entity.InputMapping.mapping[i];
-            entity.InputMapping[c.name] = this.inputService.isPressed(c.code);
+            entity.InputMapping[c.name] = this.input.isPressed(c.code);
         }
     }
 }

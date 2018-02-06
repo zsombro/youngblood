@@ -1,4 +1,4 @@
-class InputService {
+class InputManager {
     constructor() {
         var that = this;
 
@@ -19,6 +19,6 @@ class InputService {
     }
 
     isPressed(key) {
-		return (this.pressedKeys.indexOf(key) !== -1);
+		  return (this.pressedKeys.indexOf(key) !== -1);
 	}
 }

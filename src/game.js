@@ -7,11 +7,15 @@ class Game {
 		canvasContext.webkitImageSmoothingEnabled = false;
 		canvasContext.imageSmoothingEnabled = false; // future
 
-		// these are classes that lower level functionality to systems
+		// these are classes that offer lower level functionality to systems
 		// mostly through browser APIs
 		this.services = {};
-		this.services.inputService = new InputService();
-		this.services.audioManager = new AudioManager();
+		this.services.input = new InputManager();
+		this.services.audio = new AudioManager();
+		this.services.assets = new AssetLoader();
+		this.services.game = {
+			switchToScene: this.switchToScene.bind(this),
+		};
 		
 		this.gameScenes = {};
 		this.currentScene = null;
@@ -20,7 +24,7 @@ class Game {
 		
 		this.fps = 60;
 		this.startRendering = function (fps) {
-			that.fps = fps | 60;
+			that.fps = fps || 60;
 			
 			startSystem();
 		}
@@ -35,7 +39,7 @@ class Game {
 			now = Date.now();
 			delta = now - then;
 			
-			if (delta > interval) {
+			if (delta > interval || that.fps == 0) {
 				then = now - (delta % interval);
 
 				if (!that.currentScene)
@@ -106,7 +110,7 @@ class Game {
 
 					// @ifdef DEBUG
 					that.canvasContext.fillStyle = 'rgba(0, 0, 0, 1)';
-					that.canvasContext.fillText(that.services.inputService.pressedKeys, 40, 60);
+					that.canvasContext.fillText(that.services.input.pressedKeys, 40, 60);
 					// @endif
 					
 				}
@@ -121,6 +125,9 @@ class Game {
 	addScene(scene) {
 		this.gameScenes[scene.sceneId] = scene;
 
+		// services can be accessed from a scene's init callback
+		Object.assign(this.gameScenes[scene.sceneId], this.services);
+
 		if (this.currentScene == null)
 			this.switchToScene(scene.sceneId);
 	}
@@ -131,6 +138,7 @@ class Game {
 
 			if (!this.currentScene.initialized || this.currentScene.alwaysInitialize)
 				this.currentScene.initCallback();
+				//this.currentScene.initCallback.call(this.services);
 			
 		} else {
 			console.error("Scene doesn't exist: " + sceneId);

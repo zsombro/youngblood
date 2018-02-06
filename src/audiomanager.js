@@ -2,7 +2,7 @@ class AudioManager {
     constructor() {
         
         try {
-            this.audioContext == new (window.AudioContext || window.webkitAudioContext)();
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             
             this.songsPlaying = [];
 
@@ -16,7 +16,7 @@ class AudioManager {
             
             this.masterVolume.connect(this.audioContext.destination);
 		} catch (e) {
-			console.error('WebAudio API is not supported by this browser');
+			console.error(e);
 		}
     }
 

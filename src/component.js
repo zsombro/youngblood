@@ -26,6 +26,19 @@ class Velocity extends Component {
 	}
 }
 
+class Label extends Component {
+	constructor(x, y, txt, options) {
+		super();
+
+		this.x = x;
+		this.y = y;
+		this.txt = txt;
+
+		this.color = options.color || '#000';
+		this.font = options.font || 'monospace';
+	}
+}
+
 class Sprite extends Component {
 	constructor(spriteSource) {
 		super();

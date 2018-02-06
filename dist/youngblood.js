@@ -124,6 +124,11 @@ var AssetLoader = function () {
 			if (this.loadCounter != 0) return this.readyCounter / this.loadCounter * 100;else return 0;
 		}
 	}, {
+		key: 'getAsset',
+		value: function getAsset(name) {
+			return this.assets[name];
+		}
+	}, {
 		key: 'attemptCompletionCallback',
 		value: function attemptCompletionCallback(callback) {
 			if (this.readyCounter == this.loadCounter && callback !== undefined) callback();
@@ -146,7 +151,7 @@ var AudioManager = function () {
 		_classCallCheck(this, AudioManager);
 
 		try {
-			this.audioContext == new (window.AudioContext || window.webkitAudioContext)();
+			this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 			this.songsPlaying = [];
 
@@ -160,7 +165,7 @@ var AudioManager = function () {
 
 			this.masterVolume.connect(this.audioContext.destination);
 		} catch (e) {
-			console.error('WebAudio API is not supported by this browser');
+			console.error(e);
 		}
 	}
 
@@ -241,110 +246,130 @@ var Velocity = function (_Component2) {
 	return Velocity;
 }(Component);
 
-var Sprite = function (_Component3) {
-	_inherits(Sprite, _Component3);
+var Label = function (_Component3) {
+	_inherits(Label, _Component3);
+
+	function Label(x, y, txt, options) {
+		_classCallCheck(this, Label);
+
+		var _this3 = _possibleConstructorReturn(this, (Label.__proto__ || Object.getPrototypeOf(Label)).call(this));
+
+		_this3.x = x;
+		_this3.y = y;
+		_this3.txt = txt;
+
+		_this3.color = options.color || '#000';
+		_this3.font = options.font || 'monospace';
+		return _this3;
+	}
+
+	return Label;
+}(Component);
+
+var Sprite = function (_Component4) {
+	_inherits(Sprite, _Component4);
 
 	function Sprite(spriteSource) {
 		_classCallCheck(this, Sprite);
 
-		var _this3 = _possibleConstructorReturn(this, (Sprite.__proto__ || Object.getPrototypeOf(Sprite)).call(this));
+		var _this4 = _possibleConstructorReturn(this, (Sprite.__proto__ || Object.getPrototypeOf(Sprite)).call(this));
 
-		_this3.spriteSource = spriteSource;
-		return _this3;
+		_this4.spriteSource = spriteSource;
+		return _this4;
 	}
 
 	return Sprite;
 }(Component);
 
-var AnimatedSprite = function (_Component4) {
-	_inherits(AnimatedSprite, _Component4);
+var AnimatedSprite = function (_Component5) {
+	_inherits(AnimatedSprite, _Component5);
 
 	function AnimatedSprite(spriteSource, animationSheet, options) {
 		_classCallCheck(this, AnimatedSprite);
 
-		var _this4 = _possibleConstructorReturn(this, (AnimatedSprite.__proto__ || Object.getPrototypeOf(AnimatedSprite)).call(this));
+		var _this5 = _possibleConstructorReturn(this, (AnimatedSprite.__proto__ || Object.getPrototypeOf(AnimatedSprite)).call(this));
 
-		_this4.spriteSource = spriteSource;
-		_this4.animationSheet = animationSheet;
+		_this5.spriteSource = spriteSource;
+		_this5.animationSheet = animationSheet;
 
 		if (options === undefined) var options = {};
 
 		// If there's no default animation set, we'll use the first one defined in the JSON object
-		_this4.animationName = options.animationName || Object.keys(animationSheet)[0];
-		_this4.scale = options.scale || 1.0;
-		_this4.loop = options.loop || true;
-		_this4.isPlaying = options.isPlaying || true;
+		_this5.animationName = options.animationName || Object.keys(animationSheet)[0];
+		_this5.scale = options.scale || 1.0;
+		_this5.loop = options.loop || true;
+		_this5.isPlaying = options.isPlaying || true;
 
-		_this4.currentFrame = 0;
-		return _this4;
+		_this5.currentFrame = 0;
+		return _this5;
 	}
 
 	return AnimatedSprite;
 }(Component);
 
-var AudioSource = function (_Component5) {
-	_inherits(AudioSource, _Component5);
+var AudioSource = function (_Component6) {
+	_inherits(AudioSource, _Component6);
 
 	function AudioSource(audioBuffer) {
 		_classCallCheck(this, AudioSource);
 
-		var _this5 = _possibleConstructorReturn(this, (AudioSource.__proto__ || Object.getPrototypeOf(AudioSource)).call(this));
+		var _this6 = _possibleConstructorReturn(this, (AudioSource.__proto__ || Object.getPrototypeOf(AudioSource)).call(this));
 
-		_this5.audioBuffer = audioBuffer;
-		return _this5;
+		_this6.audioBuffer = audioBuffer;
+		return _this6;
 	}
 
 	return AudioSource;
 }(Component);
 
-var Box = function (_Component6) {
-	_inherits(Box, _Component6);
+var Box = function (_Component7) {
+	_inherits(Box, _Component7);
 
 	function Box(width, height, fillStyle) {
 		_classCallCheck(this, Box);
 
-		var _this6 = _possibleConstructorReturn(this, (Box.__proto__ || Object.getPrototypeOf(Box)).call(this));
+		var _this7 = _possibleConstructorReturn(this, (Box.__proto__ || Object.getPrototypeOf(Box)).call(this));
 
-		_this6.width = width;
-		_this6.height = height;
-		_this6.fillStyle = fillStyle;
-		return _this6;
+		_this7.width = width;
+		_this7.height = height;
+		_this7.fillStyle = fillStyle;
+		return _this7;
 	}
 
 	return Box;
 }(Component);
 
-var BoxCollider = function (_Component7) {
-	_inherits(BoxCollider, _Component7);
+var BoxCollider = function (_Component8) {
+	_inherits(BoxCollider, _Component8);
 
 	function BoxCollider(width, height) {
 		_classCallCheck(this, BoxCollider);
 
-		var _this7 = _possibleConstructorReturn(this, (BoxCollider.__proto__ || Object.getPrototypeOf(BoxCollider)).call(this));
+		var _this8 = _possibleConstructorReturn(this, (BoxCollider.__proto__ || Object.getPrototypeOf(BoxCollider)).call(this));
 
-		_this7.width = width;
-		_this7.height = height;
-		return _this7;
+		_this8.width = width;
+		_this8.height = height;
+		return _this8;
 	}
 
 	return BoxCollider;
 }(Component);
 
-var InputMapping = function (_Component8) {
-	_inherits(InputMapping, _Component8);
+var InputMapping = function (_Component9) {
+	_inherits(InputMapping, _Component9);
 
 	// for eg. mapping = [ {name: 'up', code: 38} ]
 	function InputMapping(mapping) {
 		_classCallCheck(this, InputMapping);
 
-		var _this8 = _possibleConstructorReturn(this, (InputMapping.__proto__ || Object.getPrototypeOf(InputMapping)).call(this));
+		var _this9 = _possibleConstructorReturn(this, (InputMapping.__proto__ || Object.getPrototypeOf(InputMapping)).call(this));
 
-		_this8.mapping = mapping;
+		_this9.mapping = mapping;
 
 		for (var i = 0; i < mapping.length; i++) {
-			_this8[mapping[i].name] = false;
+			_this9[mapping[i].name] = false;
 		}
-		return _this8;
+		return _this9;
 	}
 
 	return InputMapping;
@@ -402,11 +427,15 @@ var Game = function () {
 		canvasContext.webkitImageSmoothingEnabled = false;
 		canvasContext.imageSmoothingEnabled = false; // future
 
-		// these are classes that lower level functionality to systems
+		// these are classes that offer lower level functionality to systems
 		// mostly through browser APIs
 		this.services = {};
-		this.services.inputService = new InputService();
-		this.services.audioManager = new AudioManager();
+		this.services.input = new InputManager();
+		this.services.audio = new AudioManager();
+		this.services.assets = new AssetLoader();
+		this.services.game = {
+			switchToScene: this.switchToScene.bind(this)
+		};
 
 		this.gameScenes = {};
 		this.currentScene = null;
@@ -415,7 +444,7 @@ var Game = function () {
 
 		this.fps = 60;
 		this.startRendering = function (fps) {
-			that.fps = fps | 60;
+			that.fps = fps || 60;
 
 			startSystem();
 		};
@@ -430,7 +459,7 @@ var Game = function () {
 			now = Date.now();
 			delta = now - then;
 
-			if (delta > interval) {
+			if (delta > interval || that.fps == 0) {
 				then = now - delta % interval;
 
 				if (!that.currentScene) return;
@@ -485,7 +514,7 @@ var Game = function () {
 					}
 
 					that.canvasContext.fillStyle = 'rgba(0, 0, 0, 1)';
-					that.canvasContext.fillText(that.services.inputService.pressedKeys, 40, 60);
+					that.canvasContext.fillText(that.services.input.pressedKeys, 40, 60);
 				}
 			}
 		}
@@ -498,6 +527,9 @@ var Game = function () {
 		value: function addScene(scene) {
 			this.gameScenes[scene.sceneId] = scene;
 
+			// services can be accessed from a scene's init callback
+			Object.assign(this.gameScenes[scene.sceneId], this.services);
+
 			if (this.currentScene == null) this.switchToScene(scene.sceneId);
 		}
 	}, {
@@ -507,6 +539,7 @@ var Game = function () {
 				this.currentScene = this.gameScenes[sceneId];
 
 				if (!this.currentScene.initialized || this.currentScene.alwaysInitialize) this.currentScene.initCallback();
+				//this.currentScene.initCallback.call(this.services);
 			} else {
 				console.error("Scene doesn't exist: " + sceneId);
 			}
@@ -533,9 +566,9 @@ var Game = function () {
 
 Game.prototype.debugMode = false;
 
-var InputService = function () {
-	function InputService() {
-		_classCallCheck(this, InputService);
+var InputManager = function () {
+	function InputManager() {
+		_classCallCheck(this, InputManager);
 
 		var that = this;
 
@@ -550,14 +583,14 @@ var InputService = function () {
 		}, false);
 	}
 
-	_createClass(InputService, [{
+	_createClass(InputManager, [{
 		key: 'isPressed',
 		value: function isPressed(key) {
 			return this.pressedKeys.indexOf(key) !== -1;
 		}
 	}]);
 
-	return InputService;
+	return InputManager;
 }();
 
 var SystemScope = {
@@ -617,7 +650,7 @@ var InputMappingSystem = {
 		var l = entity.InputMapping.mapping.length;
 		for (var i = 0; i < l; i++) {
 			var c = entity.InputMapping.mapping[i];
-			entity.InputMapping[c.name] = this.inputService.isPressed(c.code);
+			entity.InputMapping[c.name] = this.input.isPressed(c.code);
 		}
 	}
 };
