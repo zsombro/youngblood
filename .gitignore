@@ -50,3 +50,6 @@ Temporary Items
 node_modules
 .vscode
 test_project
+bundle
+lib
+lib-esm

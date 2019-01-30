@@ -18,7 +18,7 @@
 	</head>
 	<body>
 		<canvas id="canvas"></canvas>
-		<script src="../../dist/youngblood.js"></script>
+		<script src="../../bundle/youngblood.js"></script>
 		<script>
 			var canvas = document.getElementById('canvas');
 			canvas.width = window.innerWidth;
@@ -26,7 +26,7 @@
 			
 			var ctx = canvas.getContext('2d');
 
-			var g = new Game(ctx);
+			var g = new yb.Game(ctx);
 			// g.setDebugMode(true);
 
 			function movementSystem(e) {
@@ -46,18 +46,18 @@
 
 			var init = function () {
 
-				this.registerSystem(InputMappingSystem);
+				this.registerSystem(yb.InputMappingSystem);
 				this.registerSystem({
 					systemId: 'movementSystem',
 					requiredComponents: ['Position', 'Velocity'],
 					update: movementSystem
 				});
 
-				var e = new Entity();
-				e.addComponent(new Position(10, 10));
-				e.addComponent(new Velocity(1, 1));
-				e.addComponent(new Box(30, 30, 'rgb(0, 0, 0, 1)'));
-				e.addComponent(new InputMapping([
+				var e = new yb.Entity();
+				e.addComponent(new yb.Position(10, 10));
+				e.addComponent(new yb.Velocity(1, 1));
+				e.addComponent(new yb.Box(30, 30, 'rgb(0, 0, 0, 1)'));
+				e.addComponent(new yb.InputMapping([
 					{ name: 'up', code: 38 },
 					{ name: 'down', code: 40 },
 					{ name: 'left', code: 37 },
@@ -67,7 +67,7 @@
 				this.addEntity(e);
 			};
 
-			var scene = new Scene({
+			var scene = new yb.Scene({
 				sceneId: 'main',
 				init: init,
 				alwaysInitialize: true

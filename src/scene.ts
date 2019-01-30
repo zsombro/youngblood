@@ -1,15 +1,20 @@
-const SystemScope = {
-	LOCAL: 'local',
-	GLOBAL: 'global'
-}
 
-const SystemType = {
-	RENDER: 'render',
-	NONRENDER: 'nonrender'
-}
+import Entity from './entity';
+import { System, SystemScope, SystemType } from './system';
 
-class Scene {
-	constructor(options) {
+export default class Scene {
+
+	sceneId: any;
+	initialized: boolean;
+	initCallback: any;
+	alwaysInitialize: any;
+	systemScope: any;
+	systemType: any;
+	gameEntities: { [index: string]: Entity };
+	systems: { [index: string]: System };
+	assets: {};
+
+	constructor(options: any) {
 		this.sceneId = options.sceneId || 'defaultScene';
 		
 		this.initialized = false;
@@ -25,15 +30,15 @@ class Scene {
 		this.systems = {};
 	}
 
-	registerSystem(system) {
+	registerSystem(system: System) {
 		this.systems[system.systemId] = system;
 	}
 
-	unregisterSystem(system) {
+	unregisterSystem(system: System) {
 		delete this.systems[system.systemId];
 	}
 
-	addEntity(entity) {
+	addEntity(entity: Entity) {
 		this.gameEntities[entity.id] = entity;
 	}
 }

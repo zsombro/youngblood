@@ -1,4 +1,8 @@
-class InputManager {
+
+export default class InputManager {
+
+    pressedKeys: any[];
+
     constructor() {
         var that = this;
 
@@ -18,7 +22,7 @@ class InputManager {
         false);
     }
 
-    isPressed(key) {
+    isPressed(key: number) {
 		  return (this.pressedKeys.indexOf(key) !== -1);
 	}
 }

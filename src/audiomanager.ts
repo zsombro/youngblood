@@ -1,8 +1,15 @@
-class AudioManager {
+export default class AudioManager {
+
+    audioContext: any;
+    songsPlaying: any[];
+    masterVolume: any;
+    musicVolume: any;
+    effectsVolume: any;
+
     constructor() {
         
         try {
-            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            this.audioContext = new ((<any>window).AudioContext || (<any>window).webkitAudioContext)();
             
             this.songsPlaying = [];
 
@@ -20,7 +27,7 @@ class AudioManager {
 		}
     }
 
-    setBackgroundMusic(buffer, loop) {
+    setBackgroundMusic(buffer: AudioBuffer, loop: boolean) {
         if (this.songsPlaying.indexOf(buffer) == -1) {
             var that = this;
             var source = this.audioContext.createBufferSource();
@@ -40,7 +47,7 @@ class AudioManager {
         }	
     }
     
-    playSound(buffer, loop) {
+    playSound(buffer: AudioBuffer, loop: boolean) {
         var source = this.audioContext.createBufferSource();
         source.buffer = buffer;
         source.loop = loop || false;

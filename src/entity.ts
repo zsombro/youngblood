@@ -1,22 +1,30 @@
-class Entity {
+import { Component } from './component';
+
+export default class Entity {
+	[x: string]: any;
+
+	id: any;
+	count: any;
+
 	constructor() {
 		this.id = Entity.prototype.count;
+
 		Entity.prototype.count++;
 	}
 	
-	addComponent(component) {
+	addComponent(component: Component) {
 		this[component.name] = component;
 	}
 	
-	removeComponent(componentName) {
+	removeComponent(componentName: string | number) {
 		delete this[componentName];
 	}
 
-	hasComponent(componentName) {
+	hasComponent(componentName: any) {
 		return (this[componentName] != null);
 	}
 
-	hasComponents(componentArray) {
+	hasComponents(componentArray: Array<Component>) {
 
 		let len = componentArray.length;
 		for (var i = 0; i < len; i++) {

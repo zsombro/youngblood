@@ -7,7 +7,7 @@ simple to use and understand. The JavaScript code for a very basic setup is just
 <canvas id="canvas"></canvas>
 <script src="youngblood.js"></script>
 <script>
-  var g = new Game(document.getElementById('canvas').getContext('2d'));
+  var g = new yb.Game(document.getElementById('canvas').getContext('2d'));
   
   g.startRendering(60);
 </script>
@@ -21,8 +21,8 @@ or changed on the fly and your systems immediately respond to these changes. *Ho
 contain game logic.* Defining an Entity in Youngblood.js looks like this:
 
 ```javascript
-var e = new Entity(); // at this point, your entity also receives a unique numeral identifier
-e.addComponent(new Position(0, 0));
+var e = new yb.Entity(); // at this point, your entity also receives a unique numeral identifier
+e.addComponent(new yb.Position(0, 0));
 
 scene.addEntity(e); // let's assume that 'scene' was defined earlier
 ```
@@ -38,7 +38,7 @@ separate menus, cutscenes, levels or anything that contains a very different set
 at least one scene! Scenes are self-contained, they all have their separate set of entities and systems. Defining one is super easy:
 
 ```javascript
-var s = new Scene({
+var s = new yb.Scene({
   sceneId: 'scene1',
   init: initFunction,
   alwaysInitialize: false

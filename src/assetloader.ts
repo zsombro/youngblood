@@ -1,5 +1,15 @@
-class AssetLoader {
-	constructor (completionCallback) {
+export default class AssetLoader {
+
+	completionCallback: any;
+	loadCounter: number;
+	readyCounter: number;
+	assets: { [index: string]: any};
+	audio: any;
+	imageTypes: string[];
+	objectTypes: string[];
+	audioTypes: string[];
+
+	constructor (completionCallback?: () => void) {
 
 		this.completionCallback = completionCallback || (() => {});
 		this.loadCounter = 0;
@@ -7,7 +17,7 @@ class AssetLoader {
 		this.assets = {};
 		
 		// asset loader uses it's own audio context to decode incoming buffers
-		this.audio = new (window.AudioContext || window.webkitAudioContext)();
+		this.audio = new ((<any>window).AudioContext || (<any>window).webkitAudioContext)();
 	
 		this.imageTypes = ['.png', '.jpg', '.gif'];
 		this.objectTypes = ['.txt', 'json'];
@@ -15,7 +25,7 @@ class AssetLoader {
 
 	}
 
-	addImageTask(url, name) {
+	addImageTask(url: string, name?: string) {
 		let that = this;
 
 		let i = new Image();
@@ -29,7 +39,7 @@ class AssetLoader {
 		this.loadCounter++;
 	}
 
-	addHttpTask(url, name) {
+	addHttpTask(url: string, name?: string) {
 		let r = new XMLHttpRequest();
 		let that = this;
 		r.onreadystatechange = function () {
@@ -47,14 +57,14 @@ class AssetLoader {
 		this.loadCounter++;
 	}
 	
-	addBufferTask(url, name) {
+	addBufferTask(url: string, name?: string) {
 		let that = this;
 		let r = new XMLHttpRequest();
 		r.responseType = 'arraybuffer';
 		r.open('GET', url, true);
 		
 		r.onload = function() {
-			that.audio.decodeAudioData(r.response, function(buffer) {
+			that.audio.decodeAudioData(r.response, function(buffer: AudioBuffer) {
 				that.assets[that.deriveObjectName(url, name)] = buffer;
 				that.readyCounter++;
 				that.attemptCompletionCallback(that.completionCallback);
@@ -68,7 +78,7 @@ class AssetLoader {
 		this.loadCounter++;
 	}
 
-	addTaskList(url) {
+	addTaskList(url: string) {
 		let that = this;
 		// load a list of txt files
 		var r = new XMLHttpRequest();
@@ -111,16 +121,16 @@ class AssetLoader {
 			return 0;
 	}
 
-	getAsset(name) {
+	getAsset(name: string | number) {
 		return this.assets[name];
 	}
 
-	attemptCompletionCallback(callback) {
+	attemptCompletionCallback(callback: any) {
 		if (this.readyCounter == this.loadCounter && callback !== undefined)
 				callback();
 	}
 
-	deriveObjectName(url, name) {
+	deriveObjectName(url: any, name: any) {
 		if (name === undefined) {
 			let f = url.slice(url.lastIndexOf('/') + 1);
 			return f.slice(0, f.indexOf('.'));
