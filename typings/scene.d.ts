@@ -1,6 +1,11 @@
 import Entity from './entity';
 import { System } from './system';
-export default class Scene {
+export interface SceneOptions {
+    sceneId?: string;
+    alwaysInitialize?: boolean;
+    init?: Function;
+}
+export declare class Scene {
     sceneId: any;
     initialized: boolean;
     initCallback: any;
@@ -14,7 +19,7 @@ export default class Scene {
         [index: string]: System;
     };
     assets: {};
-    constructor(options: any);
+    constructor(options: SceneOptions);
     registerSystem(system: System): void;
     unregisterSystem(system: System): void;
     addEntity(entity: Entity): void;

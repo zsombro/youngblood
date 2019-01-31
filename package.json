@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "A simple game development framework for web browsers.",
   "main": "bundle/youngblood.js",
-  "typings": "typings",
+  "typings": "typings/main.d.ts",
   "scripts": {
     "clean": "shx rm -rf bundles lib lib-esm typings",
     "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack"

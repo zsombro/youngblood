@@ -2,7 +2,13 @@
 import Entity from './entity';
 import { System, SystemScope, SystemType } from './system';
 
-export default class Scene {
+export interface SceneOptions {
+	sceneId?: string;
+	alwaysInitialize?: boolean;
+	init?: Function;
+}
+
+export class Scene {
 
 	sceneId: any;
 	initialized: boolean;
@@ -14,7 +20,7 @@ export default class Scene {
 	systems: { [index: string]: System };
 	assets: {};
 
-	constructor(options: any) {
+	constructor(options: SceneOptions) {
 		this.sceneId = options.sceneId || 'defaultScene';
 		
 		this.initialized = false;
@@ -23,8 +29,9 @@ export default class Scene {
 		
 		this.alwaysInitialize = options.alwaysInitialize || true;
 
-		this.systemScope = options.scope || SystemScope.LOCAL;
-		this.systemType = options.type || SystemType.NONRENDER;
+		// This stuff is really not ready yet dudes
+		// this.systemScope = options.scope || SystemScope.LOCAL;
+		// this.systemType = options.type || SystemType.NONRENDER;
 		
 		this.gameEntities = {};
 		this.systems = {};

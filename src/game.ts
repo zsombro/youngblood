@@ -1,4 +1,4 @@
-import Scene from './scene';
+import { Scene } from './scene';
 
 import InputManager from './inputmanager';
 import AudioManager from './audiomanager';
