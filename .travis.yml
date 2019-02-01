@@ -11,6 +11,7 @@ deploy:
       secure: iwFwhCvn2wPXifWbKumeumRm5rZrV1jafqRFdWqovx74QaDc1naaoHD25a8RfowlEbUjUk+RA8jTemHM5KPiN1jd6fQyjHt6fCC+iZqFUKNtktderYLO4yuSYNV18yP7P/zRiOJ+sfg85Sd7XWGgp40jqyK6o6LI0/ELfLO8QxErFu9zX0rII3yhncEqQW1xSS+Zl1cWtPOK5TL6X2PHFunsl9tJ9lpQhSQ8NBMObYlAaubtpWXUV6D8mRUcjGyeUSKSXPdbtRtYUVe8sL93c9SEWi+8hetyfjmh+k/33iImF1WeaoA3FSaN5BezqcBuuSumTiOGu1NwWUs93GwEEUR4EWXNSLOAPuwcvBS+l4CbHzR/HVxONHixgXeYg+YkaJBVZBiiUMQ3qoWM7wiBJfCz+4DmN/jsl2Mlfe2TppQbPr6752GvRWNiEtceSSDD31z2BhBgQ5f3m/jTyQ7j2sTcAmtMzzzIpY9D/twwIZ6KlegJNOgTjKCjfe9t0wOszzr5lfPhoId4l3IIE4d42vXTAFtoyxi+DmZZvwCVNcjBM10U5Y7+S5vt9X5AsbImxlZpN+KnGgsGp49wWDGWwousrIsAI0vomW9+6320oJqBtPjLNLnh4bMI5Pxhp2PRXVwqM/nmw05J5GD2MoXyI7d5LgBpDdDZ5pFKMyi/j/0=
     file: bundle/youngblood.min.js
     on:
+      tags: true
       repo: zsombro/youngblood
   - provider: npm
     email: berki.zsombor@gmail.com
