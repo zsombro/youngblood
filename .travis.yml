@@ -15,6 +15,7 @@ deploy:
       repo: zsombro/youngblood
   - provider: npm
     email: berki.zsombor@gmail.com
+    skip_cleanup: true
     api_key:
       secure: qCrBmQW2DwIR3avgREjJLuu6viafvxNl0YGUlsVi8DQfZQygLKkhH/3K4VzRB/EcA27rW/e7tKw81gLQRKSU3HpNYD9Do8/o42wX4x92ESmvNMVQIXsTMZYm5jaEe6HezsJGuYlyg8eopZ5O+YTHA9oY+WHXrI5EgjUgUEKMpOz3vPX7jgT2vIt57dKykqdO94/U+CcYwdDPBXM2Hiz/zALvVM/tXiixQLOdJDNGoYHVUS0XvASUDL3l5+njftnO7vNOhH+onSoXBfbUNvwKIFeMPBl/fIvpDPWYsSCqsRePP2EBfeZ0JVwNi7r5X5mQcMnODQKl3dbcBpbvZnRuYuAaB8WDH2cn4kdq5ZQP65lfcpm7ULBeqcGq5ZIlH4vBCKqw9AzGUerouV0eIgwoGRlMd7ueISgjn43TchJAi9p/v78/KxGBZcgx6UWox0bOnWH4vfantJSrphhWBeiCLHM36/4ByJWwOKQWvZnZLPCJkWHtexyzPULqg6wx62txd/2YA9v+wpy+0TNNdLuHsUivH61zhitJMyC2tPpI/zWT12iyuW4y6eLkUXAS91E9e+1Wzey3S1KINsO09LeGRE7xej372soRwHT/NmpBJdJmX7gSVo7+TBEMUUZ/2tRZdqCkWUWRRRTKS0IwCuTNhd9VfZWGQoewjH0BwHF7ESg=
     on:
