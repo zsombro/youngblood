@@ -1,7 +1,21 @@
 language: node_js
 node_js:
-  - "node"
+- node
 install:
-  - npm install
+- npm install
 script:
-  - npm run build
+- npm run build
+deploy:
+  - provider: releases
+    api_key:
+      secure: iwFwhCvn2wPXifWbKumeumRm5rZrV1jafqRFdWqovx74QaDc1naaoHD25a8RfowlEbUjUk+RA8jTemHM5KPiN1jd6fQyjHt6fCC+iZqFUKNtktderYLO4yuSYNV18yP7P/zRiOJ+sfg85Sd7XWGgp40jqyK6o6LI0/ELfLO8QxErFu9zX0rII3yhncEqQW1xSS+Zl1cWtPOK5TL6X2PHFunsl9tJ9lpQhSQ8NBMObYlAaubtpWXUV6D8mRUcjGyeUSKSXPdbtRtYUVe8sL93c9SEWi+8hetyfjmh+k/33iImF1WeaoA3FSaN5BezqcBuuSumTiOGu1NwWUs93GwEEUR4EWXNSLOAPuwcvBS+l4CbHzR/HVxONHixgXeYg+YkaJBVZBiiUMQ3qoWM7wiBJfCz+4DmN/jsl2Mlfe2TppQbPr6752GvRWNiEtceSSDD31z2BhBgQ5f3m/jTyQ7j2sTcAmtMzzzIpY9D/twwIZ6KlegJNOgTjKCjfe9t0wOszzr5lfPhoId4l3IIE4d42vXTAFtoyxi+DmZZvwCVNcjBM10U5Y7+S5vt9X5AsbImxlZpN+KnGgsGp49wWDGWwousrIsAI0vomW9+6320oJqBtPjLNLnh4bMI5Pxhp2PRXVwqM/nmw05J5GD2MoXyI7d5LgBpDdDZ5pFKMyi/j/0=
+    file: bundle/youngblood.min.js
+    on:
+      repo: zsombro/youngblood
+  - provider: npm
+    email: berki.zsombor@gmail.com
+    api_key:
+      secure: qCrBmQW2DwIR3avgREjJLuu6viafvxNl0YGUlsVi8DQfZQygLKkhH/3K4VzRB/EcA27rW/e7tKw81gLQRKSU3HpNYD9Do8/o42wX4x92ESmvNMVQIXsTMZYm5jaEe6HezsJGuYlyg8eopZ5O+YTHA9oY+WHXrI5EgjUgUEKMpOz3vPX7jgT2vIt57dKykqdO94/U+CcYwdDPBXM2Hiz/zALvVM/tXiixQLOdJDNGoYHVUS0XvASUDL3l5+njftnO7vNOhH+onSoXBfbUNvwKIFeMPBl/fIvpDPWYsSCqsRePP2EBfeZ0JVwNi7r5X5mQcMnODQKl3dbcBpbvZnRuYuAaB8WDH2cn4kdq5ZQP65lfcpm7ULBeqcGq5ZIlH4vBCKqw9AzGUerouV0eIgwoGRlMd7ueISgjn43TchJAi9p/v78/KxGBZcgx6UWox0bOnWH4vfantJSrphhWBeiCLHM36/4ByJWwOKQWvZnZLPCJkWHtexyzPULqg6wx62txd/2YA9v+wpy+0TNNdLuHsUivH61zhitJMyC2tPpI/zWT12iyuW4y6eLkUXAS91E9e+1Wzey3S1KINsO09LeGRE7xej372soRwHT/NmpBJdJmX7gSVo7+TBEMUUZ/2tRZdqCkWUWRRRTKS0IwCuTNhd9VfZWGQoewjH0BwHF7ESg=
+    on:
+      tags: true
+      repo: zsombro/youngblood
