@@ -1,33 +1,21 @@
 import { Scene } from './scene';
-import InputManager from './inputmanager';
-import AudioManager from './audiomanager';
-import AssetLoader from './assetloader';
 export default class Game {
-    canvasContext: CanvasRenderingContext2D;
-    services: {
-        input: InputManager;
-        audio: AudioManager;
-        assets: AssetLoader;
-        game: any;
-    };
-    gameScenes: {
-        [index: string]: Scene;
-    };
-    currentScene: any;
-    sceneEntities: {};
-    sceneSystems: {};
-    fps: number;
-    debugMode: any;
-    interval: number;
-    then: number;
-    now: number;
-    delta: number;
+    private canvasContext;
+    private services;
+    private gameScenes;
+    private currentScene;
+    private fps;
+    private debugMode;
+    private interval;
+    private then;
+    private now;
+    private delta;
     constructor(canvasContext: CanvasRenderingContext2D);
     startRendering(fps: number): void;
     addScene(scene: Scene): void;
     switchToScene(sceneId: string): void;
     setDebugMode(isDebug: boolean): void;
-    getDebugMode(): any;
+    getDebugMode(): boolean;
     log(message: string): void;
     private startSystem;
 }

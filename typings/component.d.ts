@@ -13,29 +13,52 @@ export declare class Velocity extends Component {
     constructor(x: number, y: number);
 }
 export declare class Label extends Component {
-    x: number;
-    y: number;
     txt: string;
     color: string;
     font: string;
-    constructor(x: number, y: number, txt: string, options: {
+    isVisible: boolean;
+    constructor(txt: string, options: {
         color: string;
         font: string;
+        isVisible: boolean;
     });
 }
 export declare class Sprite extends Component {
     spriteSource: HTMLImageElement;
     constructor(spriteSource: HTMLImageElement);
 }
+export interface AnimatedSpriteOptions {
+    animationName?: string;
+    scale?: number;
+    loop?: boolean;
+    isPlaying?: boolean;
+    flip?: boolean | SpriteFlipOptions;
+}
+export interface SpriteFlipOptions {
+    vertical?: boolean;
+    horizontal?: boolean;
+}
+export interface AnimationSheet {
+    [x: string]: Animation;
+}
+export interface Animation {
+    startX: number;
+    startY: number;
+    frames: number;
+    frameWidth: number;
+    frameHeight: number;
+    isVertical?: boolean;
+}
 export declare class AnimatedSprite extends Component {
     spriteSource: HTMLImageElement;
-    animationSheet: any;
-    animationName: any;
-    scale: any;
-    loop: any;
-    isPlaying: any;
+    animationSheet: AnimationSheet;
     currentFrame: number;
-    constructor(spriteSource: HTMLImageElement, animationSheet: {}, options: any);
+    animationName: string;
+    scale: number;
+    loop: boolean;
+    isPlaying: boolean;
+    flip: boolean | SpriteFlipOptions;
+    constructor(spriteSource: HTMLImageElement, animationSheet: AnimationSheet, options: AnimatedSpriteOptions);
 }
 export declare class AudioSource extends Component {
     audioBuffer: any;
@@ -52,11 +75,12 @@ export declare class BoxCollider extends Component {
     height: number;
     constructor(width: number, height: number);
 }
+export interface KeyMapping {
+    name: string;
+    code: number;
+}
 export declare class InputMapping extends Component {
     [index: string]: boolean;
     mapping: any;
-    constructor(mapping: {
-        [x: string]: any;
-        length: number;
-    });
+    constructor(mapping: KeyMapping[]);
 }

@@ -1,39 +1,38 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component } from './component';
 
 export default class Entity {
-	[x: string]: any;
+    [x: string]: Component;
 
-	id: any;
-	count: any;
+    public id: any;
+    public count: any;
 
-	constructor() {
-		this.id = Entity.prototype.count;
+    public constructor() {
+        this.id = Entity.prototype.count;
 
-		Entity.prototype.count++;
-	}
-	
-	addComponent(component: Component) {
-		this[component.name] = component;
-	}
-	
-	removeComponent(componentName: string | number) {
-		delete this[componentName];
-	}
+        Entity.prototype.count++;
+    }
 
-	hasComponent(componentName: any) {
-		return (this[componentName] != null);
-	}
+    public addComponent(component: Component): void {
+        this[component.name] = component;
+    }
 
-	hasComponents(componentArray: Array<Component>) {
+    public removeComponent(componentName: string | number): void {
+        delete this[componentName];
+    }
 
-		let len = componentArray.length;
-		for (var i = 0; i < len; i++) {
-			if (!this.hasComponent(componentArray[i]))
-				return false;
-		}
+    public hasComponent(componentName: string): boolean {
+        return this[componentName] != null;
+    }
 
-		return true;
-	}
+    public hasComponents(componentArray: string[]): boolean {
+        let len = componentArray.length;
+        for (var i = 0; i < len; i++) {
+            if (!this.hasComponent(componentArray[i])) return false;
+        }
+
+        return true;
+    }
 }
 
 Entity.prototype.count = 0;

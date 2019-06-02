@@ -1,41 +1,41 @@
 import Entity from './entity';
+import { SceneServices } from './scene';
+import { InputMapping } from './component';
 
-export const SystemScope = {
-	LOCAL: 'local', // default
-	GLOBAL: 'global'
+export enum SystemScope {
+    Local, // default
+    Global,
 }
 
-export const SystemType = {
-	NONRENDER: 'nonrender', // default
-	RENDER: 'render'
+export enum SystemType {
+    NonRender, // default
+    Render,
 }
 
 export interface System {
-    systemId: string,
-    type: string,
-    requiredComponents: Array<string>,
-    update: (e: Entity) => void
+    systemId: string;
+    type?: SystemType;
+    requiredComponents: string[];
+    update: (e: Entity, services: SceneServices) => void;
 }
 
 export var InputMappingSystem = {
     systemId: 'inputMappingSystem',
-    type: SystemType.NONRENDER,
+    type: SystemType.NonRender,
     requiredComponents: ['InputMapping'],
-    update: function (entity: Entity) {
+    update: function(entity: Entity, services: SceneServices): void {
+        const inputMapping = entity['InputMapping'] as InputMapping;
 
-        const l = entity.InputMapping.mapping.length;
-        for (var i = 0; i < l; i++) {
-            let c = entity.InputMapping.mapping[i];
-            entity.InputMapping[c.name] = this.input.isPressed(c.code);
+        for (var i = 0; i < inputMapping.mapping.length; i++) {
+            let c = inputMapping.mapping[i];
+            inputMapping[c.name] = services.input.isPressed(c.code);
         }
-    }
-}
+    },
+};
 
 var RenderSystem: System = {
     systemId: 'renderSystem',
-    type: SystemType.RENDER,
+    type: SystemType.Render,
     requiredComponents: [],
-    update: function (entity: Entity) {
-        
-    }
-}
+    update: function(entity: Entity): void {},
+};

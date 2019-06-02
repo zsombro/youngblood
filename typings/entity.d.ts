@@ -1,11 +1,11 @@
 import { Component } from './component';
 export default class Entity {
-    [x: string]: any;
+    [x: string]: Component;
     id: any;
     count: any;
     constructor();
     addComponent(component: Component): void;
     removeComponent(componentName: string | number): void;
-    hasComponent(componentName: any): boolean;
-    hasComponents(componentArray: Array<Component>): boolean;
+    hasComponent(componentName: string): boolean;
+    hasComponents(componentArray: string[]): boolean;
 }

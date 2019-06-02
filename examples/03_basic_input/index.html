@@ -1,81 +1,85 @@
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<style>
-		  html, body {
-				width: 100%;
-				height: 100%;
-				margin: 0px;
-				padding: 0px;
-				overflow: hidden;
-		  }
 
-		  canvas {
-				display: block;
-		  }
-		</style>
-	</head>
-	<body>
-		<canvas id="canvas"></canvas>
-		<script src="../../bundle/youngblood.js"></script>
-		<script>
-			var canvas = document.getElementById('canvas');
-			canvas.width = window.innerWidth;
-			canvas.height = window.innerHeight;
-			
-			var ctx = canvas.getContext('2d');
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0px;
+			padding: 0px;
+			overflow: hidden;
+		}
 
-			var g = new yb.Game(ctx);
-			// g.setDebugMode(true);
+		canvas {
+			display: block;
+		}
+	</style>
+</head>
 
-			function movementSystem(e) {
+<body>
+	<canvas id="canvas"></canvas>
+	<script src="../../bundle/youngblood.js"></script>
+	<script>
+		var canvas = document.getElementById('canvas');
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
 
-				if (e.InputMapping.down)
+		var ctx = canvas.getContext('2d');
+
+		var g = new yb.Game(ctx);
+		// g.setDebugMode(true);
+
+		function movementSystem(e) {
+
+			if (e.InputMapping.down)
 				e.Position.y += e.Velocity.y;
 
-				if (e.InputMapping.up)
-					e.Position.y -= e.Velocity.y;
+			if (e.InputMapping.up)
+				e.Position.y -= e.Velocity.y;
 
-				if (e.InputMapping.left)
-					e.Position.x -= e.Velocity.x;
+			if (e.InputMapping.left)
+				e.Position.x -= e.Velocity.x;
 
-				if (e.InputMapping.right)
-					e.Position.x += e.Velocity.x;
-			}
+			if (e.InputMapping.right)
+				e.Position.x += e.Velocity.x;
+		}
 
-			var init = function () {
+		var init = function (context, services) {
 
-				this.registerSystem(yb.InputMappingSystem);
-				this.registerSystem({
-					systemId: 'movementSystem',
-					requiredComponents: ['Position', 'Velocity'],
-					update: movementSystem
-				});
-
-				var e = new yb.Entity();
-				e.addComponent(new yb.Position(10, 10));
-				e.addComponent(new yb.Velocity(1, 1));
-				e.addComponent(new yb.Box(30, 30, 'rgb(0, 0, 0, 1)'));
-				e.addComponent(new yb.InputMapping([
-					{ name: 'up', code: 38 },
-					{ name: 'down', code: 40 },
-					{ name: 'left', code: 37 },
-					{ name: 'right', code: 39 }
-				]));
-
-				this.addEntity(e);
-			};
-
-			var scene = new yb.Scene({
-				sceneId: 'main',
-				init: init,
-				alwaysInitialize: true
+			context.registerSystem(yb.InputMappingSystem);
+			context.registerSystem({
+				systemId: 'movementSystem',
+				requiredComponents: ['Position', 'Velocity'],
+				update: movementSystem
 			});
-			
-			g.addScene(scene);
 
-			g.startRendering(60);
-		</script>
-	</body>
+			var e = new yb.Entity();
+			e.addComponent(new yb.Position(10, 10));
+			e.addComponent(new yb.Velocity(1, 1));
+			e.addComponent(new yb.Box(30, 30, 'rgb(0, 0, 0, 1)'));
+			e.addComponent(new yb.InputMapping([
+				{ name: 'up', code: 38 },
+				{ name: 'down', code: 40 },
+				{ name: 'left', code: 37 },
+				{ name: 'right', code: 39 }
+			]));
+
+			context.addEntity(e);
+		};
+
+		var scene = new yb.Scene({
+			sceneId: 'main',
+			init: init,
+			alwaysInitialize: true
+		});
+
+		g.addScene(scene);
+
+		g.startRendering(60);
+	</script>
+</body>
+
 </html>

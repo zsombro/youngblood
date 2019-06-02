@@ -1,5 +1,5 @@
 export default class InputManager {
-    pressedKeys: any[];
+    pressedKeys: number[];
     constructor();
     isPressed(key: number): boolean;
 }

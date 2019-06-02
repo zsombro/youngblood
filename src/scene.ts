@@ -1,51 +1,59 @@
-
 import Entity from './entity';
 import { System, SystemScope, SystemType } from './system';
 
+import InputManager from './inputmanager';
+import AudioManager from './audiomanager';
+import AssetLoader from './assetloader';
+
 export interface SceneOptions {
-	sceneId?: string;
-	alwaysInitialize?: boolean;
-	init?: Function;
+    sceneId: string;
+    alwaysInitialize?: boolean;
+    init: SceneInitCallback;
 }
 
+export interface SceneServices {
+    input: InputManager;
+    audio: AudioManager;
+    assets: AssetLoader;
+    game: { switchToScene(name: string): void };
+}
+
+export type SceneInitCallback = (context: Scene, services: SceneServices) => void;
+
 export class Scene {
+    public sceneId: string;
+    public initialized: boolean;
+    public initCallback: SceneInitCallback;
+    public alwaysInitialize: boolean;
+    public gameEntities: { [index: string]: Entity };
+    public systems: { [index: string]: System };
+    public assets: {};
 
-	sceneId: any;
-	initialized: boolean;
-	initCallback: any;
-	alwaysInitialize: any;
-	systemScope: any;
-	systemType: any;
-	gameEntities: { [index: string]: Entity };
-	systems: { [index: string]: System };
-	assets: {};
+    public constructor(options: SceneOptions) {
+        this.sceneId = options.sceneId;
 
-	constructor(options: SceneOptions) {
-		this.sceneId = options.sceneId || 'defaultScene';
-		
-		this.initialized = false;
-		
-		this.initCallback = options.init || (() => {});
-		
-		this.alwaysInitialize = options.alwaysInitialize || true;
+        this.initialized = false;
 
-		// This stuff is really not ready yet dudes
-		// this.systemScope = options.scope || SystemScope.LOCAL;
-		// this.systemType = options.type || SystemType.NONRENDER;
-		
-		this.gameEntities = {};
-		this.systems = {};
-	}
+        this.alwaysInitialize = options.alwaysInitialize || true;
 
-	registerSystem(system: System) {
-		this.systems[system.systemId] = system;
-	}
+        this.initCallback = options.init;
+        // This stuff is really not ready yet dudes
+        // this.systemScope = options.scope || SystemScope.LOCAL;
+        // this.systemType = options.type || SystemType.NONRENDER;
 
-	unregisterSystem(system: System) {
-		delete this.systems[system.systemId];
-	}
+        this.gameEntities = {};
+        this.systems = {};
+    }
 
-	addEntity(entity: Entity) {
-		this.gameEntities[entity.id] = entity;
-	}
+    public registerSystem(system: System): void {
+        this.systems[system.systemId] = system;
+    }
+
+    public unregisterSystem(system: System): void {
+        delete this.systems[system.systemId];
+    }
+
+    public addEntity(entity: Entity): void {
+        this.gameEntities[entity.id] = entity;
+    }
 }

@@ -1,7 +1,7 @@
 ![Build status](https://travis-ci.com/zsombro/youngblood.svg?branch=master)
 # youngblood.js
 
-`youngblood.js` is a simple game development framework for web browsers, written in JavaScript. The aim of this framework is to be
+`youngblood.js` is a simple game development framework for web browsers, written in TypeScript. The aim of this framework is to be
 simple to use and understand. The JavaScript code for a very basic setup is just a few lines of code:
 
 ```javascript
