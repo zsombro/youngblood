@@ -58,8 +58,8 @@ function movementSystem(entity) {
     entity.Position.y += entity.Velocity.y;
 }
 
-function initFunction() {
-  this.registerSystem({
+function initFunction(context, services) {
+  context.registerSystem({
     systemId: 'movementSystem',
     requiredComponents: ['Position', 'Velocity'],
     update: movementSystem
