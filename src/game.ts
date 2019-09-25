@@ -12,7 +12,6 @@ export default class Game {
     private gameScenes: { [index: string]: Scene };
     private currentScene: Scene;
     private fps: number;
-    private debugMode: boolean;
     private interval: number;
     private then: number;
     private now: number;
@@ -20,7 +19,6 @@ export default class Game {
 
     public constructor(canvasContext: CanvasRenderingContext2D) {
         this.canvasContext = canvasContext;
-
         canvasContext.imageSmoothingEnabled = false;
 
         // these are classes that offer lower level functionality to systems
@@ -53,10 +51,7 @@ export default class Game {
 
     public addScene(scene: Scene): void {
         this.gameScenes[scene.sceneId] = scene;
-
-        // services can be accessed from a scene's init callback
         this.gameScenes[scene.sceneId].assets = this.services.assets;
-        // Object.assign(this.gameScenes[scene.sceneId], this.services);
 
         if (this.currentScene == null) this.switchToScene(scene.sceneId);
     }
@@ -71,19 +66,6 @@ export default class Game {
 
         if (!this.currentScene.initialized || this.currentScene.alwaysInitialize)
             this.currentScene.initCallback(this.currentScene, this.services);
-        //this.currentScene.initCallback.call(this.services);
-    }
-
-    public setDebugMode(isDebug: boolean): void {
-        Game.prototype.debugMode = isDebug;
-    }
-
-    public getDebugMode(): boolean {
-        return Game.prototype.debugMode;
-    }
-
-    public log(message: string): void {
-        if (Game.prototype.debugMode) console.log(message);
     }
 
     private startSystem(): void {

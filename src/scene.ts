@@ -1,5 +1,5 @@
 import Entity from './entity';
-import { System, SystemScope, SystemType } from './system';
+import { System } from './system';
 
 import InputManager from './inputmanager';
 import AudioManager from './audiomanager';
@@ -37,9 +37,6 @@ export class Scene {
         this.alwaysInitialize = options.alwaysInitialize || true;
 
         this.initCallback = options.init;
-        // This stuff is really not ready yet dudes
-        // this.systemScope = options.scope || SystemScope.LOCAL;
-        // this.systemType = options.type || SystemType.NONRENDER;
 
         this.gameEntities = {};
         this.systems = {};

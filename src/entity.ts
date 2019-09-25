@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component } from './component';
+import Component from './component';
 
 export default class Entity {
     [x: string]: Component;
@@ -32,6 +32,10 @@ export default class Entity {
         }
 
         return true;
+    }
+
+    public get<T extends Component>(componentName: string): T {
+        return this[componentName] as T;
     }
 }
 

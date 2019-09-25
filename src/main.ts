@@ -3,7 +3,6 @@ import { Scene, SceneOptions, SceneInitCallback, SceneServices } from './scene';
 import Entity from './entity';
 
 import {
-    Component,
     Position,
     Velocity,
     Sprite,
@@ -14,6 +13,8 @@ import {
     Label,
     AnimationSheet,
 } from './component';
+
+import Component from './component';
 
 import { InputMappingSystem, System } from './system';
 

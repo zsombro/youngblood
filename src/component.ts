@@ -3,7 +3,7 @@
 // that relate to in-game functionality
 // Like entities, components are JUST DATA and not logic
 
-export class Component {
+export default class Component {
     public name: any;
 
     public constructor(name: string) {
