@@ -1,4 +1,4 @@
-![Build status](https://travis-ci.com/zsombro/youngblood.svg?branch=master)
+![Build status](https://travis-ci.com/zsombro/youngblood.svg?branch=master) ![npm](https://img.shields.io/npm/v/youngblood) ![npm bundle size](https://img.shields.io/bundlephobia/min/youngblood) 
 # youngblood.js
 
 `youngblood.js` is a simple game development framework for web browsers, written in TypeScript. The aim of this framework is to be
