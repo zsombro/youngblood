@@ -1,4 +1,4 @@
-import { Component } from './component';
+import Component from './component';
 export default class Entity {
     [x: string]: Component;
     id: any;
@@ -8,4 +8,5 @@ export default class Entity {
     removeComponent(componentName: string | number): void;
     hasComponent(componentName: string): boolean;
     hasComponents(componentArray: string[]): boolean;
+    get<T extends Component>(componentName: string): T;
 }

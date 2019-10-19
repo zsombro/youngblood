@@ -1,4 +1,4 @@
-export declare class Component {
+export default class Component {
     name: any;
     constructor(name: string);
 }

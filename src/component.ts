@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// Components provide entities with attributes
-// that relate to in-game functionality
-// Like entities, components are JUST DATA and not logic
 
+/**
+ * Components provide entities with attributes
+ * that relate to in-game functionality.
+ * Like entities, components are JUST DATA and not logic!
+ */
 export default class Component {
     public name: any;
 

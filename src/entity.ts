@@ -17,7 +17,7 @@ export default class Entity {
         this[component.name] = component;
     }
 
-    public removeComponent(componentName: string | number): void {
+    public removeComponent(componentName: string): void {
         delete this[componentName];
     }
 
@@ -32,10 +32,6 @@ export default class Entity {
         }
 
         return true;
-    }
-
-    public get<T extends Component>(componentName: string): T {
-        return this[componentName] as T;
     }
 }
 

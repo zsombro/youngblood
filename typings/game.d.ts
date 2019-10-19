@@ -5,7 +5,6 @@ export default class Game {
     private gameScenes;
     private currentScene;
     private fps;
-    private debugMode;
     private interval;
     private then;
     private now;
@@ -14,8 +13,5 @@ export default class Game {
     startRendering(fps: number): void;
     addScene(scene: Scene): void;
     switchToScene(sceneId: string): void;
-    setDebugMode(isDebug: boolean): void;
-    getDebugMode(): boolean;
-    log(message: string): void;
     private startSystem;
 }
