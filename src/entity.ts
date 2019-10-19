@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Component from './component';
+import Component, { Position, Velocity, Sprite, AnimatedSprite, InputMapping } from './component';
 
 export default class Entity {
     [x: string]: Component;
@@ -17,7 +17,7 @@ export default class Entity {
         this[component.name] = component;
     }
 
-    public removeComponent(componentName: string | number): void {
+    public removeComponent(componentName: string): void {
         delete this[componentName];
     }
 
@@ -34,8 +34,26 @@ export default class Entity {
         return true;
     }
 
-    public get<T extends Component>(componentName: string): T {
-        return this[componentName] as T;
+    public get(name: 'Position'): Position;
+    public get(name: 'Velocity'): Velocity;
+    public get(name: 'Sprite'): Sprite;
+    public get(name: 'InputMapping'): InputMapping;
+    public get(name: 'AnimatedSprite'): AnimatedSprite;
+    public get(name: string): any {
+        switch (name) {
+            case 'Velocity':
+                return this[name] as Velocity;
+            case 'Position':
+                return this[name] as Position;
+            case 'Sprite':
+                return this[name] as Sprite;
+            case 'AnimatedSprite':
+                return this[name] as AnimatedSprite;
+            case 'InputMapping':
+                return this[name] as InputMapping;
+            default:
+                return this[name];
+        }
     }
 }
 

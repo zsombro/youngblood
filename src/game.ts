@@ -1,13 +1,13 @@
-import { Scene, SceneServices } from './scene';
+import { Scene, SceneServices, SceneOptions } from './scene';
 
 import InputManager from './inputmanager';
 import AudioManager from './audiomanager';
 import AssetLoader from './assetloader';
-import { AnimatedSprite, Animation } from './component';
 import Entity from './entity';
+import render, { Renderer } from './renderer';
 
 export default class Game {
-    private canvasContext: CanvasRenderingContext2D;
+    private renderer: Renderer;
     private services: SceneServices;
     private gameScenes: { [index: string]: Scene };
     private currentScene: Scene;
@@ -17,9 +17,11 @@ export default class Game {
     private now: number;
     private delta: number;
 
-    public constructor(canvasContext: CanvasRenderingContext2D) {
-        this.canvasContext = canvasContext;
-        canvasContext.imageSmoothingEnabled = false;
+    /**
+     * Returns a new `Game` instance.
+     */
+    public constructor() {
+        this.renderer = null;
 
         // these are classes that offer lower level functionality to systems
         // mostly through browser APIs
@@ -38,25 +40,71 @@ export default class Game {
         this.fps = 60;
         this.then = Date.now();
 
-        // @ifdef DEBUG
-        console.log('Game object created');
-        // @endif
+        console.info('Game created');
     }
 
-    public startRendering(fps: number): void {
-        this.fps = fps || 60;
+    /**
+     * This is what's gonna kickstart your game when you're done setting it up!
+     *
+     * @param canvasSelector The `canvas` you want to render into. Leaving this empty assumes
+     * you only have one `<canvas>` element on your page. Irrelevant if you've registered
+     * a custom renderer.
+     */
+    public startRendering(canvasSelector: string = 'canvas'): void {
+        if (!this.renderer) {
+            const ctx = (document.querySelector(canvasSelector) as HTMLCanvasElement).getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            this.setRenderer(render(ctx));
+        }
 
         this.startSystem();
+
+        console.info(`Started rendering at ${this.fps}fps`);
     }
 
-    public addScene(scene: Scene): void {
-        this.gameScenes[scene.sceneId] = scene;
-        this.gameScenes[scene.sceneId].assets = this.services.assets;
+    /**
+     * Set an upper framerate limit. `60` by default!
+     * @param fps
+     */
+    public setFramerate(fps: number): Game {
+        this.fps = fps;
 
-        if (this.currentScene == null) this.switchToScene(scene.sceneId);
+        return this;
     }
 
-    public switchToScene(sceneId: string): void {
+    /**
+     * You can set a custom renderer instead of the default 2D one. It's a function
+     * that will be called at the end of every game loop.
+     * @param f A function that takes a `Scene` object and does something with it.
+     */
+    public setRenderer(f: Renderer): Game {
+        this.renderer = f;
+
+        return this;
+    }
+
+    /**
+     * Register a new `Scene`. You'll need at least one to do anything!
+     * @param sceneOptions Settings for your scene, like it's name or how it should be
+     * initialized.
+     */
+    public addScene(sceneOptions: SceneOptions): Game {
+        this.gameScenes[sceneOptions.sceneId] = new Scene(sceneOptions);
+        this.gameScenes[sceneOptions.sceneId].assets = this.services.assets;
+
+        if (this.currentScene == null) this.switchToScene(sceneOptions.sceneId);
+
+        console.info(`Scene added: ${sceneOptions.sceneId}`);
+
+        return this;
+    }
+
+    /**
+     * Switch to a different scene. Also available as a `SceneService`. If you don't call it
+     * before starting the game, it will start with the first one you added.
+     * @param sceneId The id provided when the scene was registered
+     */
+    public switchToScene(sceneId: string): Game {
         if (this.gameScenes[sceneId] == null) {
             console.error("Scene doesn't exist: " + sceneId);
             return;
@@ -66,6 +114,8 @@ export default class Game {
 
         if (!this.currentScene.initialized || this.currentScene.alwaysInitialize)
             this.currentScene.initCallback(this.currentScene, this.services);
+
+        return this;
     }
 
     private startSystem(): void {
@@ -85,14 +135,6 @@ export default class Game {
 
             if (!this.currentScene) return;
 
-            // SYSTEM FLOW:
-            // registered systems
-            //	(systems are registered on a per scene basis)
-            // default render system
-            //	(this system is the same for every scene, but it could be possible to apply separate shaders)
-
-            // TODO: figure out a way to register custom render systems for components that might have special
-            // rendering requirements (this would also allow the development of a WebGL/ThreeJS plugin of sorts)
             for (var e in this.currentScene.gameEntities) {
                 for (var s in this.currentScene.systems) {
                     var entity: Entity = this.currentScene.gameEntities[e];
@@ -103,67 +145,7 @@ export default class Game {
                 }
             }
 
-            this.canvasContext.fillStyle = 'white';
-            this.canvasContext.fillRect(0, 0, this.canvasContext.canvas.width, this.canvasContext.canvas.height);
-
-            // render system
-            var cur: any;
-            for (var e in this.currentScene.gameEntities) {
-                cur = this.currentScene.gameEntities[e];
-
-                // This basic shape is more of a testing thing
-                if (cur.hasComponent('Box') && cur.hasComponent('Position')) {
-                    this.canvasContext.fillStyle = cur.Box.fillStyle;
-
-                    this.canvasContext.fillRect(cur.Position.x, cur.Position.y, cur.Box.width, cur.Box.height);
-                }
-
-                if (cur.hasComponent('Label') && cur.hasComponent('Position')) {
-                    this.canvasContext.fillStyle = cur.Label.color;
-
-                    this.canvasContext.fillText(cur.Label.txt, cur.Position.x, cur.Position.y);
-                }
-
-                // Render a single sprite
-                if (cur.hasComponent('Sprite') && cur.hasComponent('Position')) {
-                    this.canvasContext.drawImage(cur.Sprite.spriteSource, cur.Position.x, cur.Position.y);
-                }
-
-                // Render an animated sprite
-                if (cur.hasComponents(['AnimatedSprite', 'Position'])) {
-                    var c: AnimatedSprite = cur.AnimatedSprite;
-                    var f: Animation = c.animationSheet[c.animationName];
-
-                    if (c.flip) {
-                        this.canvasContext.translate(cur.Position.x, 0);
-                        this.canvasContext.scale(-1, 1);
-                    }
-
-                    this.canvasContext.drawImage(
-                        c.spriteSource,
-                        f.startX + c.currentFrame * f.frameWidth,
-                        f.startY,
-                        f.frameWidth,
-                        f.frameHeight,
-                        c.flip ? -c.scale * f.frameWidth : cur.Position.x,
-                        cur.Position.y,
-                        f.frameWidth * c.scale,
-                        f.frameHeight * c.scale,
-                    );
-
-                    if (c.flip) this.canvasContext.setTransform(1, 0, 0, 1, 0, 0);
-
-                    if (c.isPlaying) {
-                        if (c.currentFrame >= f.frames - 1) c.currentFrame = 0;
-                        else c.currentFrame++;
-                    }
-                }
-
-                // @ifdef DEBUG
-                // this.canvasContext.fillStyle = 'rgba(0, 0, 0, 1)';
-                // this.canvasContext.fillText(this.services.input.pressedKeys.toString(), 40, 60);
-                // @endif
-            }
+            this.renderer(this.currentScene);
         }
     }
 }

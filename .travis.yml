@@ -4,7 +4,7 @@ node_js:
 install:
 - npm install
 script:
-- npm run build:prod
+- npm run build
 deploy:
   - provider: releases
     api_key:

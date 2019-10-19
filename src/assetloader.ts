@@ -70,7 +70,7 @@ export default class AssetLoader {
                     that.attemptCompletionCallback(that.completionCallback);
                 },
                 function(): void {
-                    console.log('Error decoding audio');
+                    console.error('Error decoding audio');
                 },
             );
         };

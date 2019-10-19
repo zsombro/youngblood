@@ -1,29 +1,31 @@
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<style>
-		  html, body {
-				width: 100%;
-				height: 100%;
-				margin: 0px;
-				padding: 0px;
-				overflow: hidden;
-		  }
 
-		  canvas {
-				display: block;
-		  }
-		</style>
-	</head>
-	<body>
-		<canvas id="canvas"></canvas>
-		<script src="../../bundle/youngblood.js"></script>
-		<script>
-			var g = new yb.Game(document.getElementById('canvas').getContext('2d'));
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0px;
+			padding: 0px;
+			overflow: hidden;
+		}
 
-			g.setDebugMode(true);
-			g.startRendering(60);
-		</script>
-	</body>
+		canvas {
+			display: block;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="canvas"></canvas>
+	<script src="../../bundle/youngblood.js"></script>
+	<script>
+		new yb.Game()
+			.startRendering();
+	</script>
+</body>
+
 </html>
