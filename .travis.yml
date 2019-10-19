@@ -12,6 +12,7 @@ deploy:
     file: bundle/youngblood.min.js
     on:
       tags: true
+      branch: master
       repo: zsombro/youngblood
   - provider: npm
     email: berki.zsombor@gmail.com
@@ -20,4 +21,5 @@ deploy:
       secure: MuF2XS+vyvw1eUqIJE9wc8JEr7R3R8qO2+FoiXUD6q/cgfN1yYbLWWfp7IAyHx3SQrUULuT3eDtvw8MXENxIIj0ZS+Ir9iX408IZZGle4gbUF9ci2I8TVbsmDOkid5RgJ8YZcqTPntONmuKn+ZET0DYoMi6rnjpb+kIOsuvU4AeIOnSEscvceOafXmCjtSPo6VgcBi3hDda1LxRAEOiq2fk9rZAHnGg6ViM8DRpofNE3F9on3vheDUCQK5Y0cYXOp7vFTGPWaem9h/8Mb7H/N1ey+dtuOhQcsyStoRGr5fToij/iAQcBAqJqK5VyrhCGoaxva7Af1xCvMUXQSrXsrTmxErYj4H7d/R9IEIFgVW4eoKiqB/R6I3aoDVIi7eHwxxdNDdpXlJQN7oTGxV97fzZ4SSUI00evzNkh/7PGAuHNLejubQoupEpEQf5OrNCc/bOM7/UoxegN+IoTk/RxSdByyvdiNpgyozH9JJzl/OQ+goFkHjHCtgvUhJ6xSIZBluXqNxd4X7+ze6NI/TvxiZ8f+09q/v6D727NWlzM=
     on:
       tags: true
+      branch: master
       repo: zsombro/youngblood
