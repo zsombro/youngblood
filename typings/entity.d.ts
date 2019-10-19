@@ -1,4 +1,4 @@
-import Component, { Position, Velocity, Sprite, AnimatedSprite } from './component';
+import Component, { Position, Velocity, Sprite, AnimatedSprite, InputMapping } from './component';
 export default class Entity {
     [x: string]: Component;
     id: any;
@@ -11,5 +11,6 @@ export default class Entity {
     get(name: 'Position'): Position;
     get(name: 'Velocity'): Velocity;
     get(name: 'Sprite'): Sprite;
+    get(name: 'InputMapping'): InputMapping;
     get(name: 'AnimatedSprite'): AnimatedSprite;
 }

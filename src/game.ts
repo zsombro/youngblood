@@ -53,6 +53,7 @@ export default class Game {
     public startRendering(canvasSelector: string = 'canvas'): void {
         if (!this.renderer) {
             const ctx = (document.querySelector(canvasSelector) as HTMLCanvasElement).getContext('2d');
+            ctx.imageSmoothingEnabled = false;
             this.setRenderer(render(ctx));
         }
 

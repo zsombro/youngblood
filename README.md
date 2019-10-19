@@ -5,12 +5,11 @@
 simple to use and understand. The JavaScript code for a very basic setup is just a few lines of code:
 
 ```javascript
-<canvas id="canvas"></canvas>
+<canvas></canvas>
 <script src="youngblood.js"></script>
 <script>
-  var g = new yb.Game(document.getElementById('canvas').getContext('2d'));
-  
-  g.startRendering(60);
+  new yb.Game()
+    .startRendering();
 </script>
 ```
 This won't do anything though. Keep reading to learn how to do *actual* stuff!
@@ -39,11 +38,11 @@ separate menus, cutscenes, levels or anything that contains a very different set
 at least one scene! Scenes are self-contained, they all have their separate set of entities and systems. Defining one is super easy:
 
 ```javascript
-var s = new yb.Scene({
+var s = {
   sceneId: 'scene1',
   init: initFunction,
   alwaysInitialize: false
-});
+};
 ```
 
 # Systems
