@@ -30,12 +30,17 @@ module.exports = env => {
             umdNamedDefine: true,
         },
         optimization: {
+            minimize: true,
             minimizer: [
                 new UglifyJsPlugin({
                     sourceMap: true,
                     include: /\.min\.js$/,
                     uglifyOptions: {
                         mangle: false,
+                        compress: {
+                            // eslint-disable-next-line @typescript-eslint/camelcase
+                            drop_console: true,
+                        },
                     },
                 }),
             ],

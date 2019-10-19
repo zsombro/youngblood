@@ -4,6 +4,9 @@ import { AnimatedSprite, Animation } from './component';
 export type Renderer = (scene: Scene) => void;
 
 export default (ctx: CanvasRenderingContext2D): Renderer => (scene: Scene): void => {
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
     var cur: any;
     for (var e in scene.gameEntities) {
         cur = scene.gameEntities[e];

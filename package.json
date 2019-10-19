@@ -6,8 +6,7 @@
   "typings": "typings/main.d.ts",
   "scripts": {
     "clean": "shx rm -rf bundles lib lib-esm typings",
-    "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack --env.mode=development",
-    "build:prod": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack --env.mode=production",
+    "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack --env.mode=production",
     "test": "mocha -r ts-node/register src/**/*.test.ts",
     "coverage": "nyc -r text -e .ts -x \"src/**/*/*.test.ts\" npm run test"
   },

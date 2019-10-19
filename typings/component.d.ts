@@ -1,3 +1,8 @@
+/**
+ * Components provide entities with attributes
+ * that relate to in-game functionality.
+ * Like entities, components are JUST DATA and not logic!
+ */
 export default class Component {
     name: any;
     constructor(name: string);

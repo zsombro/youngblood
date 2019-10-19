@@ -39,6 +39,8 @@ export default class Game {
 
         this.fps = 60;
         this.then = Date.now();
+
+        console.info('Game created');
     }
 
     /**
@@ -55,6 +57,8 @@ export default class Game {
         }
 
         this.startSystem();
+
+        console.info(`Started rendering at ${this.fps}fps`);
     }
 
     /**
@@ -88,6 +92,8 @@ export default class Game {
         this.gameScenes[sceneOptions.sceneId].assets = this.services.assets;
 
         if (this.currentScene == null) this.switchToScene(sceneOptions.sceneId);
+
+        console.info(`Scene added: ${sceneOptions.sceneId}`);
 
         return this;
     }

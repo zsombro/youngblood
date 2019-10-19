@@ -35,17 +35,15 @@
 			context.addEntity(e);
 		}
 
-		var mainScene = new yb.Scene({
+		var mainScene = {
 			sceneId: 'main',
 			init: init,
 			alwaysInitialize: true
-		});
+		};
 
-		var g = new yb.Game(document.getElementById('canvas').getContext('2d'));
-		g.addScene(mainScene);
-
-		g.setDebugMode(true);
-		g.startRendering(60);
+		new yb.Game()
+			.addScene(mainScene)
+			.startRendering();
 	</script>
 </body>
 

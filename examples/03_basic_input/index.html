@@ -27,11 +27,6 @@
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
 
-		var ctx = canvas.getContext('2d');
-
-		var g = new yb.Game(ctx);
-		// g.setDebugMode(true);
-
 		function movementSystem(e) {
 
 			if (e.InputMapping.down)
@@ -70,15 +65,15 @@
 			context.addEntity(e);
 		};
 
-		var scene = new yb.Scene({
+		var scene = {
 			sceneId: 'main',
 			init: init,
 			alwaysInitialize: true
-		});
+		};
 
-		g.addScene(scene);
-
-		g.startRendering(60);
+		new yb.Game()
+			.addScene(scene)
+			.startRendering();
 	</script>
 </body>
 
