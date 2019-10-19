@@ -1,6 +1,6 @@
 {
   "name": "youngblood",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A simple game development framework for web browsers.",
   "repository": "github:zsombro/youngblood",
   "main": "bundle/youngblood.js",
