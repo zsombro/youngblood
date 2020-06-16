@@ -1,5 +1,6 @@
 import { Scene } from './scene';
-import { AnimatedSprite, Animation } from './component';
+import { Animation } from './component';
+import Entity from './entity';
 
 export type Renderer = (scene: Scene) => void;
 
@@ -7,7 +8,7 @@ export default (ctx: CanvasRenderingContext2D): Renderer => (scene: Scene): void
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    var cur: any;
+    var cur: Entity;
     for (var e in scene.gameEntities) {
         cur = scene.gameEntities[e];
 
@@ -31,7 +32,7 @@ export default (ctx: CanvasRenderingContext2D): Renderer => (scene: Scene): void
 
         // Render an animated sprite
         if (cur.hasComponents(['AnimatedSprite', 'Position'])) {
-            var c: AnimatedSprite = cur.AnimatedSprite;
+            var c = cur.get('AnimatedSprite');
             var f: Animation = c.animationSheet[c.animationName];
 
             if (c.flip) {

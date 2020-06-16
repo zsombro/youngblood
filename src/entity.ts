@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Component, { Position, Velocity, Sprite, AnimatedSprite, InputMapping } from './component';
+import { Position, Velocity, Sprite, AnimatedSprite, InputMapping } from './component';
 
 export default class Entity {
-    [x: string]: Component;
+    [x: string]: Record<string, any>;
 
     public id: any;
     public count: any;
@@ -13,8 +13,8 @@ export default class Entity {
         Entity.prototype.count++;
     }
 
-    public addComponent(component: Component): void {
-        this[component.name] = component;
+    public addComponent(component: Record<string, any>): void {
+        this[component.constructor.name] = component;
     }
 
     public removeComponent(componentName: string): void {
@@ -22,7 +22,7 @@ export default class Entity {
     }
 
     public hasComponent(componentName: string): boolean {
-        return this[componentName] != null;
+        return this[componentName] !== null;
     }
 
     public hasComponents(componentArray: string[]): boolean {

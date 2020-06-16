@@ -1,49 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
-/**
- * Components provide entities with attributes
- * that relate to in-game functionality.
- * Like entities, components are JUST DATA and not logic!
- */
-export default class Component {
-    public name: any;
-
-    public constructor(name: string) {
-        this.name = name;
-    }
-}
-
-export class Position extends Component {
+export class Position {
     public x: number;
     public y: number;
     public constructor(x: number, y: number) {
-        super('Position');
-
         this.x = x;
         this.y = y;
     }
 }
 
-export class Velocity extends Component {
+export class Velocity {
     public x: number;
     public y: number;
     public constructor(x: number, y: number) {
-        super('Velocity');
-
         this.x = x;
         this.y = y;
     }
 }
 
-export class Label extends Component {
+export class Label {
     public txt: string;
     public color: string;
     public font: string;
     public isVisible: boolean;
 
     public constructor(txt: string, options: { color: string; font: string; isVisible: boolean }) {
-        super('Label');
-
         this.txt = txt;
 
         this.color = options.color || '#000';
@@ -52,12 +32,10 @@ export class Label extends Component {
     }
 }
 
-export class Sprite extends Component {
+export class Sprite {
     public spriteSource: HTMLImageElement;
 
     public constructor(spriteSource: HTMLImageElement) {
-        super('Sprite');
-
         this.spriteSource = spriteSource;
     }
 }
@@ -90,7 +68,7 @@ export interface Animation {
     isVertical?: boolean;
 }
 
-export class AnimatedSprite extends Component {
+export class AnimatedSprite {
     public spriteSource: HTMLImageElement;
     public animationSheet: AnimationSheet;
     public currentFrame: number;
@@ -101,8 +79,6 @@ export class AnimatedSprite extends Component {
     public flip: boolean | SpriteFlipOptions;
 
     public constructor(spriteSource: HTMLImageElement, animationSheet: AnimationSheet, options: AnimatedSpriteOptions) {
-        super('AnimatedSprite');
-
         this.spriteSource = spriteSource;
         this.animationSheet = animationSheet;
 
@@ -119,34 +95,28 @@ export class AnimatedSprite extends Component {
     }
 }
 
-export class AudioSource extends Component {
-    public audioBuffer: any;
+export class AudioSource {
+    public audioBuffer: AudioBuffer;
     public constructor(audioBuffer: AudioBuffer) {
-        super('AudioSource');
-
         this.audioBuffer = audioBuffer;
     }
 }
 
-export class Box extends Component {
+export class Box {
     public width: number;
     public height: number;
     public fillStyle: string;
     public constructor(width: number, height: number, fillStyle: string) {
-        super('Box');
-
         this.width = width;
         this.height = height;
         this.fillStyle = fillStyle;
     }
 }
 
-export class BoxCollider extends Component {
+export class BoxCollider {
     public width: number;
     public height: number;
     public constructor(width: number, height: number) {
-        super('BoxCollider');
-
         this.width = width;
         this.height = height;
     }
@@ -157,15 +127,13 @@ export interface KeyMapping {
     code: number;
 }
 
-export class InputMapping extends Component {
+export class InputMapping {
     [index: string]: boolean;
 
     public mapping: any;
 
     // for eg. mapping = [ {name: 'up', code: 38} ]
     public constructor(mapping: KeyMapping[]) {
-        super('InputMapping');
-
         this.mapping = mapping;
 
         for (var i = 0; i < mapping.length; i++) {

@@ -7,6 +7,7 @@ export interface SceneOptions {
     sceneId: string;
     alwaysInitialize?: boolean;
     init: SceneInitCallback;
+    systems?: System[];
 }
 export interface SceneServices {
     input: InputManager;

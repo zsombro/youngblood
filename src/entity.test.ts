@@ -2,7 +2,9 @@ import 'mocha';
 import { expect } from 'chai';
 
 import Entity from './entity';
-import Component from './component';
+
+class C1 {}
+class C2 {}
 
 describe('Entity', (): void => {
     it('should auto-increment IDs', (): void => {
@@ -15,17 +17,17 @@ describe('Entity', (): void => {
 
     it('should add components', (): void => {
         const e = new Entity();
-        const c = new Component('c');
+        const c = new C1();
         e.addComponent(c);
 
-        expect(e['c']).to.be.equal(c);
+        expect(e['C1']).to.be.equal(c);
     });
 
     it('should be able to test for multiple components', (): void => {
         const e = new Entity();
-        e.addComponent(new Component('c1'));
-        e.addComponent(new Component('c2'));
+        e.addComponent(new C1());
+        e.addComponent(new C2());
 
-        expect(e.hasComponents(['c1', 'c2'])).to.be.true;
+        expect(e.hasComponents(['C1', 'C2'])).to.be.true;
     });
 });

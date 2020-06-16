@@ -17,9 +17,9 @@ export default class Game {
     /**
      * This is what's gonna kickstart your game when you're done setting it up!
      *
-     * @param canvasSelector The `canvas` you want to render into. Leaving this empty assumes
-     * you only have one `<canvas>` element on your page. Irrelevant if you've registered
-     * a custom renderer.
+     * @param canvasSelector CSS selector for the `canvas` you want to render into. Leaving this empty assumes
+     * you only have one `<canvas>` element on your page. _Irrelevant if you've registered
+     * a custom renderer._
      */
     startRendering(canvasSelector?: string): void;
     /**
@@ -30,9 +30,9 @@ export default class Game {
     /**
      * You can set a custom renderer instead of the default 2D one. It's a function
      * that will be called at the end of every game loop.
-     * @param f A function that takes a `Scene` object and does something with it.
+     * @param renderingFunction A function that takes a `Scene` object and does something with it.
      */
-    setRenderer(f: Renderer): Game;
+    setRenderer(renderingFunction: Renderer): Game;
     /**
      * Register a new `Scene`. You'll need at least one to do anything!
      * @param sceneOptions Settings for your scene, like it's name or how it should be
@@ -46,4 +46,5 @@ export default class Game {
      */
     switchToScene(sceneId: string): Game;
     private startSystem;
+    private update;
 }

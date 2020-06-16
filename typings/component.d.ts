@@ -1,23 +1,14 @@
-/**
- * Components provide entities with attributes
- * that relate to in-game functionality.
- * Like entities, components are JUST DATA and not logic!
- */
-export default class Component {
-    name: any;
-    constructor(name: string);
-}
-export declare class Position extends Component {
+export declare class Position {
     x: number;
     y: number;
     constructor(x: number, y: number);
 }
-export declare class Velocity extends Component {
+export declare class Velocity {
     x: number;
     y: number;
     constructor(x: number, y: number);
 }
-export declare class Label extends Component {
+export declare class Label {
     txt: string;
     color: string;
     font: string;
@@ -28,7 +19,7 @@ export declare class Label extends Component {
         isVisible: boolean;
     });
 }
-export declare class Sprite extends Component {
+export declare class Sprite {
     spriteSource: HTMLImageElement;
     constructor(spriteSource: HTMLImageElement);
 }
@@ -54,7 +45,7 @@ export interface Animation {
     frameHeight: number;
     isVertical?: boolean;
 }
-export declare class AnimatedSprite extends Component {
+export declare class AnimatedSprite {
     spriteSource: HTMLImageElement;
     animationSheet: AnimationSheet;
     currentFrame: number;
@@ -65,17 +56,17 @@ export declare class AnimatedSprite extends Component {
     flip: boolean | SpriteFlipOptions;
     constructor(spriteSource: HTMLImageElement, animationSheet: AnimationSheet, options: AnimatedSpriteOptions);
 }
-export declare class AudioSource extends Component {
-    audioBuffer: any;
+export declare class AudioSource {
+    audioBuffer: AudioBuffer;
     constructor(audioBuffer: AudioBuffer);
 }
-export declare class Box extends Component {
+export declare class Box {
     width: number;
     height: number;
     fillStyle: string;
     constructor(width: number, height: number, fillStyle: string);
 }
-export declare class BoxCollider extends Component {
+export declare class BoxCollider {
     width: number;
     height: number;
     constructor(width: number, height: number);
@@ -84,7 +75,7 @@ export interface KeyMapping {
     name: string;
     code: number;
 }
-export declare class InputMapping extends Component {
+export declare class InputMapping {
     [index: string]: boolean;
     mapping: any;
     constructor(mapping: KeyMapping[]);

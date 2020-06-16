@@ -46,13 +46,19 @@ export default class Game {
     /**
      * This is what's gonna kickstart your game when you're done setting it up!
      *
-     * @param canvasSelector The `canvas` you want to render into. Leaving this empty assumes
-     * you only have one `<canvas>` element on your page. Irrelevant if you've registered
-     * a custom renderer.
+     * @param canvasSelector CSS selector for the `canvas` you want to render into. Leaving this empty assumes
+     * you only have one `<canvas>` element on your page. _Irrelevant if you've registered
+     * a custom renderer._
      */
     public startRendering(canvasSelector: string = 'canvas'): void {
         if (!this.renderer) {
             const ctx = (document.querySelector(canvasSelector) as HTMLCanvasElement).getContext('2d');
+
+            if (!ctx) {
+                console.error('No canvas element was found in the document');
+                return;
+            }
+
             ctx.imageSmoothingEnabled = false;
             this.setRenderer(render(ctx));
         }
@@ -75,10 +81,10 @@ export default class Game {
     /**
      * You can set a custom renderer instead of the default 2D one. It's a function
      * that will be called at the end of every game loop.
-     * @param f A function that takes a `Scene` object and does something with it.
+     * @param renderingFunction A function that takes a `Scene` object and does something with it.
      */
-    public setRenderer(f: Renderer): Game {
-        this.renderer = f;
+    public setRenderer(renderingFunction: Renderer): Game {
+        this.renderer = renderingFunction;
 
         return this;
     }
@@ -107,7 +113,7 @@ export default class Game {
     public switchToScene(sceneId: string): Game {
         if (this.gameScenes[sceneId] == null) {
             console.error("Scene doesn't exist: " + sceneId);
-            return;
+            return this;
         }
 
         this.currentScene = this.gameScenes[sceneId];
@@ -135,17 +141,19 @@ export default class Game {
 
             if (!this.currentScene) return;
 
-            for (var e in this.currentScene.gameEntities) {
-                for (var s in this.currentScene.systems) {
-                    var entity: Entity = this.currentScene.gameEntities[e];
-                    var system = this.currentScene.systems[s];
-
-                    if (entity.hasComponents(system.requiredComponents))
-                        this.currentScene.systems[s].update(entity, this.services);
-                }
-            }
-
+            this.update();
             this.renderer(this.currentScene);
+        }
+    }
+
+    private update(): void {
+        for (var e in this.currentScene.gameEntities) {
+            for (var s in this.currentScene.systems) {
+                var entity: Entity = this.currentScene.gameEntities[e];
+                var system = this.currentScene.systems[s];
+                if (entity.hasComponents(system.requiredComponents))
+                    this.currentScene.systems[s].update(entity, this.services);
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ export interface SceneOptions {
     sceneId: string;
     alwaysInitialize?: boolean;
     init: SceneInitCallback;
+    systems?: System[];
 }
 
 export interface SceneServices {
@@ -40,6 +41,8 @@ export class Scene {
 
         this.gameEntities = {};
         this.systems = {};
+
+        if (options.systems) options.systems.forEach((s): void => this.registerSystem(s));
     }
 
     public registerSystem(system: System): void {
