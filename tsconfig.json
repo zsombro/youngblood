@@ -3,13 +3,18 @@
     "outDir": "lib",
     "sourceMap": true,
     "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
     "module": "commonjs",
     "target": "es5",
     "jsx": "react",
     "declaration": true,
     "declarationDir": "typings",
     "experimentalDecorators": true,
-    "lib": [ "es2015", "dom" ]
+    "lib": [
+      "es6",
+      "dom"
+    ]
   },
   "include": [
     "./src/*"
@@ -19,4 +24,3 @@
     "./lib/*"
   ]
 }
-  

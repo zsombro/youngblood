@@ -1,13 +1,53 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+const audioContext = new AudioContext();
+
+function fetchImage(url: string): Promise<HTMLImageElement> {
+    return new Promise(
+        (resolve, reject): void => {
+            const image = new Image();
+            image.onload = (): void => resolve(image);
+            image.onerror = (ev: string | Event): void => reject(ev);
+            image.src = url;
+        },
+    );
+}
+
+async function fetchAudio(url: string): Promise<AudioBuffer> {
+    const response = await fetch(url);
+    const data = await response.arrayBuffer();
+
+    return audioContext.decodeAudioData(data);
+}
+
+async function fetchObject(url: string): Promise<any> {
+    const response = await fetch(url);
+    return response.json();
+}
+
+const fetchType: Record<string, Function> = {
+    '.png': fetchImage,
+    '.jpg': fetchImage,
+    '.gif': fetchImage,
+    '.wav': fetchAudio,
+    '.mp3': fetchAudio,
+    '.ogg': fetchAudio,
+    '.json': fetchObject,
+    '.txt': fetchObject,
+};
+
+export function getExtension(url: string): string {
+    const extensions = url.match(/\.[a-zA-Z0-9]+/g);
+
+    return extensions[extensions.length - 1];
+}
+
 export default class AssetLoader {
     private completionCallback: Function;
     private loadCounter: number;
     private readyCounter: number;
     private assets: { [index: string]: any };
     private audio: AudioContext;
-    private imageTypes: string[];
-    private objectTypes: string[];
-    private audioTypes: string[];
 
     public constructor(completionCallback?: () => void) {
         this.completionCallback = completionCallback || ((): void => {});
@@ -16,97 +56,24 @@ export default class AssetLoader {
         this.assets = {};
 
         // asset loader uses it's own audio context to decode incoming buffers
-        this.audio = new ((window as any).AudioContext || (window as any).webkitAudioContext)();
-
-        this.imageTypes = ['.png', '.jpg', '.gif'];
-        this.objectTypes = ['.txt', 'json'];
-        this.audioTypes = ['.wav', '.mp3', '.ogg'];
+        this.audio = new AudioContext();
     }
 
-    public addImageTask(url: string, name?: string): void {
-        let that = this;
+    public static async load(assetListUrl: string): Promise<void> {
+        const assetList = await fetch(assetListUrl);
 
-        let i = new Image();
-        i.src = url;
-        i.onload = function(): void {
-            that.readyCounter++;
-            that.attemptCompletionCallback(that.completionCallback);
-        };
+        if (!assetList.ok) throw Error(`Failed to fetch asset list from ${assetListUrl}`);
 
-        this.assets[this.deriveObjectName(url, name)] = i;
-        this.loadCounter++;
+        const assets = (await assetList.text()).split('\n');
+
+        const loadedAssets = [];
+        for (let i = 0; i < assets.length; i++) {
+            loadedAssets.push(await AssetLoader.fetchAsset(assets[i]));
+        }
     }
 
-    public addHttpTask(url: string, name?: string): void {
-        let r = new XMLHttpRequest();
-        let that = this;
-        r.onreadystatechange = function(): void {
-            if (r.readyState == 4 && r.status == 200) {
-                that.assets[that.deriveObjectName(url, name)] = JSON.parse(r.responseText);
-                that.readyCounter++;
-                that.attemptCompletionCallback(that.completionCallback);
-            }
-        };
-
-        r.overrideMimeType('application/json');
-        r.open('GET', url, true);
-        r.send(null);
-
-        this.loadCounter++;
-    }
-
-    public addBufferTask(url: string, name?: string): void {
-        let that = this;
-        let r = new XMLHttpRequest();
-        r.responseType = 'arraybuffer';
-        r.open('GET', url, true);
-
-        r.onload = function(): void {
-            that.audio.decodeAudioData(
-                r.response,
-                function(buffer: AudioBuffer): void {
-                    that.assets[that.deriveObjectName(url, name)] = buffer;
-                    that.readyCounter++;
-                    that.attemptCompletionCallback(that.completionCallback);
-                },
-                function(): void {
-                    console.error('Error decoding audio');
-                },
-            );
-        };
-
-        r.send();
-
-        this.loadCounter++;
-    }
-
-    public addTaskList(url: string): void {
-        let that = this;
-        // load a list of txt files
-        var r = new XMLHttpRequest();
-        r.onreadystatechange = function(): void {
-            if (r.readyState == 4 && r.status == 200) {
-                let fileList = r.responseText.split('\n');
-                for (var i = 0; i < fileList.length; i++) {
-                    var ext =
-                        fileList[i].indexOf('\r') == -1 ? fileList[i].slice(-4) : fileList[i].slice(-5).slice(0, -1);
-
-                    if (that.imageTypes.indexOf(ext) != -1) {
-                        that.addImageTask(fileList[i]);
-                    }
-                    if (that.objectTypes.indexOf(ext) != -1) {
-                        that.addHttpTask(fileList[i]);
-                    }
-                    if (that.audioTypes.indexOf(ext) != -1) {
-                        that.addBufferTask(fileList[i]);
-                    }
-                }
-            }
-        };
-
-        r.overrideMimeType('application/json');
-        r.open('GET', url, true);
-        r.send(null);
+    private static async fetchAsset(assetUrl: string): Promise<any> {
+        return fetchType[getExtension(assetUrl)](assetUrl);
     }
 
     // you can even track progress with this thing. it's kinda the point actually

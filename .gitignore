@@ -55,3 +55,4 @@ lib
 lib-esm
 typings/
 .nyc_output
+coverage

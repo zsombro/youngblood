@@ -1,17 +1,13 @@
+export declare function getExtension(url: string): string;
 export default class AssetLoader {
     private completionCallback;
     private loadCounter;
     private readyCounter;
     private assets;
     private audio;
-    private imageTypes;
-    private objectTypes;
-    private audioTypes;
     constructor(completionCallback?: () => void);
-    addImageTask(url: string, name?: string): void;
-    addHttpTask(url: string, name?: string): void;
-    addBufferTask(url: string, name?: string): void;
-    addTaskList(url: string): void;
+    static load(assetListUrl: string): Promise<void>;
+    private static fetchAsset;
     isReady(): boolean;
     getProgress(): number;
     getAsset(name: string | number): object;

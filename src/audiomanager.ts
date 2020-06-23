@@ -1,15 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-angle-bracket-type-assertion */
 export default class AudioManager {
-    private audioContext: any;
-    private songsPlaying: any[];
-    private masterVolume: any;
-    private musicVolume: any;
-    private effectsVolume: any;
+    private audioContext: AudioContext;
+    private songsPlaying: AudioBuffer[];
+    private masterVolume: GainNode;
+    private musicVolume: GainNode;
+    private effectsVolume: GainNode;
 
     public constructor() {
         try {
-            this.audioContext = new ((<any>window).AudioContext || (<any>window).webkitAudioContext)();
+            this.audioContext = new AudioContext();
 
             this.songsPlaying = [];
 

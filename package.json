@@ -8,7 +8,7 @@
   "scripts": {
     "clean": "shx rm -rf bundles lib lib-esm typings",
     "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack --env.mode=production",
-    "test": "mocha -r ts-node/register src/**/*.test.ts",
+    "test": "karma start karma.conf.js --single-run",
     "coverage": "nyc -r text -e .ts -x \"src/**/*/*.test.ts\" npm run test"
   },
   "keywords": [
@@ -35,6 +35,11 @@
     "eslint-config-prettier": "^4.2.0",
     "eslint-plugin-prettier": "^3.0.1",
     "jshint": "^2.9.4",
+    "karma": "^5.1.0",
+    "karma-firefox-launcher": "^1.3.0",
+    "karma-mocha": "^2.0.1",
+    "karma-spec-reporter": "0.0.32",
+    "karma-typescript": "^5.0.3",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1",
     "prettier": "^1.17.0",
