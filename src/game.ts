@@ -52,12 +52,10 @@ export default class Game {
      */
     public startRendering(canvasSelector: string = 'canvas'): void {
         if (!this.renderer) {
-            const ctx = (document.querySelector(canvasSelector) as HTMLCanvasElement).getContext('2d');
+            const canvas = document.querySelector(canvasSelector) as HTMLCanvasElement;
+            if (!canvas) throw new Error('No canvas element was found in the document');
 
-            if (!ctx) {
-                console.error('No canvas element was found in the document');
-                return;
-            }
+            const ctx = canvas.getContext('2d');
 
             ctx.imageSmoothingEnabled = false;
             this.setRenderer(render(ctx));

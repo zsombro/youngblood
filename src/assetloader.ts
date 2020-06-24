@@ -14,15 +14,13 @@ function fetchImage(url: string): Promise<HTMLImageElement> {
 }
 
 async function fetchAudio(url: string): Promise<AudioBuffer> {
-    const response = await fetch(url);
-    const data = await response.arrayBuffer();
-
-    return audioContext.decodeAudioData(data);
+    return fetch(url)
+        .then((response: Response): Promise<ArrayBuffer> => response.arrayBuffer())
+        .then((buffer: ArrayBuffer): Promise<AudioBuffer> => audioContext.decodeAudioData(buffer));
 }
 
 async function fetchObject(url: string): Promise<any> {
-    const response = await fetch(url);
-    return response.json();
+    return fetch(url).then((response: Response): Promise<any> => response.json());
 }
 
 const fetchType: Record<string, Function> = {
@@ -43,62 +41,40 @@ export function getExtension(url: string): string {
 }
 
 export default class AssetLoader {
-    private completionCallback: Function;
-    private loadCounter: number;
-    private readyCounter: number;
+    private taskQueueLength: number;
+    private completedTasks: number;
     private assets: { [index: string]: any };
-    private audio: AudioContext;
 
-    public constructor(completionCallback?: () => void) {
-        this.completionCallback = completionCallback || ((): void => {});
-        this.loadCounter = 0;
-        this.readyCounter = 0;
+    public constructor() {
+        this.taskQueueLength = 0;
+        this.completedTasks = 0;
         this.assets = {};
-
-        // asset loader uses it's own audio context to decode incoming buffers
-        this.audio = new AudioContext();
     }
 
-    public static async load(assetListUrl: string): Promise<void> {
-        const assetList = await fetch(assetListUrl);
+    public async load(assetListUrl: string): Promise<void> {
+        const assetUrls = await fetch(assetListUrl)
+            .then((response: Response): Promise<string> => response.text())
+            .then((text: string): string[] => text.split('\r\n'));
 
-        if (!assetList.ok) throw Error(`Failed to fetch asset list from ${assetListUrl}`);
+        this.completedTasks = 0;
+        this.taskQueueLength = assetUrls.length;
 
-        const assets = (await assetList.text()).split('\n');
-
-        const loadedAssets = [];
-        for (let i = 0; i < assets.length; i++) {
-            loadedAssets.push(await AssetLoader.fetchAsset(assets[i]));
-        }
+        Promise.all(assetUrls.map(this.fetchAsset.bind(this)));
     }
 
-    private static async fetchAsset(assetUrl: string): Promise<any> {
-        return fetchType[getExtension(assetUrl)](assetUrl);
+    public progress(): number {
+        return this.completedTasks / this.taskQueueLength;
     }
 
-    // you can even track progress with this thing. it's kinda the point actually
-    public isReady(): boolean {
-        if (this.loadCounter == 0) return false;
-        else return this.readyCounter == this.loadCounter;
-    }
-
-    public getProgress(): number {
-        if (this.loadCounter != 0) return (this.readyCounter / this.loadCounter) * 100;
-        else return 0;
-    }
-
-    public getAsset(name: string | number): object {
+    public get(name: string): object {
         return this.assets[name];
     }
 
-    public attemptCompletionCallback(callback: Function): void {
-        if (this.readyCounter == this.loadCounter && callback !== undefined) callback();
-    }
+    private async fetchAsset(assetUrl: string): Promise<any> {
+        const extension = getExtension(assetUrl);
 
-    private deriveObjectName(url: string, name: string): string {
-        if (name === undefined) {
-            let f = url.slice(url.lastIndexOf('/') + 1);
-            return f.slice(0, f.indexOf('.'));
-        } else return name;
+        if (!fetchType[extension]) throw new Error(`Unsupported extension: ${extension}`);
+
+        this.assets[assetUrl.replace(extension, '')] = await fetchType[extension](assetUrl);
     }
 }

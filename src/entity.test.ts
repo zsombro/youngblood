@@ -23,6 +23,15 @@ describe('Entity', (): void => {
         expect(e['C1']).to.be.equal(c);
     });
 
+    it('should remove components', (): void => {
+        const e = new Entity();
+        const c = new C1();
+        e.addComponent(c);
+        e.removeComponent('C1');
+
+        expect(e['C1']).to.be.undefined;
+    });
+
     it('should be able to test for multiple components', (): void => {
         const e = new Entity();
         e.addComponent(new C1());
