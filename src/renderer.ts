@@ -13,20 +13,20 @@ export default (ctx: CanvasRenderingContext2D): Renderer => (scene: Scene): void
         cur = scene.gameEntities[e];
 
         // This basic shape is more of a testing thing
-        if (cur.hasComponent('Box') && cur.hasComponent('Position')) {
+        if (cur.hasComponents(['Box', 'Position'])) {
             ctx.fillStyle = cur.Box.fillStyle;
 
             ctx.fillRect(cur.Position.x, cur.Position.y, cur.Box.width, cur.Box.height);
         }
 
-        if (cur.hasComponent('Label') && cur.hasComponent('Position')) {
+        if (cur.hasComponents(['Label', 'Position'])) {
             ctx.fillStyle = cur.Label.color;
 
             ctx.fillText(cur.Label.txt, cur.Position.x, cur.Position.y);
         }
 
         // Render a single sprite
-        if (cur.hasComponent('Sprite') && cur.hasComponent('Position')) {
+        if (cur.hasComponents(['Sprite', 'Position'])) {
             ctx.drawImage(cur.Sprite.spriteSource, cur.Position.x, cur.Position.y);
         }
 

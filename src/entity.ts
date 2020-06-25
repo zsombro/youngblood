@@ -22,7 +22,7 @@ export default class Entity {
     }
 
     public hasComponent(componentName: string): boolean {
-        return this[componentName] !== null;
+        return !!this[componentName];
     }
 
     public hasComponents(componentArray: string[]): boolean {

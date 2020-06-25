@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+interface AssetData {
+    type: 'image' | 'audio' | 'json';
+    url: string;
+}
+
 const audioContext = new AudioContext();
 
 function fetchImage(url: string): Promise<HTMLImageElement> {
@@ -23,17 +28,6 @@ async function fetchObject(url: string): Promise<any> {
     return fetch(url).then((response: Response): Promise<any> => response.json());
 }
 
-const fetchType: Record<string, Function> = {
-    '.png': fetchImage,
-    '.jpg': fetchImage,
-    '.gif': fetchImage,
-    '.wav': fetchAudio,
-    '.mp3': fetchAudio,
-    '.ogg': fetchAudio,
-    '.json': fetchObject,
-    '.txt': fetchObject,
-};
-
 export function getExtension(url: string): string {
     const extensions = url.match(/\.[a-zA-Z0-9]+/g);
 
@@ -52,14 +46,14 @@ export default class AssetLoader {
     }
 
     public async load(assetListUrl: string): Promise<void> {
-        const assetUrls = await fetch(assetListUrl)
-            .then((response: Response): Promise<string> => response.text())
-            .then((text: string): string[] => text.split('\r\n'));
+        const response = await fetch(assetListUrl);
+        const json = await response.json();
+        const assetData = json.assets;
 
         this.completedTasks = 0;
-        this.taskQueueLength = assetUrls.length;
+        this.taskQueueLength = assetData.length;
 
-        Promise.all(assetUrls.map(this.fetchAsset.bind(this)));
+        await Promise.all(assetData.map(this.fetchAsset.bind(this)));
     }
 
     public progress(): number {
@@ -70,11 +64,20 @@ export default class AssetLoader {
         return this.assets[name];
     }
 
-    private async fetchAsset(assetUrl: string): Promise<any> {
-        const extension = getExtension(assetUrl);
+    private async fetchAsset(asset: AssetData): Promise<any> {
+        const extension = getExtension(asset.url);
+        const assetName = asset.url.replace(extension, '');
 
-        if (!fetchType[extension]) throw new Error(`Unsupported extension: ${extension}`);
-
-        this.assets[assetUrl.replace(extension, '')] = await fetchType[extension](assetUrl);
+        switch (asset.type) {
+            case 'audio':
+                this.assets[assetName] = await fetchAudio(asset.url);
+                break;
+            case 'image':
+                this.assets[assetName] = await fetchImage(asset.url);
+                break;
+            case 'json':
+                this.assets[assetName] = await fetchObject(asset.url);
+                break;
+        }
     }
 }
