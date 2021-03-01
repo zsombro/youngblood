@@ -79,5 +79,7 @@ export default class AssetLoader {
                 this.assets[assetName] = await fetchObject(asset.url);
                 break;
         }
+
+        this.completedTasks++;
     }
 }

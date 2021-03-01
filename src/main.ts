@@ -14,6 +14,8 @@ import {
     AnimationSheet,
 } from './component';
 
+import Component from './component';
+
 import { InputMappingSystem, System } from './system';
 
 export {
@@ -24,6 +26,7 @@ export {
     SceneInitCallback,
     System,
     Entity,
+    Component,
     Position,
     Velocity,
     Sprite,

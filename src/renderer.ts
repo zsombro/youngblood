@@ -1,6 +1,5 @@
 import { Scene } from './scene';
 import { Animation } from './component';
-import Entity from './entity';
 
 export type Renderer = (scene: Scene) => void;
 
@@ -8,7 +7,8 @@ export default (ctx: CanvasRenderingContext2D): Renderer => (scene: Scene): void
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    var cur: Entity;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    var cur: any;
     for (var e in scene.gameEntities) {
         cur = scene.gameEntities[e];
 

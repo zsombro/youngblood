@@ -12,13 +12,11 @@ export default class AudioManager {
             this.songsPlaying = [];
 
             this.masterVolume = this.audioContext.createGain();
-
             this.musicVolume = this.audioContext.createGain();
-            this.musicVolume.connect(this.masterVolume);
-
             this.effectsVolume = this.audioContext.createGain();
-            this.effectsVolume.connect(this.masterVolume);
 
+            this.musicVolume.connect(this.masterVolume);
+            this.effectsVolume.connect(this.masterVolume);
             this.masterVolume.connect(this.audioContext.destination);
         } catch (e) {
             console.error(e);
@@ -27,8 +25,7 @@ export default class AudioManager {
 
     public setBackgroundMusic(buffer: AudioBuffer, loop: boolean): void {
         if (this.songsPlaying.indexOf(buffer) == -1) {
-            var that = this;
-            var source = this.audioContext.createBufferSource();
+            const source = this.audioContext.createBufferSource();
 
             source.buffer = buffer;
             source.loop = loop || false;
@@ -36,8 +33,8 @@ export default class AudioManager {
             source.connect(this.musicVolume);
             source.start();
 
-            source.onended = function(): void {
-                if (!loop) that.songsPlaying.splice(that.songsPlaying.indexOf(buffer), 1);
+            source.onended = () => {
+                if (!loop) this.songsPlaying.splice(this.songsPlaying.indexOf(buffer), 1);
             };
 
             this.songsPlaying.push(buffer);
@@ -45,7 +42,7 @@ export default class AudioManager {
     }
 
     public playSound(buffer: AudioBuffer, loop: boolean): void {
-        var source = this.audioContext.createBufferSource();
+        const source = this.audioContext.createBufferSource();
         source.buffer = buffer;
         source.loop = loop || false;
 

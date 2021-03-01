@@ -1,10 +1,10 @@
-import { Position, Velocity, Sprite, AnimatedSprite, InputMapping } from './component';
+import Component, { Position, Velocity, Sprite, AnimatedSprite, InputMapping } from './component';
 export default class Entity {
-    [x: string]: Record<string, any>;
+    [x: string]: Component;
     id: any;
     count: any;
     constructor();
-    addComponent(component: Record<string, any>): void;
+    addComponent(component: Component): void;
     removeComponent(componentName: string): void;
     hasComponent(componentName: string): boolean;
     hasComponents(componentArray: string[]): boolean;
