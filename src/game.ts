@@ -146,8 +146,9 @@ export default class Game {
 
     private update(): void {
         for (var e in this.currentScene.gameEntities) {
+            const entity: Entity = this.currentScene.gameEntities[e];
+
             for (var s in this.currentScene.systems) {
-                var entity: Entity = this.currentScene.gameEntities[e];
                 var system = this.currentScene.systems[s];
                 if (entity.hasComponents(system.requiredComponents))
                     this.currentScene.systems[s].update(entity, this.services);
