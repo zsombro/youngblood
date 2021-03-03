@@ -1,8 +1,8 @@
 import { Scene, SceneServices, SceneOptions } from './scene';
 
-import InputManager from './inputmanager';
-import AudioManager from './audiomanager';
-import AssetLoader from './assetloader';
+import InputManager from './services/inputmanager';
+import AudioManager from './services/audiomanager';
+import AssetLoader from './services/assetloader';
 import Entity from './entity';
 import render, { Renderer } from './renderer';
 
@@ -23,8 +23,6 @@ export default class Game {
     public constructor() {
         this.renderer = null;
 
-        // these are classes that offer lower level functionality to systems
-        // mostly through browser APIs
         this.services = {
             input: new InputManager(),
             audio: new AudioManager(),
@@ -56,7 +54,6 @@ export default class Game {
             if (!canvas) throw new Error('No canvas element was found in the document');
 
             const ctx = canvas.getContext('2d');
-
             ctx.imageSmoothingEnabled = false;
             this.setRenderer(render(ctx));
         }
@@ -145,13 +142,12 @@ export default class Game {
     }
 
     private update(): void {
-        for (var e in this.currentScene.gameEntities) {
+        for (const e in this.currentScene.gameEntities) {
             const entity: Entity = this.currentScene.gameEntities[e];
 
-            for (var s in this.currentScene.systems) {
-                var system = this.currentScene.systems[s];
-                if (entity.hasComponents(system.requiredComponents))
-                    this.currentScene.systems[s].update(entity, this.services);
+            for (const s in this.currentScene.systems) {
+                const system = this.currentScene.systems[s];
+                if (entity.hasComponents(system.requiredComponents)) system.update(entity, this.services);
             }
         }
     }

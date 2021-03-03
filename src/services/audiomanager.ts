@@ -33,7 +33,7 @@ export default class AudioManager {
             source.connect(this.musicVolume);
             source.start();
 
-            source.onended = () => {
+            source.onended = (): void => {
                 if (!loop) this.songsPlaying.splice(this.songsPlaying.indexOf(buffer), 1);
             };
 

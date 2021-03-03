@@ -48,7 +48,7 @@ export default class AssetLoader {
     public async load(assetListUrl: string): Promise<void> {
         const response = await fetch(assetListUrl);
         const json = await response.json();
-        const assetData = json.assets;
+        const assetData: AssetData[] = json.assets;
 
         this.completedTasks = 0;
         this.taskQueueLength = assetData.length;

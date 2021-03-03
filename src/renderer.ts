@@ -51,15 +51,15 @@ export default (ctx: CanvasRenderingContext2D): Renderer => (scene: Scene): void
 
     for (const entity in Object.values(scene.gameEntities).filter((e): boolean => e.hasComponent('Position'))) {
         const currentEntity = scene.gameEntities[entity];
-        const position = currentEntity['Position'] as Position;
+        const position = currentEntity.get('Position');
 
-        if (currentEntity.hasComponent('Box')) renderBox(position, currentEntity['Box'] as Box, ctx);
+        if (currentEntity.hasComponent('Box')) renderBox(position, currentEntity.get('Box'), ctx);
 
-        if (currentEntity.hasComponent('Label')) renderLabel(position, currentEntity['Label'] as Label, ctx);
+        if (currentEntity.hasComponent('Label')) renderLabel(position, currentEntity.get('Label'), ctx);
 
-        if (currentEntity.hasComponent('Sprite')) renderSprite(position, currentEntity['Sprite'] as Sprite, ctx);
+        if (currentEntity.hasComponent('Sprite')) renderSprite(position, currentEntity.get('Sprite'), ctx);
 
         if (currentEntity.hasComponent('AnimatedSprite'))
-            renderAnimatedSprite(position, currentEntity['AnimatedSprite'] as AnimatedSprite, ctx);
+            renderAnimatedSprite(position, currentEntity.get('AnimatedSprite'), ctx);
     }
 };

@@ -1,8 +1,8 @@
 import Entity from './entity';
 import { System } from './system';
-import InputManager from './inputmanager';
-import AudioManager from './audiomanager';
-import AssetLoader from './assetloader';
+import InputManager from './services/inputmanager';
+import AudioManager from './services/audiomanager';
+import AssetLoader from './services/assetloader';
 export interface SceneOptions {
     sceneId: string;
     alwaysInitialize?: boolean;
