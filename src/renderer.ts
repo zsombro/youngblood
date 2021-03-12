@@ -49,8 +49,7 @@ export default (ctx: CanvasRenderingContext2D): Renderer => (scene: Scene): void
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    for (const entity in Object.values(scene.gameEntities).filter((e): boolean => e.hasComponent('Position'))) {
-        const currentEntity = scene.gameEntities[entity];
+    for (const currentEntity of Object.values(scene.gameEntities).filter((e): boolean => e.hasComponent('Position'))) {
         const position = currentEntity.get('Position');
 
         if (currentEntity.hasComponent('Box')) renderBox(position, currentEntity.get('Box'), ctx);
