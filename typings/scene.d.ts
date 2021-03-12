@@ -34,4 +34,5 @@ export declare class Scene {
     registerSystem(system: System): void;
     unregisterSystem(system: System): void;
     addEntity(entity: Entity): void;
+    removeEntity(id: number): void;
 }

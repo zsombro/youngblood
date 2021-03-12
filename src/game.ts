@@ -147,7 +147,9 @@ export default class Game {
 
             for (const s in this.currentScene.systems) {
                 const system = this.currentScene.systems[s];
-                if (entity.hasComponents(system.requiredComponents)) system.update(entity, this.services);
+
+                if (entity.hasComponents(system.requiredComponents))
+                    system.update(entity, this.currentScene, this.services);
             }
         }
     }

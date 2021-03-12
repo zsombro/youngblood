@@ -13,7 +13,7 @@ module.exports = function(config) {
             compilerOptions: {
                 module: 'commonjs',
                 target: 'ES2015',
-                lib: ['es5', 'es6', 'es2015', 'dom'],
+                lib: ['es5', 'es6', 'es2017', 'dom'],
             },
             tsconfig: './tsconfig.json',
         },
