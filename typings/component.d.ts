@@ -66,7 +66,7 @@ export declare class AnimatedSprite extends Component {
     constructor(spriteSource: HTMLImageElement, animationSheet: AnimationSheet, options: AnimatedSpriteOptions);
 }
 export declare class AudioSource extends Component {
-    audioBuffer: any;
+    audioBuffer: AudioBuffer;
     constructor(audioBuffer: AudioBuffer);
 }
 export declare class Box extends Component {

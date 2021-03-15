@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Component, { Position, Velocity, Sprite, AnimatedSprite, InputMapping, Label, Box } from './component';
+import TiledMap from './tiledMap';
 
 export default class Entity {
     [x: string]: Component;
@@ -39,6 +40,7 @@ export default class Entity {
     public get(name: 'Sprite'): Sprite;
     public get(name: 'InputMapping'): InputMapping;
     public get(name: 'AnimatedSprite'): AnimatedSprite;
+    public get(name: 'TiledMap'): TiledMap;
     public get(name: 'Label'): Label;
     public get(name: 'Box'): Box;
     public get(name: string): any {
@@ -57,6 +59,8 @@ export default class Entity {
                 return this[name] as Label;
             case 'Box':
                 return this[name] as Box;
+            case 'TiledMap':
+                return this[name] as TiledMap;
             default:
                 return this[name];
         }

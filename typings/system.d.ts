@@ -5,4 +5,5 @@ export interface System {
     requiredComponents: string[];
     update: (e: Entity, scene: Scene, services: SceneServices) => void;
 }
-export declare var InputMappingSystem: System;
+export declare const InputMappingSystem: System;
+export declare const TiledMapSystem: System;

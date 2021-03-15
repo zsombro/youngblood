@@ -1,5 +1,6 @@
 import { AnimatedSprite, Animation, Box, Position, Label, Sprite } from './component';
 import { Scene } from './scene';
+import TiledMap, { Layer } from './tiledMap';
 
 export type Renderer = (entity: Scene) => void;
 
@@ -45,6 +46,28 @@ function renderAnimatedSprite(p: Position, sprite: AnimatedSprite, ctx: CanvasRe
     }
 }
 
+function renderImageLayer(position: Position, layer: Layer, ctx: CanvasRenderingContext2D): void {
+    throw new Error('Function not implemented.');
+}
+
+function renderTileLayer(position: Position, layer: Layer, ctx: CanvasRenderingContext2D): void {
+    throw new Error('Function not implemented.');
+}
+
+function renderObjectLayer(position: Position, layer: Layer, ctx: CanvasRenderingContext2D): void {
+    throw new Error('Function not implemented.');
+}
+
+function renderTiledMap(position: Position, map: TiledMap, ctx: CanvasRenderingContext2D): void {
+    for (const layer of map.data.layers) {
+        ({
+            imagelayer: renderImageLayer,
+            tilelayer: renderTileLayer,
+            objectgroup: renderObjectLayer,
+        }[layer.type](position, layer, ctx));
+    }
+}
+
 export default (ctx: CanvasRenderingContext2D): Renderer => (scene: Scene): void => {
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -60,5 +83,7 @@ export default (ctx: CanvasRenderingContext2D): Renderer => (scene: Scene): void
 
         if (currentEntity.hasComponent('AnimatedSprite'))
             renderAnimatedSprite(position, currentEntity.get('AnimatedSprite'), ctx);
+
+        if (currentEntity.hasComponent('TiledMap')) renderTiledMap(position, currentEntity.get('TiledMap'), ctx);
     }
 };

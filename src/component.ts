@@ -120,7 +120,7 @@ export class AnimatedSprite extends Component {
 }
 
 export class AudioSource extends Component {
-    public audioBuffer: any;
+    public audioBuffer: AudioBuffer;
     public constructor(audioBuffer: AudioBuffer) {
         super('AudioSource');
 
