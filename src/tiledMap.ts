@@ -8,8 +8,11 @@ export interface MapObject {
 
 export interface Layer {
     type: 'imagelayer' | 'tilelayer' | 'objectgroup';
+    x: number;
+    y: number;
     data?: number[];
     objects?: MapObject[];
+    image?: HTMLImageElement;
 }
 
 export interface TiledMapData {

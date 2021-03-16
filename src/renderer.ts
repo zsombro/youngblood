@@ -47,7 +47,7 @@ function renderAnimatedSprite(p: Position, sprite: AnimatedSprite, ctx: CanvasRe
 }
 
 function renderImageLayer(position: Position, layer: Layer, ctx: CanvasRenderingContext2D): void {
-    throw new Error('Function not implemented.');
+    ctx.drawImage(layer.image, position.x + layer.x, position.y + layer.y);
 }
 
 function renderTileLayer(position: Position, layer: Layer, ctx: CanvasRenderingContext2D): void {

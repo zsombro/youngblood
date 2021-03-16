@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { TiledMapData } from '../tiledMap';
+
 interface AssetData {
-    type: 'image' | 'audio' | 'json';
+    type: 'image' | 'audio' | 'json' | 'tiled-map';
     url: string;
 }
 
@@ -26,6 +28,33 @@ async function fetchAudio(url: string): Promise<AudioBuffer> {
 
 async function fetchObject(url: string): Promise<any> {
     return fetch(url).then((response: Response): Promise<any> => response.json());
+}
+
+async function fetchTiledMap(url: string): Promise<TiledMapData> {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const result: TiledMapData = {
+        width: data.width,
+        height: data.height,
+        layers: [],
+    };
+
+    for (const layer of data.layers) {
+        switch (layer.type) {
+            case 'imagelayer':
+                result.layers.push({ image: await fetchImage(layer.image), ...layer });
+                break;
+            case 'tilelayer':
+                result.layers.push({ data: layer.data, ...layer });
+                break;
+            case 'objectgroup':
+                result.layers.push({ objects: layer.objects, ...layer });
+                break;
+        }
+    }
+
+    return result;
 }
 
 export function getExtension(url: string): string {
@@ -78,6 +107,8 @@ export default class AssetLoader {
             case 'json':
                 this.assets[assetName] = await fetchObject(asset.url);
                 break;
+            case 'tiled-map':
+                this.assets[assetName] = await fetchTiledMap(asset.url);
         }
 
         this.completedTasks++;
