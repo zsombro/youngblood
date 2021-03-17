@@ -1,6 +1,6 @@
 import { AnimatedSprite, Animation, Box, Position, Label, Sprite } from './component';
 import { Scene } from './scene';
-import TiledMap, { Layer } from './tiledMap';
+import TiledMap, { Layer, TiledSheetData } from './tiledMap';
 
 export type Renderer = (entity: Scene) => void;
 
@@ -50,8 +50,27 @@ function renderImageLayer(position: Position, layer: Layer, ctx: CanvasRendering
     ctx.drawImage(layer.image, position.x + layer.x, position.y + layer.y);
 }
 
-function renderTileLayer(position: Position, layer: Layer, ctx: CanvasRenderingContext2D): void {
-    throw new Error('Function not implemented.');
+function getTileById(id: number, sheet: TiledSheetData): { x: number; y: number } {
+    return { x: id % sheet.columns, y: id / sheet.columns };
+}
+
+function renderTileLayer(position: Position, layer: Layer, sheet: TiledSheetData, ctx: CanvasRenderingContext2D): void {
+    for (let i = 0; i < layer.data.length; i++) {
+        if (layer.data[i] === 0) continue;
+
+        const { x, y } = getTileById(layer.data[i], sheet);
+        ctx.drawImage(
+            sheet.image,
+            x,
+            y,
+            sheet.tilewidth,
+            sheet.tileheight,
+            layer.x + (i % layer.width),
+            layer.y + i / layer.width,
+            sheet.tilewidth,
+            sheet.tileheight,
+        );
+    }
 }
 
 function renderObjectLayer(position: Position, layer: Layer, ctx: CanvasRenderingContext2D): void {
@@ -60,11 +79,16 @@ function renderObjectLayer(position: Position, layer: Layer, ctx: CanvasRenderin
 
 function renderTiledMap(position: Position, map: TiledMap, ctx: CanvasRenderingContext2D): void {
     for (const layer of map.data.layers) {
-        ({
-            imagelayer: renderImageLayer,
-            tilelayer: renderTileLayer,
-            objectgroup: renderObjectLayer,
-        }[layer.type](position, layer, ctx));
+        switch (layer.type) {
+            case 'imagelayer':
+                renderImageLayer(position, layer, ctx);
+                break;
+            case 'tilelayer':
+                renderTileLayer(position, layer, map.spriteSheet, ctx);
+                break;
+            case 'objectgroup':
+                break;
+        }
     }
 }
 

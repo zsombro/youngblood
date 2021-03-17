@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { TiledMapData } from '../tiledMap';
+import { TiledMapData, TiledSheetData } from '../tiledMap';
 
 interface AssetData {
-    type: 'image' | 'audio' | 'json' | 'tiled-map';
+    type: 'image' | 'audio' | 'json' | 'tiled-map' | 'tiled-set';
     url: string;
 }
 
@@ -55,6 +55,16 @@ async function fetchTiledMap(url: string): Promise<TiledMapData> {
     }
 
     return result;
+}
+
+async function fetchTiledSet(url: string): Promise<TiledSheetData> {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    return {
+        image: await fetchImage(data.image),
+        ...data,
+    };
 }
 
 export function getExtension(url: string): string {
@@ -109,6 +119,9 @@ export default class AssetLoader {
                 break;
             case 'tiled-map':
                 this.assets[assetName] = await fetchTiledMap(asset.url);
+                break;
+            case 'tiled-set':
+                this.assets[assetName] = await fetchTiledSet(asset.url);
         }
 
         this.completedTasks++;
