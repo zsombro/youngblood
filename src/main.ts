@@ -14,6 +14,8 @@ import {
     AnimationSheet,
 } from './component';
 
+import TiledMap, { TiledMapData, TiledSheetData } from './tiledMap';
+
 import Component from './component';
 
 import { InputMappingSystem, System } from './system';
@@ -37,4 +39,7 @@ export {
     InputMapping,
     InputMappingSystem,
     Label,
+    TiledMap,
+    TiledMapData,
+    TiledSheetData,
 };

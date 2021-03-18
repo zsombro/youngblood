@@ -47,14 +47,23 @@ function renderAnimatedSprite(p: Position, sprite: AnimatedSprite, ctx: CanvasRe
 }
 
 function renderImageLayer(position: Position, layer: Layer, ctx: CanvasRenderingContext2D): void {
-    ctx.drawImage(layer.image, position.x + layer.x, position.y + layer.y);
+    ctx.drawImage(layer.image, position.x + layer.x, position.y + layer.y, ctx.canvas.width, ctx.canvas.height);
 }
 
 function getTileById(id: number, sheet: TiledSheetData): { x: number; y: number } {
-    return { x: id % sheet.columns, y: id / sheet.columns };
+    return {
+        x: (id % sheet.columns) * sheet.tilewidth - sheet.tilewidth,
+        y: Math.floor(id / sheet.columns) * sheet.tileheight,
+    };
 }
 
-function renderTileLayer(position: Position, layer: Layer, sheet: TiledSheetData, ctx: CanvasRenderingContext2D): void {
+function renderTileLayer(
+    position: Position,
+    layer: Layer,
+    sheet: TiledSheetData,
+    scalingFactor: number,
+    ctx: CanvasRenderingContext2D,
+): void {
     for (let i = 0; i < layer.data.length; i++) {
         if (layer.data[i] === 0) continue;
 
@@ -65,16 +74,12 @@ function renderTileLayer(position: Position, layer: Layer, sheet: TiledSheetData
             y,
             sheet.tilewidth,
             sheet.tileheight,
-            layer.x + (i % layer.width),
-            layer.y + i / layer.width,
-            sheet.tilewidth,
-            sheet.tileheight,
+            position.x + (i % layer.width) * (sheet.tilewidth * scalingFactor),
+            position.y + Math.floor(i / layer.width) * (sheet.tileheight * scalingFactor),
+            sheet.tilewidth * scalingFactor,
+            sheet.tileheight * scalingFactor,
         );
     }
-}
-
-function renderObjectLayer(position: Position, layer: Layer, ctx: CanvasRenderingContext2D): void {
-    throw new Error('Function not implemented.');
 }
 
 function renderTiledMap(position: Position, map: TiledMap, ctx: CanvasRenderingContext2D): void {
@@ -84,9 +89,7 @@ function renderTiledMap(position: Position, map: TiledMap, ctx: CanvasRenderingC
                 renderImageLayer(position, layer, ctx);
                 break;
             case 'tilelayer':
-                renderTileLayer(position, layer, map.spriteSheet, ctx);
-                break;
-            case 'objectgroup':
+                renderTileLayer(position, layer, map.spriteSheet, map.options.scale, ctx);
                 break;
         }
     }

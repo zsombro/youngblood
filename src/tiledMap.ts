@@ -1,4 +1,4 @@
-import Component, { Sprite } from './component';
+import Component from './component';
 
 export interface MapObject {
     name: string;
@@ -36,11 +36,14 @@ export interface TiledSheetData {
 export default class TiledMap extends Component {
     public data: TiledMapData;
     public spriteSheet: TiledSheetData;
+    public options: { scale: number };
 
-    public constructor(data: TiledMapData, spriteSheet: TiledSheetData) {
+    public constructor(data: TiledMapData, spriteSheet: TiledSheetData, options: { scale: number } = { scale: 1 }) {
         super('TiledMap');
 
         this.data = data;
         this.spriteSheet = spriteSheet;
+
+        this.options = options;
     }
 }

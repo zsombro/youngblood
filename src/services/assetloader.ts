@@ -43,13 +43,13 @@ async function fetchTiledMap(url: string): Promise<TiledMapData> {
     for (const layer of data.layers) {
         switch (layer.type) {
             case 'imagelayer':
-                result.layers.push({ image: await fetchImage(layer.image), ...layer });
+                result.layers.push({ ...layer, image: await fetchImage(layer.image) });
                 break;
             case 'tilelayer':
-                result.layers.push({ data: layer.data, ...layer });
+                result.layers.push({ ...layer, data: layer.data });
                 break;
             case 'objectgroup':
-                result.layers.push({ objects: layer.objects, ...layer });
+                result.layers.push({ ...layer, objects: layer.objects });
                 break;
         }
     }
@@ -62,8 +62,8 @@ async function fetchTiledSet(url: string): Promise<TiledSheetData> {
     const data = await response.json();
 
     return {
-        image: await fetchImage(data.image),
         ...data,
+        image: await fetchImage(data.image),
     };
 }
 
