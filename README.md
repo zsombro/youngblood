@@ -2,7 +2,7 @@
 # youngblood.js
 
 `youngblood.js` is a simple game development framework for web browsers, written in TypeScript. The aim of this framework is to be
-simple to use and understand. The JavaScript code for a very basic setup is just a few lines of code:
+simple to use and understand. The JavaScript code for setting it up is just a few lines of code:
 
 ```javascript
 <canvas></canvas>
@@ -12,64 +12,28 @@ simple to use and understand. The JavaScript code for a very basic setup is just
     .startRendering();
 </script>
 ```
-This won't do anything though. Keep reading to learn how to do *actual* stuff!
 
-# Basics
-Youngblood.js builds on a modern game development pattern called Entity-Component-System. The idea behind ECS is that every entity 
-in your game is just data that is described by it's components and handled by systems that you specify. Components can be added, removed
-or changed on the fly and your systems immediately respond to these changes. *However, it's crucial to understand that components don't
-contain game logic.* Defining an Entity in Youngblood.js looks like this:
+You can also find the package on NPM, which means that you can use it from a proper setup by installing it:
 
-```javascript
-var e = new yb.Entity(); // at this point, your entity also receives a unique numeral identifier
-e.addComponent(new yb.Position(0, 0));
+`npm install youngblood`
 
-scene.addEntity(e); // let's assume that 'scene' was defined earlier
-```
-
-It's important to note that an Entity can only hold one instance of given component, so for example, nothing can have two positions
-at the same time. Obviously if you're trying to describe a unique game mechanic that requires this possibility, you can come up with
-a custom Component that allows this.
-
-# Defining a scene
-
-Another very important concept in Youngblood.js is the *scene system*. Scenes are the basic building blocks of your game that basically
-separate menus, cutscenes, levels or anything that contains a very different set of game mechanics. Every game in Youngblood.js **must**
-at least one scene! Scenes are self-contained, they all have their separate set of entities and systems. Defining one is super easy:
+And then importing the stuff you need in your code:
 
 ```javascript
-var s = {
-  sceneId: 'scene1',
-  init: initFunction,
-  alwaysInitialize: false
-};
+import { Game } from `youngblood`;
 ```
 
-# Systems
+# Getting Started
 
-Systems are the heart of your game. They will contain the game logic that handles operations on the entities that make
-up your game. A system in Youngblood.js consists of two main things: a list of components they require and a function that will do the actual magic. When the game loops through your entities, it will check if a given entity has every component required
-before passing it to a given system. You can register them in the *init function* of your scene like this:
+- [Read the Wiki](https://github.com/zsombro/youngblood/wiki) on how to get started with Youngblood
+- [Check out this repository](https://github.com/zsombro/youngblood-example-project) to see a working example
 
-```javascript
-function movementSystem(entity) {
-    entity.Position.x += entity.Velocity.x;
-    entity.Position.y += entity.Velocity.y;
-}
+# Contributing
 
-function initFunction(context, services) {
-  context.registerSystem({
-    systemId: 'movementSystem',
-    requiredComponents: ['Position', 'Velocity'],
-    update: movementSystem
-  });
-  
-  *...some more code...*
-}
-```
+To start working on the code, you just have to
 
-# Plans, To-Dos, Missing stuff
+1. Clone the repo
+2. `npm install`
+3. `npm build`
 
-This is a very early version of the framework which only contains the bare basics. Lots of rendering options, input handling, asset
-management and audio playback features are missing. I also don't work on this framework all the time, just when I have the time
-and a few ideas on how to improve it.
+At this point, you should be able to run the examples included with this codebase! If you would like to contribute, [please read the contribution guide](https://github.com/zsombro/youngblood/blob/master/CONTRIBUTING.md) before doing so!

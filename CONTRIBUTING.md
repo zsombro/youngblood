@@ -11,6 +11,7 @@ While there are no big, competitive ambitions behind this project, I do believe 
 
 - **Documentation**: this probably sounds lame at first, but trust me, it matters! Another big benefit of improving doc strings and the Wiki is that you have to become familiar with the codebase to do it effectively
 - **Optimization**: Youngblood is very much being developed along a "core first, shine last" kind of philosophy and I think this becomes immediately apparent the first time you try to do heavier rendering tasks using the engine. I have a couple of ideas on how to improve speed, but I'm open to suggestions from folks who are well versed in optimizing!
+- **Testing**: unit tests have been setup for the codebase, but there aren't too many actual tests written. If you're up for it, feel free to improve coverage!
 - **New features**: there are many things that are fundamentally missing from this engine and while I think it's easy to find them, I hope to put together some sort of list eventually that could help people looking to contribute
 
 # Things to keep in mind
@@ -36,3 +37,6 @@ There are a couple of other concepts that have been adden onto these core mechan
 - I will admit that Services are very loosely defined here, but basically they are a means to provide access to various browser APIs and custom APIs that are relevant to building games.
 - Renderers are basically functions that accept a Scene and do whatever. The engine doesn't care about the outcome because right now it really is irrelevant. Your custom renderer can draw onto a canvas, a WebGL canvas, send it over WebSockets or to a printer, it really doesn't matter. The default renderer uses a regular 2D canvas. All rendering functions are pure functions and I'd love to keep it that way, but I have a suspicion that it will be hard to improve performance without introducing some statefulness.
 
+## Pull requests
+
+Before opening a Pull Request, please make sure you follow the above guide and also ensure that you've written tests for any new code that you intend to add. I know that current test coverage is pretty bad, but it should'nt stay that way, even for a hobby project!
