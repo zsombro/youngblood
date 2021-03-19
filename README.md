@@ -26,7 +26,8 @@ import { Game } from `youngblood`;
 # Getting Started
 
 - [Read the Wiki](https://github.com/zsombro/youngblood/wiki) on how to get started with Youngblood
-- [Check out this repository](https://github.com/zsombro/youngblood-example-project) to see a working example
+- Look at the quick and dirty examples in [the 'examples' folder of this repositorry](https://github.com/zsombro/youngblood/tree/master/examples)
+- [Check out this repository](https://github.com/zsombro/youngblood-example-project) to see a working example with bundling
 
 # Contributing
 
