@@ -1,7 +1,7 @@
 import Entity from './entity';
 import { Scene, SceneServices } from './scene';
-import { InputMapping } from './component';
-import TiledMap from './tiledMap';
+import { InputMapping } from './components/component';
+import TiledMap from './components/tiledMap';
 
 export interface System {
     systemId: string;

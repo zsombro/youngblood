@@ -2,7 +2,7 @@ import 'mocha';
 import { expect } from 'chai';
 
 import Entity from './entity';
-import Component from './component';
+import Component from './components/component';
 
 class C1 extends Component {}
 class C2 extends Component {}

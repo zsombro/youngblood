@@ -12,11 +12,11 @@ import {
     InputMapping,
     Label,
     AnimationSheet,
-} from './component';
+} from './components/component';
 
-import TiledMap, { TiledMapData, TiledSheetData } from './tiledMap';
+import TiledMap, { TiledMapData, TiledSheetData } from './components/tiledMap';
 
-import Component from './component';
+import Component from './components/component';
 
 import { InputMappingSystem, System } from './system';
 

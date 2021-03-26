@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { TiledMapData, TiledSheetData } from '../tiledMap';
+import { TiledMapData, TiledSheetData } from '../components/tiledMap';
 
 interface AssetData {
     type: 'image' | 'audio' | 'json' | 'tiled-map' | 'tiled-set';

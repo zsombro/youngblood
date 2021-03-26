@@ -1,6 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Component, { Position, Velocity, Sprite, AnimatedSprite, InputMapping, Label, Box } from './component';
-import TiledMap from './tiledMap';
+import Component, {
+    Position,
+    Velocity,
+    Sprite,
+    AnimatedSprite,
+    InputMapping,
+    Label,
+    Box,
+} from './components/component';
+import TiledMap from './components/tiledMap';
 
 export default class Entity {
     [x: string]: Component;

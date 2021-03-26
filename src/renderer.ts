@@ -1,6 +1,6 @@
-import { AnimatedSprite, Animation, Box, Position, Label, Sprite } from './component';
+import { AnimatedSprite, Animation, Box, Position, Label, Sprite } from './components/component';
 import { Scene } from './scene';
-import TiledMap, { Layer, TiledSheetData } from './tiledMap';
+import TiledMap, { Layer, TiledSheetData } from './components/tiledMap';
 
 export type Renderer = (entity: Scene) => void;
 
@@ -47,10 +47,10 @@ function renderAnimatedSprite(p: Position, sprite: AnimatedSprite, ctx: CanvasRe
 }
 
 function renderImageLayer(position: Position, layer: Layer, ctx: CanvasRenderingContext2D): void {
-    ctx.drawImage(layer.image, position.x + layer.x, position.y + layer.y, ctx.canvas.width, ctx.canvas.height);
+    ctx.drawImage(layer.image, layer.x, layer.y, ctx.canvas.width, ctx.canvas.height);
 }
 
-function getTileById(id: number, sheet: TiledSheetData): { x: number; y: number } {
+export function getTilesheetCoordinateById(id: number, sheet: TiledSheetData): { x: number; y: number } {
     return {
         x: (id % sheet.columns) * sheet.tilewidth - sheet.tilewidth,
         y: Math.floor(id / sheet.columns) * sheet.tileheight,
@@ -67,7 +67,7 @@ function renderTileLayer(
     for (let i = 0; i < layer.data.length; i++) {
         if (layer.data[i] === 0) continue;
 
-        const { x, y } = getTileById(layer.data[i], sheet);
+        const { x, y } = getTilesheetCoordinateById(layer.data[i], sheet);
         ctx.drawImage(
             sheet.image,
             x,
