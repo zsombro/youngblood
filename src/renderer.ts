@@ -10,8 +10,10 @@ function renderBox(p: Position, b: Box, ctx: CanvasRenderingContext2D): void {
 }
 
 function renderLabel(p: Position, l: Label, ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = l.color;
-    ctx.fillText(l.txt, p.x, p.y);
+    if (l.isVisible) {
+        ctx.fillStyle = l.color;
+        ctx.fillText(l.txt, p.x, p.y);
+    }
 }
 
 function renderSprite(p: Position, s: Sprite, ctx: CanvasRenderingContext2D): void {
