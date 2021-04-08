@@ -91,7 +91,6 @@ export default class Game {
      */
     public addScene(sceneOptions: SceneOptions): Game {
         this.gameScenes[sceneOptions.sceneId] = new Scene(sceneOptions);
-        this.gameScenes[sceneOptions.sceneId].assets = this.services.assets;
 
         if (this.currentScene == null) this.switchToScene(sceneOptions.sceneId);
 

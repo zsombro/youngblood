@@ -8,8 +8,9 @@ import AssetLoader from './services/assetloader';
 export interface SceneOptions {
     sceneId: string;
     alwaysInitialize?: boolean;
-    init: SceneInitCallback;
+    init?: SceneInitCallback;
     systems?: System[];
+    entities?: Entity[];
 }
 
 export interface SceneServices {
@@ -26,9 +27,8 @@ export class Scene {
     public initialized: boolean;
     public initCallback: SceneInitCallback;
     public alwaysInitialize: boolean;
-    public gameEntities: { [index: string]: Entity };
     public systems: { [index: string]: System };
-    public assets: {};
+    public gameEntities: { [index: string]: Entity };
 
     public constructor(options: SceneOptions) {
         this.sceneId = options.sceneId;
@@ -37,15 +37,20 @@ export class Scene {
 
         this.alwaysInitialize = options.alwaysInitialize || true;
 
-        this.initCallback = options.init;
+        this.initCallback = options.init || ((): void => {});
 
         this.gameEntities = {};
         this.systems = {};
 
         if (options.systems) options.systems.forEach((s): void => this.registerSystem(s));
+
+        if (options.entities) options.entities.forEach((e): void => this.addEntity(e));
     }
 
     public registerSystem(system: System): void {
+        if (this.systems[system.systemId])
+            throw new Error(`System with system ID '${system.systemId}' has already been registered`);
+
         this.systems[system.systemId] = system;
     }
 

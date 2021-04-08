@@ -6,8 +6,9 @@ import AssetLoader from './services/assetloader';
 export interface SceneOptions {
     sceneId: string;
     alwaysInitialize?: boolean;
-    init: SceneInitCallback;
+    init?: SceneInitCallback;
     systems?: System[];
+    entities?: Entity[];
 }
 export interface SceneServices {
     input: InputManager;
@@ -23,13 +24,12 @@ export declare class Scene {
     initialized: boolean;
     initCallback: SceneInitCallback;
     alwaysInitialize: boolean;
-    gameEntities: {
-        [index: string]: Entity;
-    };
     systems: {
         [index: string]: System;
     };
-    assets: {};
+    gameEntities: {
+        [index: string]: Entity;
+    };
     constructor(options: SceneOptions);
     registerSystem(system: System): void;
     unregisterSystem(system: System): void;
