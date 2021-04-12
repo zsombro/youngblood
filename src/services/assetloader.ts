@@ -76,7 +76,7 @@ export function getExtension(url: string): string {
 export default class AssetLoader {
     private taskQueueLength: number;
     private completedTasks: number;
-    private assets: { [index: string]: any };
+    private assets: Record<string, any>;
 
     public constructor() {
         this.taskQueueLength = 0;
@@ -84,7 +84,7 @@ export default class AssetLoader {
         this.assets = {};
     }
 
-    public async load(assetListUrl: string): Promise<void> {
+    public async load(assetListUrl: string): Promise<Record<string, any>> {
         const response = await fetch(assetListUrl);
         const json = await response.json();
         const assetData: AssetData[] = json.assets;
@@ -93,6 +93,8 @@ export default class AssetLoader {
         this.taskQueueLength = assetData.length;
 
         await Promise.all(assetData.map(this.fetchAsset.bind(this)));
+
+        return this.assets;
     }
 
     public progress(): number {
