@@ -12,6 +12,7 @@ function renderBox(p: Position, b: Box, ctx: CanvasRenderingContext2D): void {
 function renderLabel(p: Position, l: Label, ctx: CanvasRenderingContext2D): void {
     if (l.isVisible) {
         ctx.fillStyle = l.color;
+        ctx.font = l.font;
         ctx.fillText(l.txt, p.x, p.y);
     }
 }
