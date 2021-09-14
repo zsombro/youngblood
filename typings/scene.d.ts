@@ -8,7 +8,7 @@ export interface SceneOptions {
     alwaysInitialize?: boolean;
     init?: SceneInitCallback;
     systems?: System[];
-    entities?: Entity[];
+    entities?: EntityFunction[];
 }
 export interface SceneServices {
     input: InputManager;
@@ -19,6 +19,7 @@ export interface SceneServices {
     };
 }
 export declare type SceneInitCallback = (context: Scene, services: SceneServices) => void;
+export declare type EntityFunction = (services: SceneServices) => Entity;
 export declare class Scene {
     sceneId: string;
     initialized: boolean;
@@ -30,7 +31,9 @@ export declare class Scene {
     gameEntities: {
         [index: string]: Entity;
     };
+    private options;
     constructor(options: SceneOptions);
+    initialize(context: Scene, services: SceneServices): void;
     registerSystem(system: System): void;
     unregisterSystem(system: System): void;
     addEntity(entity: Entity): void;

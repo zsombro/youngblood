@@ -10,7 +10,7 @@ export interface SceneOptions {
     alwaysInitialize?: boolean;
     init?: SceneInitCallback;
     systems?: System[];
-    entities?: Entity[];
+    entities?: EntityFunction[];
 }
 
 export interface SceneServices {
@@ -22,6 +22,8 @@ export interface SceneServices {
 
 export type SceneInitCallback = (context: Scene, services: SceneServices) => void;
 
+export type EntityFunction = (services: SceneServices) => Entity;
+
 export class Scene {
     public sceneId: string;
     public initialized: boolean;
@@ -29,6 +31,8 @@ export class Scene {
     public alwaysInitialize: boolean;
     public systems: { [index: string]: System };
     public gameEntities: { [index: string]: Entity };
+
+    private options: SceneOptions = null;
 
     public constructor(options: SceneOptions) {
         this.sceneId = options.sceneId;
@@ -42,9 +46,15 @@ export class Scene {
         this.gameEntities = {};
         this.systems = {};
 
-        if (options.systems) options.systems.forEach((s): void => this.registerSystem(s));
+        this.options = options;
+    }
 
-        if (options.entities) options.entities.forEach((e): void => this.addEntity(e));
+    public initialize(context: Scene, services: SceneServices): void {
+        if (this.options.systems) this.options.systems.forEach((s): void => this.registerSystem(s));
+        if (this.options.entities) this.options.entities.forEach((entity): void => this.addEntity(entity(services)));
+
+        this.initCallback(context, services);
+        this.initialized = true;
     }
 
     public registerSystem(system: System): void {

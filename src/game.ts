@@ -113,7 +113,7 @@ export default class Game {
         this.currentScene = this.gameScenes[sceneId];
 
         if (!this.currentScene.initialized || this.currentScene.alwaysInitialize)
-            this.currentScene.initCallback(this.currentScene, this.services);
+            this.currentScene.initialize(this.currentScene, this.services);
 
         return this;
     }
