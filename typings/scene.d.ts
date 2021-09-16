@@ -3,6 +3,7 @@ import { System } from './system';
 import InputManager from './services/inputmanager';
 import AudioManager from './services/audiomanager';
 import AssetLoader from './services/assetloader';
+import { Component } from './main';
 export interface SceneOptions {
     sceneId: string;
     alwaysInitialize?: boolean;
@@ -19,7 +20,7 @@ export interface SceneServices {
     };
 }
 export declare type SceneInitCallback = (context: Scene, services: SceneServices) => void;
-export declare type EntityFunction = (services: SceneServices) => Entity;
+export declare type EntityFunction = (services: SceneServices) => Entity | Component[];
 export declare class Scene {
     sceneId: string;
     initialized: boolean;
@@ -36,6 +37,6 @@ export declare class Scene {
     initialize(context: Scene, services: SceneServices): void;
     registerSystem(system: System): void;
     unregisterSystem(system: System): void;
-    addEntity(entity: Entity): void;
+    addEntity(entity: Entity | Component[]): void;
     removeEntity(id: number): void;
 }

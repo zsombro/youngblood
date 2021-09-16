@@ -4,6 +4,7 @@ import { System } from './system';
 import InputManager from './services/inputmanager';
 import AudioManager from './services/audiomanager';
 import AssetLoader from './services/assetloader';
+import { Component } from './main';
 
 export interface SceneOptions {
     sceneId: string;
@@ -22,7 +23,7 @@ export interface SceneServices {
 
 export type SceneInitCallback = (context: Scene, services: SceneServices) => void;
 
-export type EntityFunction = (services: SceneServices) => Entity;
+export type EntityFunction = (services: SceneServices) => Entity | Component[];
 
 export class Scene {
     public sceneId: string;
@@ -68,8 +69,14 @@ export class Scene {
         delete this.systems[system.systemId];
     }
 
-    public addEntity(entity: Entity): void {
-        this.gameEntities[entity.id] = entity;
+    public addEntity(entity: Entity | Component[]): void {
+        if (entity instanceof Entity) {
+            this.gameEntities[entity.id] = entity;
+        } else {
+            const e = new Entity();
+            e.addComponents(entity);
+            this.gameEntities[e.id] = e;
+        }
     }
 
     public removeEntity(id: number): void {

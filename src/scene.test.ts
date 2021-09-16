@@ -8,6 +8,7 @@ import InputManager from './services/inputmanager';
 import AssetLoader from './services/assetloader';
 import AudioManager from './services/audiomanager';
 import Game from './game';
+import { Component } from './main';
 
 const mockSceneServices: SceneServices = {
     input: new InputManager(),
@@ -20,7 +21,7 @@ describe('Scene', (): void => {
     it('should auto-register Entities', (): void => {
         const sceneOptions: SceneOptions = {
             sceneId: 'test',
-            entities: [(): Entity => new Entity(), (): Entity => new Entity()],
+            entities: [(): Entity => new Entity(), (): Component[] => []],
         };
 
         const scene = new Scene(sceneOptions);

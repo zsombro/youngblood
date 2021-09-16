@@ -26,6 +26,10 @@ export default class Entity {
         this[component.name] = component;
     }
 
+    public addComponents(components: Component[]): void {
+        components.forEach(this.addComponent.bind(this));
+    }
+
     public removeComponent(componentName: string): void {
         delete this[componentName];
     }

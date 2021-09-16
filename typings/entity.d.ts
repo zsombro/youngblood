@@ -6,6 +6,7 @@ export default class Entity {
     count: any;
     constructor();
     addComponent(component: Component): void;
+    addComponents(components: Component[]): void;
     removeComponent(componentName: string): void;
     hasComponent(componentName: string): boolean;
     hasComponents(componentArray: string[]): boolean;
