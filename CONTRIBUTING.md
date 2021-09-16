@@ -29,14 +29,14 @@ If you've read the Wiki, you probably already know that Youngblood is built on a
 - *Entities* do not contain properties of their own except for an id, which is added automatically. They do contain a list of *Components* though
 - *Components* do not contain any sort of logic. They are purely data, which means that the *Entities* that contain them are also just a collection of data by consequence
 - *Systems* contain the actual logic that operates on the *Components* contained within Entities
-  - **Ideally, the update function of your *Systems* should be pure functions**
+  - **Ideally, the update function of your *Systems* should be only modify relevant entities and otherwise avoid stateful behavior**
 
 There are a couple of other concepts that have been adden onto these core mechanisms, so let's cover those too:
 
 - Scenes are a basic unit of separation for the engine. They have their own collection of Entities and Systems. They can be paused or switched between. **Scenes are not meant to reach into each other (at least not yet and definitely not in a monkey patching sort of way)**
 - I will admit that Services are very loosely defined here, but basically they are a means to provide access to various browser APIs and custom APIs that are relevant to building games.
-- Renderers are basically functions that accept a Scene and do whatever. The engine doesn't care about the outcome because right now it really is irrelevant. Your custom renderer can draw onto a canvas, a WebGL canvas, send it over WebSockets or to a printer, it really doesn't matter. The default renderer uses a regular 2D canvas. All rendering functions are pure functions and I'd love to keep it that way, but I have a suspicion that it will be hard to improve performance without introducing some statefulness.
+- Renderers are basically functions that accept a Scene and do whatever. The engine doesn't care about the outcome because right now it really is irrelevant. Your custom renderer can draw onto a canvas, a WebGL canvas, send it over WebSockets or to a printer, it really doesn't matter. The default renderer uses a regular 2D canvas. All rendering functions are stateless and I'd love to keep it that way, but I have a suspicion that it will be hard to improve performance without introducing some statefulness.
 
 ## Pull requests
 
-Before opening a Pull Request, please make sure you follow the above guide and also ensure that you've written tests for any new code that you intend to add. I know that current test coverage is pretty bad, but it should'nt stay that way, even for a hobby project!
+Before opening a Pull Request, please make sure you follow the above guide and also ensure that you've written tests for any new code that you intend to add (except for rendering code, I don't really know how to easily test that). I know that current test coverage is pretty bad, but it should'nt stay that way, even for a hobby project!
