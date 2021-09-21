@@ -29,7 +29,7 @@
 
 		const movementSystem = {
 			systemId: 'movementSystem',
-			requiredComponents: ['Position', 'Velocity'],
+			requiredComponents: ['Position', 'Velocity', 'InputMapping'],
 			update: entity => {
 				if (entity.InputMapping.down)
 					entity.Position.y += entity.Velocity.y;
