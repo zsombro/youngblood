@@ -27,48 +27,38 @@
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
 
-		function movementSystem(e) {
-
-			if (e.InputMapping.down)
-				e.Position.y += e.Velocity.y;
-
-			if (e.InputMapping.up)
-				e.Position.y -= e.Velocity.y;
-
-			if (e.InputMapping.left)
-				e.Position.x -= e.Velocity.x;
-
-			if (e.InputMapping.right)
-				e.Position.x += e.Velocity.x;
+		const movementSystem = {
+			systemId: 'movementSystem',
+			requiredComponents: ['Position', 'Velocity'],
+			update: entity => {
+				if (entity.InputMapping.down)
+					entity.Position.y += entity.Velocity.y;
+				if (entity.InputMapping.up)
+					entity.Position.y -= entity.Velocity.y;
+				if (entity.InputMapping.left)
+					entity.Position.x -= entity.Velocity.x;
+				if (entity.InputMapping.right)
+					entity.Position.x += entity.Velocity.x;
+				}
 		}
 
-		var init = function (context, services) {
-
-			context.registerSystem(yb.InputMappingSystem);
-			context.registerSystem({
-				systemId: 'movementSystem',
-				requiredComponents: ['Position', 'Velocity'],
-				update: movementSystem
-			});
-
-			var e = new yb.Entity();
-			e.addComponent(new yb.Position(10, 10));
-			e.addComponent(new yb.Velocity(1, 1));
-			e.addComponent(new yb.Box(30, 30, 'rgb(0, 0, 0, 1)'));
-			e.addComponent(new yb.InputMapping([
+		const player = () => [
+			new yb.Position(10, 10),
+			new yb.Velocity(1, 1),
+			new yb.Box(30, 30, 'rgb(0, 0, 0, 1)'),
+			new yb.InputMapping([
 				{ name: 'up', code: 38 },
 				{ name: 'down', code: 40 },
 				{ name: 'left', code: 37 },
 				{ name: 'right', code: 39 }
-			]));
-
-			context.addEntity(e);
-		};
+			])
+		]
 
 		var scene = {
 			sceneId: 'main',
-			init: init,
-			alwaysInitialize: true
+			alwaysInitialize: true,
+			systems: [yb.InputMappingSystem, movementSystem],
+			entities: [player]
 		};
 
 		new yb.Game()
