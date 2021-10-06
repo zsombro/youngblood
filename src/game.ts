@@ -7,6 +7,7 @@ import AssetLoader from './services/assetloader';
 import Entity from './entity';
 import render, { Renderer } from './renderer';
 import FramerateManager from './framerateManager';
+import { InputMappingSystem } from './system';
 
 export default class Game {
     private renderer: Renderer;
@@ -57,7 +58,7 @@ export default class Game {
 
         this.startSystem();
 
-        console.info(`Started rendering at ${this.framerateManager}fps`);
+        console.info(`Started rendering at ${this.framerateManager.framerate}fps`);
     }
 
     /**
@@ -87,13 +88,28 @@ export default class Game {
      * initialized.
      */
     public addScene(sceneOptions: SceneOptions): Game {
-        this.gameScenes[sceneOptions.sceneId] = new Scene(sceneOptions);
+        const scene = new Scene(sceneOptions);
+        scene.registerSystem(InputMappingSystem);
+
+        this.gameScenes[sceneOptions.sceneId] = scene;
 
         if (this.currentScene == null) this.switchToScene(sceneOptions.sceneId);
 
         console.info(`Scene added: ${sceneOptions.sceneId}`);
 
         return this;
+    }
+
+    /**
+     * Remove a scene from the system.
+     * @param sceneId The sceneId you provided when registering the System
+     * @returns The scene itself before it's deleted, just in case
+     */
+    public removeScene(sceneId: string): Scene {
+        const scene = this.gameScenes[sceneId];
+        delete this.gameScenes[sceneId];
+
+        return scene;
     }
 
     /**
@@ -124,7 +140,6 @@ export default class Game {
 
                 this.update();
                 this.renderer(this.currentScene);
-                console.log('end frame');
             },
         );
     }

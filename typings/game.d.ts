@@ -1,4 +1,4 @@
-import { SceneOptions } from './scene';
+import { Scene, SceneOptions } from './scene';
 import { Renderer } from './renderer';
 export default class Game {
     private renderer;
@@ -35,6 +35,12 @@ export default class Game {
      * initialized.
      */
     addScene(sceneOptions: SceneOptions): Game;
+    /**
+     * Remove a scene from the system.
+     * @param sceneId The sceneId you provided when registering the System
+     * @returns The scene itself before it's deleted, just in case
+     */
+    removeScene(sceneId: string): Scene;
     /**
      * Switch to a different scene. Also available as a `SceneService`. If you don't call it
      * before starting the game, it will start with the first one you added.

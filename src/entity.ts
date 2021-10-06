@@ -7,6 +7,7 @@ import Component, {
     InputMapping,
     Label,
     Box,
+    Camera,
 } from './components/component';
 import TiledMap from './components/tiledMap';
 
@@ -53,6 +54,7 @@ export default class Entity {
     public get(name: 'InputMapping'): InputMapping;
     public get(name: 'AnimatedSprite'): AnimatedSprite;
     public get(name: 'TiledMap'): TiledMap;
+    public get(name: 'Camera'): Camera;
     public get(name: 'Label'): Label;
     public get(name: 'Box'): Box;
     public get(name: string): any {

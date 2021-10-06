@@ -25,4 +25,8 @@ export default class FramerateManager {
         this.then = Date.now();
         this.interval = 1000 / this.fps;
     }
+
+    public get framerate(): number {
+        return this.fps;
+    }
 }

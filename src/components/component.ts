@@ -173,3 +173,29 @@ export class InputMapping extends Component {
         }
     }
 }
+
+export interface CameraOptions {
+    offsetX?: number;
+    offsetY?: number;
+    drag?: number;
+}
+
+export class Camera extends Component {
+    public centerX: number;
+    public centerY: number;
+
+    public offsetX: number;
+    public offsetY: number;
+    public drag: number;
+
+    public constructor(options: CameraOptions) {
+        super('Camera');
+
+        this.centerX = 0;
+        this.centerY = 0;
+
+        this.offsetX = options.offsetX | 0;
+        this.offsetY = options.offsetY | 0;
+        this.drag = options.drag | 0;
+    }
+}

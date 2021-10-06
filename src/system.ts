@@ -1,7 +1,5 @@
 import Entity from './entity';
 import { Scene, SceneServices } from './scene';
-import { InputMapping } from './components/component';
-import TiledMap from './components/tiledMap';
 
 export interface System {
     systemId: string;
@@ -13,7 +11,7 @@ export const InputMappingSystem: System = {
     systemId: 'inputMappingSystem',
     requiredComponents: ['InputMapping'],
     update: function(entity: Entity, scene: Scene, services: SceneServices): void {
-        const inputMapping = entity['InputMapping'] as InputMapping;
+        const inputMapping = entity.get('InputMapping');
 
         for (var i = 0; i < inputMapping.mapping.length; i++) {
             let c = inputMapping.mapping[i];
@@ -25,7 +23,19 @@ export const InputMappingSystem: System = {
 export const TiledMapSystem: System = {
     systemId: 'tiledMapSystem',
     requiredComponents: ['TiledMap', 'Position', 'InputMapping'],
-    update: function(entity: Entity, scene: Scene, services: SceneServices): void {
-        const mapData = entity['TiledMap'] as TiledMap;
+    update: function(entity: Entity): void {
+        const mapData = entity.get('TiledMap');
+    },
+};
+
+export const CameraMovementSystem: System = {
+    systemId: 'cameraMovementSystem',
+    requiredComponents: ['Position', 'Camera'],
+    update: function(entity: Entity): void {
+        const position = entity.get('Position');
+        const camera = entity.get('Camera');
+
+        camera.centerX = position.x;
+        camera.centerY = position.y;
     },
 };
