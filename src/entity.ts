@@ -56,26 +56,7 @@ export default class Entity {
     public get(name: 'Label'): Label;
     public get(name: 'Box'): Box;
     public get(name: string): any {
-        switch (name) {
-            case 'Velocity':
-                return this[name] as Velocity;
-            case 'Position':
-                return this[name] as Position;
-            case 'Sprite':
-                return this[name] as Sprite;
-            case 'AnimatedSprite':
-                return this[name] as AnimatedSprite;
-            case 'InputMapping':
-                return this[name] as InputMapping;
-            case 'Label':
-                return this[name] as Label;
-            case 'Box':
-                return this[name] as Box;
-            case 'TiledMap':
-                return this[name] as TiledMap;
-            default:
-                return this[name];
-        }
+        return this[name];
     }
 }
 

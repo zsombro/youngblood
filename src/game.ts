@@ -3,19 +3,17 @@ import { Scene, SceneServices, SceneOptions } from './scene';
 import InputManager from './services/inputmanager';
 import AudioManager from './services/audiomanager';
 import AssetLoader from './services/assetloader';
+
 import Entity from './entity';
 import render, { Renderer } from './renderer';
+import FramerateManager from './framerateManager';
 
 export default class Game {
     private renderer: Renderer;
     private services: SceneServices;
     private gameScenes: { [index: string]: Scene };
     private currentScene: Scene;
-    private fps: number;
-    private interval: number;
-    private then: number;
-    private now: number;
-    private delta: number;
+    private framerateManager: FramerateManager;
 
     /**
      * Returns a new `Game` instance.
@@ -35,8 +33,7 @@ export default class Game {
         this.gameScenes = {};
         this.currentScene = null;
 
-        this.fps = 60;
-        this.then = Date.now();
+        this.framerateManager = new FramerateManager(60);
 
         console.info('Game created');
     }
@@ -60,7 +57,7 @@ export default class Game {
 
         this.startSystem();
 
-        console.info(`Started rendering at ${this.fps}fps`);
+        console.info(`Started rendering at ${this.framerateManager}fps`);
     }
 
     /**
@@ -68,7 +65,7 @@ export default class Game {
      * @param fps
      */
     public setFramerate(fps: number): Game {
-        this.fps = fps;
+        this.framerateManager.setFramerate(fps);
 
         return this;
     }
@@ -119,25 +116,17 @@ export default class Game {
     }
 
     private startSystem(): void {
-        window.requestAnimationFrame(
+        window.requestAnimationFrame((): void => this.startSystem());
+
+        this.framerateManager.processFrame(
             (): void => {
-                this.startSystem();
+                if (!this.currentScene) return;
+
+                this.update();
+                this.renderer(this.currentScene);
+                console.log('end frame');
             },
         );
-
-        this.interval = 1000 / this.fps;
-
-        this.now = Date.now();
-        this.delta = this.now - this.then;
-
-        if (this.delta > this.interval) {
-            this.then = this.now - (this.delta % this.interval);
-
-            if (!this.currentScene) return;
-
-            this.update();
-            this.renderer(this.currentScene);
-        }
     }
 
     private update(): void {

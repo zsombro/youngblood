@@ -5,11 +5,7 @@ export default class Game {
     private services;
     private gameScenes;
     private currentScene;
-    private fps;
-    private interval;
-    private then;
-    private now;
-    private delta;
+    private framerateManager;
     /**
      * Returns a new `Game` instance.
      */
