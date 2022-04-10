@@ -7,3 +7,4 @@ export interface System {
 }
 export declare const InputMappingSystem: System;
 export declare const TiledMapSystem: System;
+export declare const CameraMovementSystem: System;

@@ -12,13 +12,14 @@ import {
     InputMapping,
     Label,
     AnimationSheet,
+    Camera
 } from './components/component';
 
 import TiledMap, { TiledMapData, TiledSheetData } from './components/tiledMap';
 
 import Component from './components/component';
 
-import { InputMappingSystem, System } from './system';
+import { CameraMovementSystem, InputMappingSystem, System } from './system';
 
 export {
     Game,
@@ -36,8 +37,10 @@ export {
     AnimatedSpriteOptions,
     AnimationSheet,
     Box,
+    Camera,
     InputMapping,
     InputMappingSystem,
+    CameraMovementSystem,
     Label,
     TiledMap,
     TiledMapData,

@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                margin: 0px;
+                padding: 0px;
+                overflow: hidden;
+            }
+    
+            canvas {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas"></canvas>
+        <script src="../../bundle/youngblood.js"></script>
+        <script>
+            const movementSystem = {
+                systemId: 'movementSystem',
+                requiredComponents: ['Position', 'Velocity', 'InputMapping'],
+                update: entity => {
+                    if (entity.InputMapping.down)
+                        entity.Position.y += entity.Velocity.y;
+                    if (entity.InputMapping.up)
+                        entity.Position.y -= entity.Velocity.y;
+                    if (entity.InputMapping.left)
+                        entity.Position.x -= entity.Velocity.x;
+                    if (entity.InputMapping.right)
+                        entity.Position.x += entity.Velocity.x;
+                    }
+            }
+
+            const player = () => [
+                new yb.Camera({}),
+                new yb.Position(50, 50),
+                new yb.Velocity(1, 1),
+                new yb.Box(30, 30, 'rgb(0, 0, 0, 1)'),
+                new yb.InputMapping([
+                    { name: 'up', code: 38 },
+                    { name: 'down', code: 40 },
+                    { name: 'left', code: 37 },
+                    { name: 'right', code: 39 }
+                ])
+            ];
+
+            const comparisonObject = () => [
+                new yb.Position(10, 10),
+                new yb.Box(15, 15, 'rgb(255, 0, 0, 1)')
+            ];
+
+            const scene = {
+                sceneId: 'main',
+                alwaysInitialize: true,
+                systems: [yb.CameraMovementSystem, movementSystem],
+                entities: [player, comparisonObject],
+            }
+
+            new yb.Game()
+                .addScene(scene)
+                .startRendering();
+        </script>
+    </body>
+</html>

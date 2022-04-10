@@ -1,4 +1,4 @@
-import Component, { Position, Velocity, Sprite, AnimatedSprite, InputMapping, Label, Box } from './components/component';
+import Component, { Position, Velocity, Sprite, AnimatedSprite, InputMapping, Label, Box, Camera } from './components/component';
 import TiledMap from './components/tiledMap';
 export default class Entity {
     [x: string]: Component;
@@ -16,6 +16,7 @@ export default class Entity {
     get(name: 'InputMapping'): InputMapping;
     get(name: 'AnimatedSprite'): AnimatedSprite;
     get(name: 'TiledMap'): TiledMap;
+    get(name: 'Camera'): Camera;
     get(name: 'Label'): Label;
     get(name: 'Box'): Box;
 }

@@ -102,18 +102,30 @@ export default (ctx: CanvasRenderingContext2D): Renderer => (scene: Scene): void
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+    let camera = null;
+    const cameras = Object.values(scene.gameEntities).filter(entity => entity.hasComponent('Camera'));
+    if (cameras.length > 0) {
+        camera = cameras[0].get('Camera')
+    }
+
+    let renderPosition;
     for (const currentEntity of Object.values(scene.gameEntities).filter((e): boolean => e.hasComponent('Position'))) {
         const position = currentEntity.get('Position');
+        renderPosition = new Position(position.x, position.y);
+        if (camera) {
+            renderPosition.x = ctx.canvas.width / 2 + position.x - camera.centerX + camera.offsetX;
+            renderPosition.y = ctx.canvas.height / 2 + position.y - camera.centerY + camera.offsetY;
+        }
 
-        if (currentEntity.hasComponent('Box')) renderBox(position, currentEntity.get('Box'), ctx);
+        if (currentEntity.hasComponent('Box')) renderBox(renderPosition, currentEntity.get('Box'), ctx);
 
-        if (currentEntity.hasComponent('Label')) renderLabel(position, currentEntity.get('Label'), ctx);
+        if (currentEntity.hasComponent('Label')) renderLabel(renderPosition, currentEntity.get('Label'), ctx);
 
-        if (currentEntity.hasComponent('Sprite')) renderSprite(position, currentEntity.get('Sprite'), ctx);
+        if (currentEntity.hasComponent('Sprite')) renderSprite(renderPosition, currentEntity.get('Sprite'), ctx);
 
         if (currentEntity.hasComponent('AnimatedSprite'))
-            renderAnimatedSprite(position, currentEntity.get('AnimatedSprite'), ctx);
+            renderAnimatedSprite(renderPosition, currentEntity.get('AnimatedSprite'), ctx);
 
-        if (currentEntity.hasComponent('TiledMap')) renderTiledMap(position, currentEntity.get('TiledMap'), ctx);
+        if (currentEntity.hasComponent('TiledMap')) renderTiledMap(renderPosition, currentEntity.get('TiledMap'), ctx);
     }
 };

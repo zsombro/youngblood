@@ -7,7 +7,7 @@ import AssetLoader from './services/assetloader';
 import Entity from './entity';
 import render, { Renderer } from './renderer';
 import FramerateManager from './framerateManager';
-import { InputMappingSystem } from './system';
+import { CameraMovementSystem, InputMappingSystem } from './system';
 
 export default class Game {
     private renderer: Renderer;
@@ -90,6 +90,7 @@ export default class Game {
     public addScene(sceneOptions: SceneOptions): Game {
         const scene = new Scene(sceneOptions);
         scene.registerSystem(InputMappingSystem);
+        scene.registerSystem(CameraMovementSystem);
 
         this.gameScenes[sceneOptions.sceneId] = scene;
 
