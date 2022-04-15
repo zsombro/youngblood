@@ -40,4 +40,11 @@ describe('Entity', (): void => {
 
         expect(e.hasComponents(['C1', 'C2'])).to.be.true;
     });
+
+    it('should return false if a system has no component requirements', (): void => {
+        const e = new Entity();
+        e.addComponent(new C1('C1'));
+
+        expect(e.hasComponents([])).to.be.false;
+    });
 });

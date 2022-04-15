@@ -8,6 +8,7 @@ import Entity from './entity';
 import render, { Renderer } from './renderer';
 import FramerateManager from './framerateManager';
 import { CameraMovementSystem, InputMappingSystem } from './system';
+import EventManager from './services/eventmanager';
 
 export default class Game {
     private renderer: Renderer;
@@ -15,26 +16,30 @@ export default class Game {
     private gameScenes: { [index: string]: Scene };
     private currentScene: Scene;
     private framerateManager: FramerateManager;
+    private eventManager: EventManager;
 
     /**
      * Returns a new `Game` instance.
      */
     public constructor() {
         this.renderer = null;
+        this.framerateManager = new FramerateManager(60);
+        this.eventManager = new EventManager();
+        this.gameScenes = {};
+        this.currentScene = null;
 
         this.services = {
             input: new InputManager(),
             audio: new AudioManager(),
             assets: new AssetLoader(),
+            event: {
+                dispatch: this.eventManager.dispatch.bind(this.eventManager),
+                on: this.eventManager.on.bind(this.eventManager),
+            },
             game: {
                 switchToScene: this.switchToScene.bind(this),
             },
         };
-
-        this.gameScenes = {};
-        this.currentScene = null;
-
-        this.framerateManager = new FramerateManager(60);
 
         console.info('Game created');
     }
@@ -156,5 +161,12 @@ export default class Game {
                     system.update(entity, this.currentScene, this.services);
             }
         }
+
+        // Systems that have no component requirements will run once per frame
+        Object.values(this.currentScene.systems)
+            .filter(system => system.requiredComponents.length === 0)
+            .forEach(system => system.update(null, this.currentScene, this.services))
+
+        this.eventManager.emptyQueue();
     }
 }

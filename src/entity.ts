@@ -41,6 +41,9 @@ export default class Entity {
 
     public hasComponents(componentArray: string[]): boolean {
         let len = componentArray.length;
+
+        if (!len) return false;
+        
         for (var i = 0; i < len; i++) {
             if (!this.hasComponent(componentArray[i])) return false;
         }

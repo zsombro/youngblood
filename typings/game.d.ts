@@ -6,6 +6,7 @@ export default class Game {
     private gameScenes;
     private currentScene;
     private framerateManager;
+    private eventManager;
     /**
      * Returns a new `Game` instance.
      */

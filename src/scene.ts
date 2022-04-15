@@ -18,6 +18,7 @@ export interface SceneServices {
     input: InputManager;
     audio: AudioManager;
     assets: AssetLoader;
+    event: { dispatch(event: string, params: any): void, on(event: string, callback: Function): void };
     game: { switchToScene(name: string): void };
 }
 

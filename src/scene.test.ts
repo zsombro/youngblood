@@ -9,11 +9,13 @@ import AssetLoader from './services/assetloader';
 import AudioManager from './services/audiomanager';
 import Game from './game';
 import { Component } from './main';
+import EventManager from './services/eventmanager';
 
 const mockSceneServices: SceneServices = {
     input: new InputManager(),
     assets: new AssetLoader(),
     audio: new AudioManager(),
+    event: new EventManager(),
     game: new Game(),
 };
 
