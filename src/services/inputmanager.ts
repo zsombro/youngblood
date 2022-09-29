@@ -1,7 +1,9 @@
+import EventManager from "./eventmanager";
+
 export default class InputManager {
     public pressedKeys: number[];
 
-    public constructor() {
+    public constructor(eventManager: EventManager) {
         var that = this;
 
         this.pressedKeys = [];
@@ -10,6 +12,7 @@ export default class InputManager {
             'keydown',
             function(e): void {
                 if (that.pressedKeys.indexOf(e.keyCode) === -1) that.pressedKeys.push(e.keyCode);
+                eventManager.dispatch('input.keydown', { code: e.key })
             },
             false,
         );
@@ -18,6 +21,7 @@ export default class InputManager {
             'keyup',
             function(e): void {
                 that.pressedKeys.splice(that.pressedKeys.indexOf(e.keyCode), 1);
+                eventManager.dispatch('input.keyup', { code: e.key })
             },
             false,
         );

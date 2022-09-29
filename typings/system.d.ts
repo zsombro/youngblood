@@ -8,6 +8,7 @@ export interface System {
     };
     update: (e: Entity, scene: Scene, services: SceneServices) => void;
 }
+export declare const VelocitySystem: System;
 export declare const InputMappingSystem: System;
 export declare const TiledMapSystem: System;
 export declare const CameraMovementSystem: System;

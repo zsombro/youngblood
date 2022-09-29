@@ -30,6 +30,10 @@
 
                         scene.addEntity(e)
                     })
+
+                    services.event.on('input.keyup', e => {
+                        scene.addEntity([new yb.Position(Math.random() * 100, Math.random() * 100), new yb.Label(e.code, { color: '#f00' })])
+                    })
                 }
             }
 

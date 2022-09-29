@@ -12,7 +12,7 @@ import { Component } from './main';
 import EventManager from './services/eventmanager';
 
 const mockSceneServices: SceneServices = {
-    input: new InputManager(),
+    input: new InputManager(new EventManager()),
     assets: new AssetLoader(),
     audio: new AudioManager(),
     event: new EventManager(),

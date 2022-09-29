@@ -7,7 +7,7 @@
   "typings": "typings/main.d.ts",
   "scripts": {
     "clean": "shx rm -rf bundles lib lib-esm typings",
-    "build": "npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack --env.mode=production",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack --env.mode=production",
     "test": "karma start karma.conf.js --single-run",
     "coverage": "nyc -r text -e .ts -x \"src/**/*/*.test.ts\" npm run test"
   },

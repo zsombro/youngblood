@@ -7,7 +7,7 @@ import AssetLoader from './services/assetloader';
 import Entity from './entity';
 import render, { Renderer } from './renderer';
 import FramerateManager from './framerateManager';
-import { CameraMovementSystem, InputMappingSystem } from './system';
+import { CameraMovementSystem, InputMappingSystem, VelocitySystem } from './system';
 import EventManager from './services/eventmanager';
 
 export default class Game {
@@ -29,7 +29,7 @@ export default class Game {
         this.currentScene = null;
 
         this.services = {
-            input: new InputManager(),
+            input: new InputManager(this.eventManager),
             audio: new AudioManager(),
             assets: new AssetLoader(),
             event: {
@@ -94,6 +94,7 @@ export default class Game {
      */
     public addScene(sceneOptions: SceneOptions): Game {
         const scene = new Scene(sceneOptions);
+        scene.registerSystem(VelocitySystem);
         scene.registerSystem(InputMappingSystem);
         scene.registerSystem(CameraMovementSystem);
 

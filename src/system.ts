@@ -8,6 +8,18 @@ export interface System {
     update: (e: Entity, scene: Scene, services: SceneServices) => void;
 }
 
+export const VelocitySystem: System = {
+    systemId: 'velocitySystem',
+    requiredComponents: ['Position', 'Velocity'],
+    update: function(entity) {
+        const pos = entity.get('Position')
+        const vel = entity.get('Velocity')
+
+        pos.x += vel.x
+        pos.y += vel.y
+    }
+};
+
 export const InputMappingSystem: System = {
     systemId: 'inputMappingSystem',
     requiredComponents: ['InputMapping'],
