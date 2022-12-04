@@ -6,8 +6,8 @@ import AssetLoader from './services/assetloader';
 
 import Entity from './entity';
 import render, { Renderer } from './renderer';
-import FramerateManager from './framerateManager';
-import { CameraMovementSystem, InputMappingSystem, VelocitySystem } from './system';
+import FramerateManager, { FrameData } from './framerateManager';
+import { CameraMovementSystem, InputMappingSystem, TiledMapSystem, VelocitySystem } from './system';
 import EventManager from './services/eventmanager';
 
 export default class Game {
@@ -97,6 +97,7 @@ export default class Game {
         scene.registerSystem(VelocitySystem);
         scene.registerSystem(InputMappingSystem);
         scene.registerSystem(CameraMovementSystem);
+        scene.registerSystem(TiledMapSystem);
 
         this.gameScenes[sceneOptions.sceneId] = scene;
 
@@ -142,16 +143,16 @@ export default class Game {
         window.requestAnimationFrame((): void => this.startSystem());
 
         this.framerateManager.processFrame(
-            (): void => {
+            (frameData): void => {
                 if (!this.currentScene) return;
 
-                this.update();
+                this.update(frameData);
                 this.renderer(this.currentScene);
             },
         );
     }
 
-    private update(): void {
+    private update(frameData: FrameData): void {
         for (const e in this.currentScene.gameEntities) {
             const entity: Entity = this.currentScene.gameEntities[e];
 
@@ -159,14 +160,14 @@ export default class Game {
                 const system = this.currentScene.systems[s];
 
                 if (entity.hasComponents(system.requiredComponents))
-                    system.update(entity, this.currentScene, this.services);
+                    system.update(entity, this.currentScene, this.services, frameData);
             }
         }
 
         // Systems that have no component requirements will run once per frame
         Object.values(this.currentScene.systems)
             .filter(system => system.requiredComponents.length === 0)
-            .forEach(system => system.update(null, this.currentScene, this.services))
+            .forEach(system => system.update(null, this.currentScene, this.services, frameData))
 
         this.eventManager.emptyQueue();
     }

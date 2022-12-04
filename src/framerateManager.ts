@@ -1,3 +1,10 @@
+export interface FrameData {
+    delta: number;
+    currentFrame: number;
+}
+
+export type FrameFunction = (frameData: FrameData) => void;
+
 export default class FramerateManager {
     private fps: number;
     private interval: number;
@@ -5,18 +12,25 @@ export default class FramerateManager {
     private now: number;
     private delta: number;
 
+    private currentFrame: number = 0;
+
     public constructor(fps: number) {
         this.setFramerate(fps);
     }
 
-    public processFrame(callback: Function): void {
+    public processFrame(callback: FrameFunction): void {
         this.now = Date.now();
         this.delta = this.now - this.then;
 
         if (this.delta > this.interval) {
             this.then = this.now - (this.delta % this.interval);
 
-            callback();
+            if (this.currentFrame < this.fps)
+                this.currentFrame++;
+            else
+                this.currentFrame = 0;
+            
+            callback({ delta: this.delta, currentFrame: this.currentFrame });
         }
     }
 

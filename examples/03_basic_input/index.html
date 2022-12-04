@@ -30,21 +30,24 @@
 		const movementSystem = {
 			systemId: 'movementSystem',
 			requiredComponents: ['Position', 'Velocity', 'InputMapping'],
-			update: entity => {
-				if (entity.InputMapping.down)
-					entity.Position.y += entity.Velocity.y;
-				if (entity.InputMapping.up)
-					entity.Position.y -= entity.Velocity.y;
-				if (entity.InputMapping.left)
-					entity.Position.x -= entity.Velocity.x;
-				if (entity.InputMapping.right)
-					entity.Position.x += entity.Velocity.x;
+			update: (entity, scene, services, frameData) => {
+					entity.Velocity = { x: 0, y: 0 };
+
+					if (entity.InputMapping.down)
+						entity.Velocity.y = 1;
+					if (entity.InputMapping.up)
+						entity.Velocity.y = -1;
+					if (entity.InputMapping.left)
+						entity.Velocity.x = -1;
+					if (entity.InputMapping.right)
+						entity.Velocity.x = 1;
 				}
+
 		}
 
 		const player = () => [
 			new yb.Position(10, 10),
-			new yb.Velocity(1, 1),
+			new yb.Velocity(0, 0),
 			new yb.Box(30, 30, 'rgb(0, 0, 0, 1)'),
 			new yb.InputMapping([
 				{ name: 'up', code: 38 },
