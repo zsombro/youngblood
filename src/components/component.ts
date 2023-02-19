@@ -6,7 +6,7 @@
  * Like entities, components are JUST DATA and not logic!
  */
 export default class Component {
-    public name: any;
+    public name: string;
 
     public constructor(name: string) {
         this.name = name;
@@ -46,9 +46,9 @@ export class Label extends Component {
 
         this.txt = txt;
 
-        this.color = options.color || '#000';
-        this.font = options.font || 'monospace';
-        this.isVisible = options.isVisible || true;
+        this.color = options.color ?? '#000';
+        this.font = options.font ?? 'monospace';
+        this.isVisible = options.isVisible ?? true;
     }
 }
 
@@ -110,10 +110,10 @@ export class AnimatedSprite extends Component {
 
         // If there's no default animation set, we'll use the first one defined in the JSON object
         this.animationName = options.animationName || Object.keys(animationSheet)[0];
-        this.scale = options.scale || 1.0;
-        this.loop = options.loop || true;
-        this.isPlaying = options.isPlaying || true;
-        this.flip = options.flip || false;
+        this.scale = options.scale ?? 1.0;
+        this.loop = options.loop ?? true;
+        this.isPlaying = options.isPlaying ?? true;
+        this.flip = options.flip ?? false;
 
         this.currentFrame = 0;
     }
@@ -158,9 +158,9 @@ export interface KeyMapping {
 }
 
 export class InputMapping extends Component {
-    [index: string]: boolean;
+    [index: string]: boolean | KeyMapping[] | string;
 
-    public mapping: any;
+    public mapping: KeyMapping[];
 
     // for eg. mapping = [ {name: 'up', code: 38} ]
     public constructor(mapping: KeyMapping[]) {

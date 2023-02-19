@@ -115,7 +115,7 @@ export default class Game {
      */
     public removeScene(sceneId: string): Scene {
         const scene = this.gameScenes[sceneId];
-        delete this.gameScenes[sceneId];
+        this.gameScenes[sceneId] = undefined;
 
         return scene;
     }
@@ -127,7 +127,7 @@ export default class Game {
      */
     public switchToScene(sceneId: string): Game {
         if (this.gameScenes[sceneId] == null) {
-            console.error("Scene doesn't exist: " + sceneId);
+            console.error(`Scene doesn't exist: ${sceneId}`);
             return this;
         }
 

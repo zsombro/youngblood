@@ -1,6 +1,6 @@
 interface Event {
     event: string;
-    params: any;
+    params: object;
 }
 
 export default class EventManager {
@@ -18,7 +18,7 @@ export default class EventManager {
             .forEach(e => callback(e.params))
     }
 
-    public dispatch(event: string, params: any) {
+    public dispatch(event: string, params: object) {
         this.dispatchQueue.push({ event, params })
     }
 

@@ -11,16 +11,18 @@ import Component, {
 } from './components/component';
 import TiledMap from './components/tiledMap';
 
-export default class Entity {
-    [x: string]: Component;
+let entityCount = 0;
 
-    public id: any;
-    public count: any;
+export default class Entity {
+    [x: string]: Component | number;
+
+    public id: number;
+    public count: number;
 
     public constructor() {
-        this.id = Entity.prototype.count;
+        this.id = entityCount;
 
-        Entity.prototype.count++;
+        entityCount++;
     }
 
     public addComponent(component: Component): void {
@@ -32,7 +34,7 @@ export default class Entity {
     }
 
     public removeComponent(componentName: string): void {
-        delete this[componentName];
+        this[componentName] = undefined;
     }
 
     public hasComponent(componentName: string): boolean {
@@ -60,9 +62,7 @@ export default class Entity {
     public get(name: 'Camera'): Camera;
     public get(name: 'Label'): Label;
     public get(name: 'Box'): Box;
-    public get(name: string): any {
+    public get(name: string): unknown {
         return this[name];
     }
 }
-
-Entity.prototype.count = 0;

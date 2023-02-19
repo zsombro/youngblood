@@ -7,6 +7,8 @@ interface AssetData {
     url: string;
 }
 
+type Asset = HTMLImageElement | AudioBuffer | Object | TiledMapData | TiledSheetData
+
 const audioContext = new AudioContext();
 
 function fetchImage(url: string): Promise<HTMLImageElement> {
@@ -26,8 +28,8 @@ async function fetchAudio(url: string): Promise<AudioBuffer> {
         .then((buffer: ArrayBuffer): Promise<AudioBuffer> => audioContext.decodeAudioData(buffer));
 }
 
-async function fetchObject(url: string): Promise<any> {
-    return fetch(url).then((response: Response): Promise<any> => response.json());
+async function fetchObject(url: string): Promise<unknown> {
+    return fetch(url).then((response: Response): Promise<unknown> => response.json());
 }
 
 async function fetchTiledMap(url: string): Promise<TiledMapData> {
@@ -76,7 +78,7 @@ export function getExtension(url: string): string {
 export default class AssetLoader {
     private taskQueueLength: number;
     private completedTasks: number;
-    private assets: Record<string, any>;
+    private assets: Record<string, Asset>;
 
     public constructor() {
         this.taskQueueLength = 0;
@@ -84,7 +86,7 @@ export default class AssetLoader {
         this.assets = {};
     }
 
-    public async load(assetListUrl: string): Promise<Record<string, any>> {
+    public async load(assetListUrl: string): Promise<Record<string, Asset>> {
         const response = await fetch(assetListUrl);
         const json = await response.json();
         const assetData: AssetData[] = json.assets;
@@ -105,7 +107,7 @@ export default class AssetLoader {
         return this.assets[name];
     }
 
-    private async fetchAsset(asset: AssetData): Promise<any> {
+    private async fetchAsset(asset: AssetData): Promise<void> {
         const extension = getExtension(asset.url);
         const assetName = asset.url.replace(extension, '');
 

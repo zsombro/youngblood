@@ -24,11 +24,11 @@ export default class AudioManager {
     }
 
     public setBackgroundMusic(buffer: AudioBuffer, loop: boolean): void {
-        if (this.songsPlaying.indexOf(buffer) == -1) {
+        if (this.songsPlaying.indexOf(buffer) === -1) {
             const source = this.audioContext.createBufferSource();
 
             source.buffer = buffer;
-            source.loop = loop || false;
+            source.loop = loop;
 
             source.connect(this.musicVolume);
             source.start();
@@ -44,7 +44,7 @@ export default class AudioManager {
     public playSound(buffer: AudioBuffer, loop: boolean): void {
         const source = this.audioContext.createBufferSource();
         source.buffer = buffer;
-        source.loop = loop || false;
+        source.loop = loop;
 
         source.connect(this.effectsVolume);
 

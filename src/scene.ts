@@ -18,7 +18,7 @@ export interface SceneServices {
     input: InputManager;
     audio: AudioManager;
     assets: AssetLoader;
-    event: { dispatch(event: string, params: any): void, on(event: string, callback: Function): void };
+    event: { dispatch(event: string, params: unknown): void, on(event: string, callback: Function): void };
     game: { switchToScene(name: string): void };
 }
 
@@ -41,9 +41,9 @@ export class Scene {
 
         this.initialized = false;
 
-        this.alwaysInitialize = options.alwaysInitialize || true;
+        this.alwaysInitialize = options.alwaysInitialize ?? true;
 
-        this.initCallback = options.init || ((): void => {});
+        this.initCallback = options.init ?? ((): void => {});
 
         this.gameEntities = {};
         this.systems = {};
@@ -67,7 +67,7 @@ export class Scene {
     }
 
     public unregisterSystem(system: System): void {
-        delete this.systems[system.systemId];
+        this.systems[system.systemId] = undefined;
     }
 
     public addEntity(entity: Entity | Component[]): void {
@@ -81,6 +81,6 @@ export class Scene {
     }
 
     public removeEntity(id: number): void {
-        delete this.gameEntities[id];
+        this.gameEntities[id] = undefined;
     }
 }
