@@ -1,4 +1,4 @@
-import { Scene, SceneServices, SceneOptions } from './scene';
+import { Scene, ISceneServices, SceneOptions } from './scene';
 
 import InputManager from './services/inputmanager';
 import AudioManager from './services/audiomanager';
@@ -12,7 +12,7 @@ import EventManager from './services/eventmanager';
 
 export default class Game {
     private renderer: Renderer;
-    private services: SceneServices;
+    private services: ISceneServices;
     private gameScenes: { [index: string]: Scene };
     private currentScene: Scene;
     private framerateManager: FramerateManager;
@@ -51,9 +51,9 @@ export default class Game {
      * you only have one `<canvas>` element on your page. _Irrelevant if you've registered
      * a custom renderer._
      */
-    public startRendering(canvasSelector: string = 'canvas'): void {
+    public startRendering(canvasElement: string | HTMLCanvasElement): void {
         if (!this.renderer) {
-            const canvas = document.querySelector(canvasSelector) as HTMLCanvasElement;
+            const canvas = this.getCanvas(canvasElement);
             if (!canvas) throw new Error('No canvas element was found in the document');
 
             const ctx = canvas.getContext('2d');
@@ -153,22 +153,32 @@ export default class Game {
     }
 
     private update(frameData: FrameData): void {
-        for (const e in this.currentScene.gameEntities) {
-            const entity: Entity = this.currentScene.gameEntities[e];
+        for (let i = 0; i < this.currentScene.systems.length; i++) {
+            const system = this.currentScene.systems[i];
 
-            for (const s in this.currentScene.systems) {
-                const system = this.currentScene.systems[s];
+            // Systems that have no component requirements will run once per frame
+            if (system.requiredComponents.length === 0) {
+                system.update(null, this.currentScene, this.services, frameData);
+                continue;
+            }
 
-                if (entity.hasComponents(system.requiredComponents))
+            for (let j = 0; j < this.currentScene.gameEntities.length; j++) {
+                const entity: Entity = this.currentScene.gameEntities[j];
+
+                if (system.requiredComponents && entity.hasComponents(system.requiredComponents))
                     system.update(entity, this.currentScene, this.services, frameData);
             }
         }
 
-        // Systems that have no component requirements will run once per frame
-        Object.values(this.currentScene.systems)
-            .filter(system => system.requiredComponents.length === 0)
-            .forEach(system => system.update(null, this.currentScene, this.services, frameData))
-
         this.eventManager.emptyQueue();
+    }
+
+    private getCanvas(canvas: string | HTMLCanvasElement = 'canvas'): HTMLCanvasElement {
+        switch (typeof canvas) {
+            case 'string':
+                return document.querySelector(canvas) as HTMLCanvasElement
+            case 'object':
+                return canvas
+        }
     }
 }

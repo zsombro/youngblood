@@ -18,7 +18,7 @@ export default class Game {
      * you only have one `<canvas>` element on your page. _Irrelevant if you've registered
      * a custom renderer._
      */
-    startRendering(canvasSelector?: string): void;
+    startRendering(canvasElement: string | HTMLCanvasElement): void;
     /**
      * Set an upper framerate limit. `60` by default!
      * @param fps
@@ -50,4 +50,5 @@ export default class Game {
     switchToScene(sceneId: string): Game;
     private startSystem;
     private update;
+    private getCanvas;
 }

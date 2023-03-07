@@ -1,13 +1,13 @@
 import Entity from './entity';
 import { FrameData } from './framerateManager';
-import { Scene, SceneServices } from './scene';
+import { Scene, ISceneServices } from './scene';
 export interface System {
-    systemId: string;
+    id: string;
     requiredComponents: string[];
-    eventSubscriptions?: (e: Entity, scene: Scene, services: SceneServices) => {
+    eventSubscriptions?: (e: Entity, scene: Scene, services: ISceneServices) => {
         [x: string]: Function;
     };
-    update: (e: Entity, scene: Scene, services: SceneServices, frameData: FrameData) => void;
+    update: (e: Entity, scene: Scene, services: ISceneServices, frameData: FrameData) => void;
 }
 export declare const VelocitySystem: System;
 export declare const InputMappingSystem: System;

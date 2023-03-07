@@ -8,12 +8,16 @@ class C1 extends Component {}
 class C2 extends Component {}
 
 describe('Entity', (): void => {
-    it('should auto-increment IDs', (): void => {
+    it('should auto-generate IDs if not supplied', (): void => {
         const e = new Entity();
-        const e2 = new Entity();
 
-        expect(e.id).to.be.equal(0);
-        expect(e2.id).to.be.equal(1);
+        expect(e.id).not.to.be.null;
+    });
+
+    it('should use IDs if provided', (): void => {
+        const e = new Entity('aaa');
+
+        expect(e.id).to.be.equal('aaa');
     });
 
     it('should add components', (): void => {

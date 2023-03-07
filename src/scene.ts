@@ -14,7 +14,7 @@ export interface SceneOptions {
     entities?: EntityFunction[];
 }
 
-export interface SceneServices {
+export interface ISceneServices {
     input: InputManager;
     audio: AudioManager;
     assets: AssetLoader;
@@ -22,22 +22,22 @@ export interface SceneServices {
     game: { switchToScene(name: string): void };
 }
 
-export type SceneInitCallback = (context: Scene, services: SceneServices) => void;
+export type SceneInitCallback = (context: Scene, services: ISceneServices) => void;
 
-export type EntityFunction = (services: SceneServices) => Entity | Component[];
+export type EntityFunction = (services: ISceneServices) => Entity | Component[];
 
 export class Scene {
-    public sceneId: string;
+    public id: string;
     public initialized: boolean;
     public initCallback: SceneInitCallback;
     public alwaysInitialize: boolean;
-    public systems: { [index: string]: System };
-    public gameEntities: { [index: string]: Entity };
+    public systems: System[];
+    public gameEntities: Entity[];
 
     private options: SceneOptions = null;
 
     public constructor(options: SceneOptions) {
-        this.sceneId = options.sceneId;
+        this.id = options.sceneId;
 
         this.initialized = false;
 
@@ -45,13 +45,13 @@ export class Scene {
 
         this.initCallback = options.init ?? ((): void => {});
 
-        this.gameEntities = {};
-        this.systems = {};
+        this.gameEntities = [];
+        this.systems = [];
 
         this.options = options;
     }
 
-    public initialize(context: Scene, services: SceneServices): void {
+    public initialize(context: Scene, services: ISceneServices): void {
         if (this.options.systems) this.options.systems.forEach((s): void => this.registerSystem(s));
         if (this.options.entities) this.options.entities.forEach((entity): void => this.addEntity(entity(services)));
 
@@ -60,27 +60,31 @@ export class Scene {
     }
 
     public registerSystem(system: System): void {
-        if (this.systems[system.systemId])
-            throw new Error(`System with system ID '${system.systemId}' has already been registered`);
+        if (this.systems.map(s => s.id).includes(system.id))
+            throw new Error(`System with ID ${system.id} has already been registered!`)
 
-        this.systems[system.systemId] = system;
+        this.systems.push(system);
     }
 
-    public unregisterSystem(system: System): void {
-        this.systems[system.systemId] = undefined;
+    public unregisterSystem(id: String): void {
+        this.systems[this.systems.findIndex(e => e.id === id)] = undefined
     }
 
     public addEntity(entity: Entity | Component[]): void {
         if (entity instanceof Entity) {
-            this.gameEntities[entity.id] = entity;
+            this.gameEntities.push(entity);
         } else {
             const e = new Entity();
             e.addComponents(entity);
-            this.gameEntities[e.id] = e;
+            this.gameEntities.push(e);
         }
     }
 
-    public removeEntity(id: number): void {
-        this.gameEntities[id] = undefined;
+    public removeEntity(id: string): void {
+        this.gameEntities[this.gameEntities.findIndex(e => e.id === id)] = undefined
+    }
+
+    public getEntitiesWith(componentName: string): Entity[] {
+        return this.gameEntities.filter(e => e.hasComponent(componentName))
     }
 }

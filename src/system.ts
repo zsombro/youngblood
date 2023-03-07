@@ -1,16 +1,16 @@
 import Entity from './entity';
 import { FrameData } from './framerateManager';
-import { Scene, SceneServices } from './scene';
+import { Scene, ISceneServices } from './scene';
 
 export interface System {
-    systemId: string;
+    id: string;
     requiredComponents: string[];
-    eventSubscriptions?: (e: Entity, scene: Scene, services: SceneServices) => { [x: string]: Function };
-    update: (e: Entity, scene: Scene, services: SceneServices, frameData: FrameData) => void;
+    eventSubscriptions?: (e: Entity, scene: Scene, services: ISceneServices) => { [x: string]: Function };
+    update: (e: Entity, scene: Scene, services: ISceneServices, frameData: FrameData) => void;
 }
 
 export const VelocitySystem: System = {
-    systemId: 'velocitySystem',
+    id: 'velocitySystem',
     requiredComponents: ['Position', 'Velocity'],
     update: function(entity) {
         const pos = entity.get('Position')
@@ -22,9 +22,9 @@ export const VelocitySystem: System = {
 };
 
 export const InputMappingSystem: System = {
-    systemId: 'inputMappingSystem',
+    id: 'inputMappingSystem',
     requiredComponents: ['InputMapping'],
-    update: function(entity: Entity, scene: Scene, services: SceneServices): void {
+    update: function(entity: Entity, scene: Scene, services: ISceneServices): void {
         const inputMapping = entity.get('InputMapping');
 
         for (var i = 0; i < inputMapping.mapping.length; i++) {
@@ -35,7 +35,7 @@ export const InputMappingSystem: System = {
 };
 
 export const TiledMapSystem: System = {
-    systemId: 'tiledMapSystem',
+    id: 'tiledMapSystem',
     requiredComponents: ['TiledMap', 'Position', 'InputMapping'],
     update: function(entity: Entity): void {
         const mapData = entity.get('TiledMap');
@@ -43,7 +43,7 @@ export const TiledMapSystem: System = {
 };
 
 export const CameraMovementSystem: System = {
-    systemId: 'cameraMovementSystem',
+    id: 'cameraMovementSystem',
     requiredComponents: ['Position', 'Camera'],
     update: function(entity: Entity): void {
         const position = entity.get('Position');

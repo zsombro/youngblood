@@ -1,5 +1,5 @@
 import Game from './game';
-import { Scene, SceneOptions, SceneInitCallback, SceneServices } from './scene';
+import { Scene, SceneOptions, SceneInitCallback, ISceneServices } from './scene';
 import Entity from './entity';
 
 import {
@@ -25,7 +25,7 @@ export {
     Game,
     Scene,
     SceneOptions,
-    SceneServices,
+    ISceneServices as SceneServices,
     SceneInitCallback,
     System,
     Entity,

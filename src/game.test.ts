@@ -10,7 +10,7 @@ describe('Game', (): void => {
 
         const scene = game.removeScene('test');
 
-        expect(Object.keys(scene.systems)).to.contain('inputMappingSystem');
-        expect(Object.keys(scene.systems)).to.contain('cameraMovementSystem');
+        expect(scene.systems.map(s => s.id)).to.contain('inputMappingSystem');
+        expect(scene.systems.map(s => s.id)).to.contain('cameraMovementSystem');
     });
 });

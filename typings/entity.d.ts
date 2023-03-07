@@ -1,9 +1,8 @@
 import Component, { Position, Velocity, Sprite, AnimatedSprite, InputMapping, Label, Box, Camera } from './components/component';
 import TiledMap from './components/tiledMap';
 export default class Entity {
-    [x: string]: Component;
-    id: any;
-    count: any;
+    [x: string]: Component | string;
+    id: string;
     constructor();
     addComponent(component: Component): void;
     addComponents(components: Component[]): void;

@@ -2,7 +2,7 @@ import 'mocha';
 import { expect } from 'chai';
 
 import Entity from './entity';
-import { Scene, SceneOptions, SceneServices } from './scene';
+import { Scene, SceneOptions, ISceneServices } from './scene';
 import { System } from './system';
 import InputManager from './services/inputmanager';
 import AssetLoader from './services/assetloader';
@@ -11,7 +11,7 @@ import Game from './game';
 import { Component } from './main';
 import EventManager from './services/eventmanager';
 
-const mockSceneServices: SceneServices = {
+const mockSceneServices: ISceneServices = {
     input: new InputManager(new EventManager()),
     assets: new AssetLoader(),
     audio: new AudioManager(),
@@ -36,8 +36,8 @@ describe('Scene', (): void => {
         const sceneOptions: SceneOptions = {
             sceneId: 'test',
             systems: [
-                { systemId: 'system1', requiredComponents: [], update: (): void => {} },
-                { systemId: 'system2', requiredComponents: [], update: (): void => {} },
+                { id: 'system1', requiredComponents: [], update: (): void => {} },
+                { id: 'system2', requiredComponents: [], update: (): void => {} },
             ],
         };
 
@@ -50,7 +50,7 @@ describe('Scene', (): void => {
     it('should throw an error if a system ID has already been registered', (): void => {
         const scene = new Scene({ sceneId: 'test' });
 
-        const system: System = { systemId: 'system1', requiredComponents: [], update: (): void => {} };
+        const system: System = { id: 'system1', requiredComponents: [], update: (): void => {} };
 
         scene.registerSystem(system);
 

@@ -11,36 +11,33 @@ export interface SceneOptions {
     systems?: System[];
     entities?: EntityFunction[];
 }
-export interface SceneServices {
+export interface ISceneServices {
     input: InputManager;
     audio: AudioManager;
     assets: AssetLoader;
     event: {
-        dispatch(event: string, params: any): void;
+        dispatch(event: string, params: unknown): void;
         on(event: string, callback: Function): void;
     };
     game: {
         switchToScene(name: string): void;
     };
 }
-export declare type SceneInitCallback = (context: Scene, services: SceneServices) => void;
-export declare type EntityFunction = (services: SceneServices) => Entity | Component[];
+export type SceneInitCallback = (context: Scene, services: ISceneServices) => void;
+export type EntityFunction = (services: ISceneServices) => Entity | Component[];
 export declare class Scene {
-    sceneId: string;
+    id: string;
     initialized: boolean;
     initCallback: SceneInitCallback;
     alwaysInitialize: boolean;
-    systems: {
-        [index: string]: System;
-    };
-    gameEntities: {
-        [index: string]: Entity;
-    };
+    systems: System[];
+    gameEntities: Entity[];
     private options;
     constructor(options: SceneOptions);
-    initialize(context: Scene, services: SceneServices): void;
+    initialize(context: Scene, services: ISceneServices): void;
     registerSystem(system: System): void;
-    unregisterSystem(system: System): void;
+    unregisterSystem(id: String): void;
     addEntity(entity: Entity | Component[]): void;
-    removeEntity(id: number): void;
+    removeEntity(id: string): void;
+    getEntitiesWith(componentName: string): Entity[];
 }

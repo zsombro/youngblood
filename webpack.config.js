@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
+
 
 module.exports = env => {
     return {
@@ -32,17 +33,16 @@ module.exports = env => {
         optimization: {
             minimize: true,
             minimizer: [
-                new UglifyJsPlugin({
-                    sourceMap: true,
+                new TerserPlugin({
                     include: /\.min\.js$/,
-                    uglifyOptions: {
+                    terserOptions: {
                         mangle: false,
                         compress: {
                             // eslint-disable-next-line @typescript-eslint/camelcase
-                            drop_console: true,
-                        },
-                    },
-                }),
+                            drop_console: true
+                        }
+                    }
+                })
             ],
         },
     };

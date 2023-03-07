@@ -11,18 +11,13 @@ import Component, {
 } from './components/component';
 import TiledMap from './components/tiledMap';
 
-let entityCount = 0;
-
 export default class Entity {
-    [x: string]: Component | number;
+    [x: string]: Component | string;
 
-    public id: number;
-    public count: number;
+    public id: string;
 
-    public constructor() {
-        this.id = entityCount;
-
-        entityCount++;
+    public constructor(id: string = crypto.randomUUID()) {
+        this.id = id;
     }
 
     public addComponent(component: Component): void {

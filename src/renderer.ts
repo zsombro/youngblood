@@ -103,13 +103,13 @@ export default (ctx: CanvasRenderingContext2D): Renderer => (scene: Scene): void
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
     let camera = null;
-    const cameras = Object.values(scene.gameEntities).filter(entity => entity.hasComponent('Camera'));
+    const cameras = scene.getEntitiesWith('Camera');
     if (cameras.length > 0) {
         camera = cameras[0].get('Camera')
     }
 
     let renderPosition;
-    for (const currentEntity of Object.values(scene.gameEntities).filter((e): boolean => e.hasComponent('Position'))) {
+    for (const currentEntity of scene.getEntitiesWith('Position')) {
         const position = currentEntity.get('Position');
         renderPosition = new Position(position.x, position.y);
         if (camera) {
