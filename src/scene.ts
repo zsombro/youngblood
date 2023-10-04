@@ -38,21 +38,17 @@ export class Scene {
 
     public constructor(options: SceneOptions) {
         this.id = options.sceneId;
-
         this.initialized = false;
-
         this.alwaysInitialize = options.alwaysInitialize ?? true;
-
         this.initCallback = options.init ?? ((): void => {});
+        this.options = options;
 
         this.gameEntities = [];
         this.systems = [];
-
-        this.options = options;
     }
 
     public initialize(context: Scene, services: ISceneServices): void {
-        if (this.options.systems) this.options.systems.forEach((s): void => this.registerSystem(s));
+        if (this.options.systems) this.registerSystems(this.options.systems);
         if (this.options.entities) this.options.entities.forEach((entity): void => this.addEntity(entity(services)));
 
         this.initCallback(context, services);
@@ -64,6 +60,10 @@ export class Scene {
             throw new Error(`System with ID ${system.id} has already been registered!`)
 
         this.systems.push(system);
+    }
+
+    public registerSystems(systems: System[]): void {
+        systems.forEach(this.registerSystem.bind(this));
     }
 
     public unregisterSystem(id: String): void {

@@ -7,6 +7,8 @@ export interface System {
     requiredComponents: string[];
     eventSubscriptions?: (e: Entity, scene: Scene, services: ISceneServices) => { [x: string]: Function };
     update: (e: Entity, scene: Scene, services: ISceneServices, frameData: FrameData) => void;
+    onSceneSwitched?: (scene: Scene, services: ISceneServices) => void;
+    onSceneResumed?: (scene: Scene, services: ISceneServices) => void;
 }
 
 export const VelocitySystem: System = {
@@ -27,8 +29,8 @@ export const InputMappingSystem: System = {
     update: function(entity: Entity, scene: Scene, services: ISceneServices): void {
         const inputMapping = entity.get('InputMapping');
 
-        for (var i = 0; i < inputMapping.mapping.length; i++) {
-            let c = inputMapping.mapping[i];
+        for (let i = 0; i < inputMapping.mapping.length; i++) {
+            const c = inputMapping.mapping[i];
             inputMapping[c.name] = services.input.isPressed(c.code);
         }
     },

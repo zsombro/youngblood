@@ -7,7 +7,14 @@ interface AssetData {
     url: string;
 }
 
-type Asset = HTMLImageElement | AudioBuffer | Object | TiledMapData | TiledSheetData
+type Asset 
+    = HTMLImageElement 
+    | AudioBuffer
+    | Object 
+    | TiledMapData 
+    | TiledSheetData
+
+type AssetFunction = (url: string) => Asset;
 
 const audioContext = new AudioContext();
 
@@ -79,11 +86,24 @@ export default class AssetLoader {
     private taskQueueLength: number;
     private completedTasks: number;
     private assets: Record<string, Asset>;
+    private loaders: Record<string, AssetFunction>;
 
     public constructor() {
         this.taskQueueLength = 0;
         this.completedTasks = 0;
         this.assets = {};
+
+        this.loaders = {};
+
+        this.registerLoader('image', fetchImage);
+        this.registerLoader('audio', fetchAudio);
+        this.registerLoader('json', fetchObject);
+        this.registerLoader('tiled-map', fetchTiledMap);
+        this.registerLoader('tiled-set', fetchTiledSet);
+    }
+
+    public registerLoader(type: string, loader: AssetFunction) {
+        this.loaders[type] = loader;
     }
 
     public async load(assetListUrl: string): Promise<Record<string, Asset>> {
@@ -111,22 +131,24 @@ export default class AssetLoader {
         const extension = getExtension(asset.url);
         const assetName = asset.url.replace(extension, '');
 
-        switch (asset.type) {
-            case 'audio':
-                this.assets[assetName] = await fetchAudio(asset.url);
-                break;
-            case 'image':
-                this.assets[assetName] = await fetchImage(asset.url);
-                break;
-            case 'json':
-                this.assets[assetName] = await fetchObject(asset.url);
-                break;
-            case 'tiled-map':
-                this.assets[assetName] = await fetchTiledMap(asset.url);
-                break;
-            case 'tiled-set':
-                this.assets[assetName] = await fetchTiledSet(asset.url);
-        }
+        this.assets[assetName] = await this.loaders[asset.type](asset.url);
+
+        // switch (asset.type) {
+        //     case 'audio':
+        //         this.assets[assetName] = await fetchAudio(asset.url);
+        //         break;
+        //     case 'image':
+        //         this.assets[assetName] = await fetchImage(asset.url);
+        //         break;
+        //     case 'json':
+        //         this.assets[assetName] = await fetchObject(asset.url);
+        //         break;
+        //     case 'tiled-map':
+        //         this.assets[assetName] = await fetchTiledMap(asset.url);
+        //         break;
+        //     case 'tiled-set':
+        //         this.assets[assetName] = await fetchTiledSet(asset.url);
+        // }
 
         this.completedTasks++;
     }
