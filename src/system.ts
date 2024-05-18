@@ -9,6 +9,7 @@ export interface System {
     update: (e: Entity, scene: Scene, services: ISceneServices, frameData: FrameData) => void;
     onSceneSwitched?: (scene: Scene, services: ISceneServices) => void;
     onSceneResumed?: (scene: Scene, services: ISceneServices) => void;
+    onBeforeUpdate?: (scene: Scene, services: ISceneServices, frameData: FrameData) => void;
 }
 
 export const VelocitySystem: System = {

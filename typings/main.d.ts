@@ -5,4 +5,5 @@ import { Position, Velocity, Sprite, AnimatedSprite, AnimatedSpriteOptions, Box,
 import TiledMap, { TiledMapData, TiledSheetData } from './components/tiledMap';
 import Component from './components/component';
 import { CameraMovementSystem, InputMappingSystem, System } from './system';
-export { Game, Scene, SceneOptions, ISceneServices as SceneServices, SceneInitCallback, System, Entity, Component, Position, Velocity, Sprite, AnimatedSprite, AnimatedSpriteOptions, AnimationSheet, Box, Camera, InputMapping, InputMappingSystem, CameraMovementSystem, Label, TiledMap, TiledMapData, TiledSheetData, };
+import { PhysicsSystem, PhysicsObject } from './systems/physicsSystem';
+export { Game, Scene, SceneOptions, ISceneServices as SceneServices, SceneInitCallback, System, Entity, Component, Position, Velocity, Sprite, AnimatedSprite, AnimatedSpriteOptions, AnimationSheet, Box, Camera, InputMapping, InputMappingSystem, CameraMovementSystem, PhysicsSystem, PhysicsObject, Label, TiledMap, TiledMapData, TiledSheetData, };

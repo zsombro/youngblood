@@ -35,13 +35,15 @@ export class Scene {
     public gameEntities: Entity[];
 
     private options: SceneOptions = null;
+    private services: ISceneServices = null;
 
-    public constructor(options: SceneOptions) {
+    public constructor(options: SceneOptions, services: ISceneServices) {
         this.id = options.sceneId;
         this.initialized = false;
         this.alwaysInitialize = options.alwaysInitialize ?? true;
         this.initCallback = options.init ?? ((): void => {});
         this.options = options;
+        this.services = services;
 
         this.gameEntities = [];
         this.systems = [];
@@ -77,6 +79,7 @@ export class Scene {
             const e = new Entity();
             e.addComponents(entity);
             this.gameEntities.push(e);
+            this.services.event.dispatch('scene.entity_added', e);
         }
     }
 

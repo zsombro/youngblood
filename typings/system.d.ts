@@ -8,6 +8,9 @@ export interface System {
         [x: string]: Function;
     };
     update: (e: Entity, scene: Scene, services: ISceneServices, frameData: FrameData) => void;
+    onSceneSwitched?: (scene: Scene, services: ISceneServices) => void;
+    onSceneResumed?: (scene: Scene, services: ISceneServices) => void;
+    onBeforeUpdate?: (scene: Scene, services: ISceneServices, frameData: FrameData) => void;
 }
 export declare const VelocitySystem: System;
 export declare const InputMappingSystem: System;

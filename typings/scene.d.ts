@@ -33,9 +33,11 @@ export declare class Scene {
     systems: System[];
     gameEntities: Entity[];
     private options;
-    constructor(options: SceneOptions);
+    private services;
+    constructor(options: SceneOptions, services: ISceneServices);
     initialize(context: Scene, services: ISceneServices): void;
     registerSystem(system: System): void;
+    registerSystems(systems: System[]): void;
     unregisterSystem(id: String): void;
     addEntity(entity: Entity | Component[]): void;
     removeEntity(id: string): void;

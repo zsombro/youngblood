@@ -1,5 +1,5 @@
-import { Scene, SceneOptions } from './scene';
-import { Renderer } from './renderer';
+import { Scene, SceneOptions } from "./scene";
+import { Renderer } from "./renderer";
 export default class Game {
     private renderer;
     private services;

@@ -16,6 +16,7 @@ import {
 import EventManager from "./services/eventmanager";
 import { AudioSystem } from "./systems/audiosystem";
 import { ScriptSystem } from "./systems/scriptsystem";
+import { PhysicsSystem } from "./systems/physicsSystem";
 
 export default class Game {
 	private renderer: Renderer;
@@ -101,7 +102,7 @@ export default class Game {
 	 * initialized.
 	 */
 	public addScene(sceneOptions: SceneOptions): Game {
-		const scene = new Scene(sceneOptions);
+		const scene = new Scene(sceneOptions, this.services);
 		scene.registerSystems([
 			AudioSystem,
 			ScriptSystem,
@@ -109,6 +110,7 @@ export default class Game {
 			InputMappingSystem,
 			CameraMovementSystem,
 			TiledMapSystem,
+			new PhysicsSystem()
 		]);
 
 		this.gameScenes[sceneOptions.sceneId] = scene;
@@ -165,6 +167,8 @@ export default class Game {
 	private update(frameData: FrameData): void {
 		for (let i = 0; i < this.currentScene.systems.length; i++) {
 			const system = this.currentScene.systems[i];
+
+			system.onBeforeUpdate?.(this.currentScene, this.services, frameData)
 
 			// Systems that have no component requirements will run once per frame
 			if (system.requiredComponents.length === 0) {

@@ -10,6 +10,7 @@ import Component, {
     Camera,
 } from './components/component';
 import TiledMap from './components/tiledMap';
+import { PhysicsObject } from './systems/physicsSystem'
 
 export default class Entity {
     [x: string]: Component | string;
@@ -57,6 +58,7 @@ export default class Entity {
     public get(name: 'Camera'): Camera;
     public get(name: 'Label'): Label;
     public get(name: 'Box'): Box;
+    public get(name: 'PhysicsObject'): PhysicsObject;
     public get(name: string): unknown {
         return this[name];
     }

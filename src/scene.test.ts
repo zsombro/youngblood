@@ -26,7 +26,7 @@ describe('Scene', (): void => {
             entities: [(): Entity => new Entity(), (): Component[] => []],
         };
 
-        const scene = new Scene(sceneOptions);
+        const scene = new Scene(sceneOptions, mockSceneServices);
         scene.initialize(scene, mockSceneServices);
 
         expect(Object.values(scene.gameEntities).length).to.equal(2);
@@ -41,14 +41,14 @@ describe('Scene', (): void => {
             ],
         };
 
-        const scene = new Scene(sceneOptions);
+        const scene = new Scene(sceneOptions, mockSceneServices);
         scene.initialize(scene, mockSceneServices);
 
         expect(Object.values(scene.systems).length).to.equal(2);
     });
 
     it('should throw an error if a system ID has already been registered', (): void => {
-        const scene = new Scene({ sceneId: 'test' });
+        const scene = new Scene({ sceneId: 'test' }, mockSceneServices);
 
         const system: System = { id: 'system1', requiredComponents: [], update: (): void => {} };
 

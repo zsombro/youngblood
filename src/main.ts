@@ -12,7 +12,7 @@ import {
     InputMapping,
     Label,
     AnimationSheet,
-    Camera
+    Camera,
 } from './components/component';
 
 import TiledMap, { TiledMapData, TiledSheetData } from './components/tiledMap';
@@ -20,6 +20,7 @@ import TiledMap, { TiledMapData, TiledSheetData } from './components/tiledMap';
 import Component from './components/component';
 
 import { CameraMovementSystem, InputMappingSystem, System } from './system';
+import { PhysicsSystem, PhysicsObject } from './systems/physicsSystem';
 
 export {
     Game,
@@ -41,6 +42,8 @@ export {
     InputMapping,
     InputMappingSystem,
     CameraMovementSystem,
+    PhysicsSystem,
+    PhysicsObject,
     Label,
     TiledMap,
     TiledMapData,
