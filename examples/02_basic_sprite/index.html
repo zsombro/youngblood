@@ -29,8 +29,8 @@
 			sprite.src = "sprite1.png";
 
 			var e = new yb.Entity();
-			e.addComponent(new yb.Position(10, 10));
-			e.addComponent(new yb.Sprite(sprite));
+			e.addComponent(new yb.transform({ position: { x: 10, y: 10 }}));
+			e.addComponent(new yb.sprite({ spriteSource: sprite }));
 
 			context.addEntity(e);
 		}

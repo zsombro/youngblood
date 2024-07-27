@@ -23,16 +23,16 @@
                 systemId: 'objectSpawningSystem',
                 requiredComponents: [],
                 update(entity, scene, services) {
-                    services.event.on('spawn_object', ({ x, y }) => {
+                    services.event.on('spawn_object', position => {
                         const e = new yb.Entity()
-                        e.addComponent(new yb.Position(x, y))
-                        e.addComponent(new yb.Box(30, 30, 'rgba(0, 0, 0, 1)'))
+                        e.addComponent(yb.transform({ position }))
+                        e.addComponent(yb.box({ width: 30, height: 30, fillStyle: 'rgb(0, 0, 0, 1)'}))
 
                         scene.addEntity(e)
                     })
 
                     services.event.on('input.keyup', e => {
-                        scene.addEntity([new yb.Position(Math.random() * 100, Math.random() * 100), new yb.Label(e.code, { color: '#f00' })])
+                        scene.addEntity([yb.transform({ position: { x: Math.random() * 100, y: Math.random() * 100}}), yb.label({ txt: e.code, color: '#f00' })])
                     })
                 }
             }

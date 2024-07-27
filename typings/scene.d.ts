@@ -4,6 +4,7 @@ import InputManager from './services/inputmanager';
 import AudioManager from './services/audiomanager';
 import AssetLoader from './services/assetloader';
 import { Component } from './main';
+import { ComponentFunction } from './components/component';
 export interface SceneOptions {
     sceneId: string;
     alwaysInitialize?: boolean;
@@ -24,7 +25,7 @@ export interface ISceneServices {
     };
 }
 export type SceneInitCallback = (context: Scene, services: ISceneServices) => void;
-export type EntityFunction = (services: ISceneServices) => Entity | Component[];
+export type EntityFunction = (services: ISceneServices) => Entity | Component<any>[];
 export declare class Scene {
     id: string;
     initialized: boolean;
@@ -39,7 +40,7 @@ export declare class Scene {
     registerSystem(system: System): void;
     registerSystems(systems: System[]): void;
     unregisterSystem(id: String): void;
-    addEntity(entity: Entity | Component[]): void;
+    addEntity(entity: Entity | Component<any>[]): void;
     removeEntity(id: string): void;
-    getEntitiesWith(componentName: string): Entity[];
+    getEntitiesWith(component: string | ComponentFunction<any>): Entity[];
 }

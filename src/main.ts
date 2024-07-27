@@ -3,24 +3,33 @@ import { Scene, SceneOptions, SceneInitCallback, ISceneServices } from './scene'
 import Entity from './entity';
 
 import {
-    Position,
-    Velocity,
+    component,
+    transform,
+    Transform,
+    velocity,
+    Vector2,
+    sprite,
     Sprite,
+    animatedSprite,
     AnimatedSprite,
     AnimatedSpriteOptions,
-    Box,
-    InputMapping,
-    Label,
     AnimationSheet,
+    box,
+    Box,
+    inputMapping,
+    InputMapping,
+    label,
+    Label,
+    camera,
     Camera,
 } from './components/component';
 
-import TiledMap, { TiledMapData, TiledSheetData } from './components/tiledMap';
+import tiledMap, { TiledMapData, TiledSheetData, TiledMap } from './components/tiledMap';
 
 import Component from './components/component';
 
 import { CameraMovementSystem, InputMappingSystem, System } from './system';
-import { PhysicsSystem, PhysicsObject } from './systems/physicsSystem';
+import { PhysicsSystem, PhysicsObject, physicsObject } from './systems/physicsSystem';
 
 export {
     Game,
@@ -30,22 +39,22 @@ export {
     SceneInitCallback,
     System,
     Entity,
-    Component,
-    Position,
-    Velocity,
-    Sprite,
-    AnimatedSprite,
+    component, Component,
+    transform, Transform,
+    velocity, Vector2,
+    animatedSprite, AnimatedSprite,
+    sprite, Sprite,
     AnimatedSpriteOptions,
     AnimationSheet,
-    Box,
-    Camera,
-    InputMapping,
+    box, Box,
+    camera, Camera,
+    inputMapping, InputMapping,
     InputMappingSystem,
     CameraMovementSystem,
     PhysicsSystem,
-    PhysicsObject,
-    Label,
-    TiledMap,
+    physicsObject, PhysicsObject,
+    label, Label,
+    tiledMap, TiledMap,
     TiledMapData,
     TiledSheetData,
 };

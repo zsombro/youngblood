@@ -5,6 +5,7 @@ import InputManager from './services/inputmanager';
 import AudioManager from './services/audiomanager';
 import AssetLoader from './services/assetloader';
 import { Component } from './main';
+import { ComponentFunction } from './components/component';
 
 export interface SceneOptions {
     sceneId: string;
@@ -24,7 +25,7 @@ export interface ISceneServices {
 
 export type SceneInitCallback = (context: Scene, services: ISceneServices) => void;
 
-export type EntityFunction = (services: ISceneServices) => Entity | Component[];
+export type EntityFunction = (services: ISceneServices) => Entity | Component<any>[];
 
 export class Scene {
     public id: string;
@@ -72,22 +73,23 @@ export class Scene {
         this.systems[this.systems.findIndex(e => e.id === id)] = undefined
     }
 
-    public addEntity(entity: Entity | Component[]): void {
+    public addEntity(entity: Entity | Component<any>[]): void {
         if (entity instanceof Entity) {
             this.gameEntities.push(entity);
         } else {
             const e = new Entity();
             e.addComponents(entity);
             this.gameEntities.push(e);
-            this.services.event.dispatch('scene.entity_added', e);
         }
+
+        this.services.event.dispatch('scene.entity_added', entity);
     }
 
     public removeEntity(id: string): void {
         this.gameEntities[this.gameEntities.findIndex(e => e.id === id)] = undefined
     }
 
-    public getEntitiesWith(componentName: string): Entity[] {
-        return this.gameEntities.filter(e => e.hasComponent(componentName))
+    public getEntitiesWith(component: string | ComponentFunction<any>): Entity[] {
+        return this.gameEntities.filter(e => e.hasComponent(component))
     }
 }

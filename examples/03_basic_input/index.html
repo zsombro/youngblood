@@ -29,32 +29,33 @@
 
 		const movementSystem = {
 			systemId: 'movementSystem',
-			requiredComponents: ['Position', 'Velocity', 'InputMapping'],
+			requiredComponents: ['transform', 'velocity', 'inputMapping'],
 			update: (entity, scene, services, frameData) => {
-					entity.Velocity = { x: 0, y: 0 };
+					entity.velocity = { x: 0, y: 0 };
+					const input = entity.get(yb.inputMapping);
 
-					if (entity.InputMapping.down)
-						entity.Velocity.y = 1;
-					if (entity.InputMapping.up)
-						entity.Velocity.y = -1;
-					if (entity.InputMapping.left)
-						entity.Velocity.x = -1;
-					if (entity.InputMapping.right)
-						entity.Velocity.x = 1;
+					if (entity.inputMapping.down)
+						entity.velocity.y = 1;
+					if (entity.inputMapping.up)
+						entity.velocity.y = -1;
+					if (entity.inputMapping.left)
+						entity.velocity.x = -1;
+					if (entity.inputMapping.right)
+						entity.velocity.x = 1;
 				}
 
 		}
 
 		const player = () => [
-			new yb.Position(10, 10),
-			new yb.Velocity(0, 0),
-			new yb.Box(30, 30, 'rgb(0, 0, 0, 1)'),
-			new yb.InputMapping([
+			yb.transform({ position: { x: 10, y: 10 }}),
+			yb.velocity({ x: 0, y: 0}),
+			yb.box({ width: 30, height: 30, fillStyle: 'rgb(0, 0, 0, 1)'}),
+			yb.inputMapping({ mapping: [
 				{ name: 'up', code: 38 },
 				{ name: 'down', code: 40 },
 				{ name: 'left', code: 37 },
 				{ name: 'right', code: 39 }
-			])
+			]})
 		]
 
 		var scene = {

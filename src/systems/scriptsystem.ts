@@ -1,20 +1,16 @@
-import Component from "../components/component";
+import { component } from "../components/component";
 import { System } from "../system";
 
 export const ScriptSystem: System = {
     id: 'scriptSystem',
-    requiredComponents: ['Script'],
+    requiredComponents: ['script'],
     update(e, scene, services, frameData) {
-        (<Script>e['Script']).update(e)
+        e.get(script).update(e)
     },
 }
 
-export class Script extends Component {
+export interface Script {
     update: Function
-
-    constructor(update: Function) {
-        super('Script')
-
-        this.update = update
-    }
 }
+
+export const script = component<Script>('script')

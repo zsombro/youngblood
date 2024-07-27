@@ -5,62 +5,46 @@
  * that relate to in-game functionality.
  * Like entities, components are JUST DATA and not logic!
  */
-export default class Component {
-    public name: string;
-
-    public constructor(name: string) {
-        this.name = name;
-    }
+export default interface Component<T> {
+    type: string
+    data?: T
 }
 
-export class Position extends Component {
-    public x: number;
-    public y: number;
-    public constructor(x: number, y: number) {
-        super('Position');
-
-        this.x = x;
-        this.y = y;
-    }
+export function component<T>(type: string, defaults?: T) {
+    return (data?: T): Component<T> => (defaults ? { type, data: { ...defaults, ...data } } : { type, data })
 }
 
-export class Velocity extends Component {
-    public x: number;
-    public y: number;
-    public constructor(x: number, y: number) {
-        super('Velocity');
+export type ComponentFunction<T> = ReturnType<typeof component<T>>
 
-        this.x = x;
-        this.y = y;
-    }
+export interface Transform {
+    position: Vector2
+    rotation: number
+    scale: number
 }
 
-export class Label extends Component {
-    public txt: string;
-    public color: string;
-    public font: string;
-    public isVisible: boolean;
+export const transform = component<Transform>('transform', { position: { x: 0, y: 0 }, rotation: 0, scale: 1 })
 
-    public constructor(txt: string, options: { color: string; font: string; isVisible: boolean }) {
-        super('Label');
-
-        this.txt = txt;
-
-        this.color = options.color ?? '#000';
-        this.font = options.font ?? 'monospace';
-        this.isVisible = options.isVisible ?? true;
-    }
+export interface Vector2 {
+    x: number
+    y: number
 }
 
-export class Sprite extends Component {
-    public spriteSource: HTMLImageElement;
+export const velocity = component<Vector2>('velocity', { x: 0, y: 0 })
 
-    public constructor(spriteSource: HTMLImageElement) {
-        super('Sprite');
-
-        this.spriteSource = spriteSource;
-    }
+export interface Label {
+    txt: string;
+    color: string;
+    font: string;
+    isVisible: boolean;
 }
+
+export const label = component<Label>('label', { txt: '', color: 'white', font: '10px verdana', isVisible: true })
+
+export interface Sprite {
+    spriteSource: HTMLImageElement;
+}
+
+export const sprite = component<Sprite>('sprite')
 
 export interface AnimatedSpriteOptions {
     animationName?: string;
@@ -90,88 +74,71 @@ export interface Animation {
     isVertical?: boolean;
 }
 
-export class AnimatedSprite extends Component {
-    public spriteSource: HTMLImageElement;
-    public animationSheet: AnimationSheet;
-    public currentFrame: number;
-    public animationName: string;
-    public scale: number;
-    public loop: boolean;
-    public isPlaying: boolean;
-    public flip: boolean | SpriteFlipOptions;
+export interface AnimatedSprite {
+    spriteSource: HTMLImageElement;
+    animationSheet: AnimationSheet;
+    currentFrame: number;
+    animationName: string;
+    scale: number;
+    loop: boolean;
+    isPlaying: boolean;
+    flip: boolean | SpriteFlipOptions;
 
-    public constructor(spriteSource: HTMLImageElement, animationSheet: AnimationSheet, options: AnimatedSpriteOptions) {
-        super('AnimatedSprite');
+    // if (options === undefined) var options: AnimatedSpriteOptions = {};
 
-        this.spriteSource = spriteSource;
-        this.animationSheet = animationSheet;
-
-        if (options === undefined) var options: AnimatedSpriteOptions = {};
-
-        // If there's no default animation set, we'll use the first one defined in the JSON object
-        this.animationName = options.animationName || Object.keys(animationSheet)[0];
-        this.scale = options.scale ?? 1.0;
-        this.loop = options.loop ?? true;
-        this.isPlaying = options.isPlaying ?? true;
-        this.flip = options.flip ?? false;
-
-        this.currentFrame = 0;
-    }
+    // // If there's no default animation set, we'll use the first one defined in the JSON object
+    // this.animationName = options.animationName || Object.keys(animationSheet)[0];
+    // this.scale = options.scale ?? 1.0;
+    // this.loop = options.loop ?? true;
+    // this.isPlaying = options.isPlaying ?? true;
+    // this.flip = options.flip ?? false;
+    // this.currentFrame = 0;
 }
 
-export class AudioSource extends Component {
-    public audioBuffer: AudioBuffer;
-    public constructor(audioBuffer: AudioBuffer) {
-        super('AudioSource');
+export const animatedSprite = component<AnimatedSprite>('animatedSprite')
 
-        this.audioBuffer = audioBuffer;
-    }
+export interface AudioSource {
+    audioBuffer: AudioBuffer;
 }
 
-export class Box extends Component {
-    public width: number;
-    public height: number;
-    public fillStyle: string;
-    public constructor(width: number, height: number, fillStyle: string) {
-        super('Box');
+export const audioSource = component<AudioSource>('audioSource')
 
-        this.width = width;
-        this.height = height;
-        this.fillStyle = fillStyle;
-    }
+export interface Box {
+    width: number;
+    height: number;
+    fillStyle: string;
 }
 
-export class BoxCollider extends Component {
-    public width: number;
-    public height: number;
-    public constructor(width: number, height: number) {
-        super('BoxCollider');
+export const box = component<Box>('box')
 
-        this.width = width;
-        this.height = height;
-    }
+export interface BoxCollider {
+    width: number;
+    height: number;
 }
+
+export const boxCollider = component<BoxCollider>('boxCollider')
 
 export interface KeyMapping {
     name: string;
     code: number;
 }
 
-export class InputMapping extends Component {
+export interface InputMapping {
     [index: string]: boolean | KeyMapping[] | string;
 
-    public mapping: KeyMapping[];
+    mapping: KeyMapping[];
+}
 
-    // for eg. mapping = [ {name: 'up', code: 38} ]
-    public constructor(mapping: KeyMapping[]) {
-        super('InputMapping');
+export const inputMapping = (data?: InputMapping): Component<InputMapping> => {
+    const map: { [index: string]: boolean } = {}
 
-        this.mapping = mapping;
+    if (!data) return { type: 'inputMapping', data: { mapping: [] } }
 
-        for (var i = 0; i < mapping.length; i++) {
-            this[mapping[i].name] = false;
-        }
+    for (var i = 0; i < data.mapping.length; i++) {
+        map[data.mapping[i].name] = false;
     }
+
+    return { type: 'inputMapping', data: { ...data, ...map } }
 }
 
 export interface CameraOptions {
@@ -180,22 +147,19 @@ export interface CameraOptions {
     drag?: number;
 }
 
-export class Camera extends Component {
-    public centerX: number;
-    public centerY: number;
+export interface Camera {
+    centerX: number;
+    centerY: number;
 
-    public offsetX: number;
-    public offsetY: number;
-    public drag: number;
-
-    public constructor(options: CameraOptions) {
-        super('Camera');
-
-        this.centerX = 0;
-        this.centerY = 0;
-
-        this.offsetX = options.offsetX | 0;
-        this.offsetY = options.offsetY | 0;
-        this.drag = options.drag | 0;
-    }
+    offsetX: number;
+    offsetY: number;
+    drag: number;
 }
+
+export const camera = component<Camera>('camera', {
+    centerX: 0,
+    centerY: 0,
+    offsetX: 0,
+    offsetY: 0,
+    drag: 0
+})

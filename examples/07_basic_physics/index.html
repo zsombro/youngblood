@@ -10,15 +10,15 @@
 	<script src="../../bundle/youngblood.js"></script>
     <script>
         const actor = () => [
-            new yb.Position(10, 10),
-			new yb.Box(30, 30, 'rgb(255, 0, 0, 1)'),
-            new yb.PhysicsObject(30, 30, 'kinetic')
+            yb.transform({ position: { x: 10, y: 10 }}),
+			yb.box({ width: 30, height: 30, fillStyle: 'rgb(255, 0, 0, 1)'}),
+            yb.physicsObject({ width: 30, height: 30, bodyType: 'kinetic'})
         ]
 
         const ground = () => [
-            new yb.Position(10, 100),
-			new yb.Box(300, 30, 'rgb(0, 255, 0, 1)'),
-            new yb.PhysicsObject(300, 30, 'static')
+            yb.transform({ position: { x: 10, y: 100 }}),
+            yb.box({ width: 300, height: 30, fillStyle: 'rgb(0, 255, 0, 1)'}),
+            yb.physicsObject({ width: 300, height: 30, bodyType: 'static'})
         ]
 
         const scene = {

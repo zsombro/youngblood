@@ -53,8 +53,8 @@
                 systems: [ sceneSwitchSystem('scene2') ],
                 entities: [
                     () => [
-                        new yb.Position(100, 100),
-                        new yb.Label('Press A to switch scene', { color: 'black' }),
+                        yb.transform({ position: { x: 100, y: 100 } }),
+                        yb.label({ txt: 'Press A to switch scene',color: 'black' }),
                     ]
                 ],
                 init(context, services) {
@@ -74,8 +74,8 @@
                 systems: [ sceneSwitchSystem('scene1') ],
                 entities: [
                 () => [
-                        new yb.Position(100, 100),
-                        new yb.Label('Press A to return to original scene', { color: 'black' })
+                        yb.transform({ position: { x: 100, y: 100 } }),
+                        yb.label({ txt: 'Press A to return to the original scene',color: 'black' }),
                     ]
                 ]
             }

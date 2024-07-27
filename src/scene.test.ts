@@ -23,7 +23,7 @@ describe('Scene', (): void => {
     it('should auto-register Entities', (): void => {
         const sceneOptions: SceneOptions = {
             sceneId: 'test',
-            entities: [(): Entity => new Entity(), (): Component[] => []],
+            entities: [(): Entity => new Entity(), (): Component<any>[] => []],
         };
 
         const scene = new Scene(sceneOptions, mockSceneServices);

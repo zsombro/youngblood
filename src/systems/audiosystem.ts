@@ -1,4 +1,4 @@
-import Component from "../components/component";
+import Component, { component } from "../components/component";
 import Entity from "../entity";
 import { ISceneServices, Scene } from "../scene";
 import { System } from "../system";
@@ -42,16 +42,10 @@ interface AudioSourceOptions {
 
 const defaultOptions: AudioSourceOptions = { isPlaying: false, playbackMode: 'oneshot' }
 
-export class AudioSource extends Component {
+export interface AudioSource {
     buffer: AudioBuffer
     audioChannelId: string
     options: AudioSourceOptions
-
-    constructor(buffer: AudioBuffer, audioChannelId: string, options?: AudioSourceOptions) {
-        super('AudioSource')
-
-        this.buffer = buffer
-        this.audioChannelId = audioChannelId
-        this.options = options ?? defaultOptions
-    }
 }
+
+export const audioSource = component<AudioSource>('audioSource')

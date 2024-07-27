@@ -1,40 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Component, {
-    Position,
-    Velocity,
-    Sprite,
-    AnimatedSprite,
-    InputMapping,
-    Label,
-    Box,
-    Camera,
-} from './components/component';
-import TiledMap from './components/tiledMap';
-import { PhysicsObject } from './systems/physicsSystem'
+import Component, { ComponentFunction, component } from './components/component';
+
+const ctype = (type: string | ComponentFunction<any>) => typeof type === 'function' ? type().type : type
+
 
 export default class Entity {
-    [x: string]: Component | string;
+    [x: string]: Component<any> | Function | string
 
-    public id: string;
+    id: string
 
-    public constructor(id: string = crypto.randomUUID()) {
-        this.id = id;
+    constructor(id = crypto.randomUUID()) {
+        this.id = id
     }
 
-    public addComponent(component: Component): void {
-        this[component.name] = component;
+    public addComponent(component: Component<any>): void {
+        this[component.type] = component.data
     }
 
-    public addComponents(components: Component[]): void {
+    public addComponents(components: Component<any>[]): void {
         components.forEach(this.addComponent.bind(this));
     }
 
-    public removeComponent(componentName: string): void {
-        this[componentName] = undefined;
+    public removeComponent(component: string | ComponentFunction<any>): void {
+        this[ctype(component)] = undefined;
     }
 
-    public hasComponent(componentName: string): boolean {
-        return this[componentName] != null;
+    public hasComponent(component: string | ComponentFunction<any>): boolean {
+        return this[ctype(component)] != null;
     }
 
     public hasComponents(componentArray: string[]): boolean {
@@ -49,17 +41,7 @@ export default class Entity {
         return true;
     }
 
-    public get(name: 'Position'): Position;
-    public get(name: 'Velocity'): Velocity;
-    public get(name: 'Sprite'): Sprite;
-    public get(name: 'InputMapping'): InputMapping;
-    public get(name: 'AnimatedSprite'): AnimatedSprite;
-    public get(name: 'TiledMap'): TiledMap;
-    public get(name: 'Camera'): Camera;
-    public get(name: 'Label'): Label;
-    public get(name: 'Box'): Box;
-    public get(name: 'PhysicsObject'): PhysicsObject;
-    public get(name: string): unknown {
-        return this[name];
+    public get<T>(component: string | ComponentFunction<T>): T {
+        return this[ctype(component)] as T;
     }
 }

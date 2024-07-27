@@ -1,31 +1,31 @@
-import { AnimatedSprite, Animation, Box, Position, Label, Sprite } from './components/component';
+import { AnimatedSprite, Animation, Box, Transform, Label, Sprite, transform, Camera, camera, box, label, sprite, animatedSprite } from './components/component';
 import { Scene } from './scene';
-import TiledMap, { Layer, TiledSheetData } from './components/tiledMap';
+import tiledMap, { Layer, TiledSheetData, TiledMap } from './components/tiledMap';
 
 export type Renderer = (entity: Scene) => void;
 
-function renderBox(p: Position, b: Box, ctx: CanvasRenderingContext2D): void {
+function renderBox(transform: Transform, b: Box, ctx: CanvasRenderingContext2D): void {
     ctx.fillStyle = b.fillStyle;
-    ctx.fillRect(p.x, p.y, b.width, b.height);
+    ctx.fillRect(transform.position.x, transform.position.y, b.width, b.height);
 }
 
-function renderLabel(p: Position, l: Label, ctx: CanvasRenderingContext2D): void {
+function renderLabel(transform: Transform, l: Label, ctx: CanvasRenderingContext2D): void {
     if (l.isVisible) {
         ctx.fillStyle = l.color;
         ctx.font = l.font;
-        ctx.fillText(l.txt, p.x, p.y);
+        ctx.fillText(l.txt, transform.position.x, transform.position.y);
     }
 }
 
-function renderSprite(p: Position, s: Sprite, ctx: CanvasRenderingContext2D): void {
-    ctx.drawImage(s.spriteSource, p.x, p.y);
+function renderSprite(transform: Transform, s: Sprite, ctx: CanvasRenderingContext2D): void {
+    ctx.drawImage(s.spriteSource, transform.position.x, transform.position.y);
 }
 
-function renderAnimatedSprite(p: Position, sprite: AnimatedSprite, ctx: CanvasRenderingContext2D): void {
+function renderAnimatedSprite(transform: Transform, sprite: AnimatedSprite, ctx: CanvasRenderingContext2D): void {
     const f: Animation = sprite.animationSheet[sprite.animationName];
 
     if (sprite.flip) {
-        ctx.translate(p.x, 0);
+        ctx.translate(transform.position.x, 0);
         ctx.scale(-1, 1);
     }
 
@@ -35,8 +35,8 @@ function renderAnimatedSprite(p: Position, sprite: AnimatedSprite, ctx: CanvasRe
         f.startY,
         f.frameWidth,
         f.frameHeight,
-        sprite.flip ? -sprite.scale * f.frameWidth : p.x,
-        p.y,
+        sprite.flip ? -sprite.scale * f.frameWidth : transform.position.x,
+        transform.position.y,
         f.frameWidth * sprite.scale,
         f.frameHeight * sprite.scale,
     );
@@ -49,7 +49,7 @@ function renderAnimatedSprite(p: Position, sprite: AnimatedSprite, ctx: CanvasRe
     }
 }
 
-function renderImageLayer(position: Position, layer: Layer, ctx: CanvasRenderingContext2D): void {
+function renderImageLayer(Transform: Transform, layer: Layer, ctx: CanvasRenderingContext2D): void {
     ctx.drawImage(layer.image, layer.x, layer.y, ctx.canvas.width, ctx.canvas.height);
 }
 
@@ -61,7 +61,7 @@ export function getTilesheetCoordinateById(id: number, sheet: TiledSheetData): {
 }
 
 function renderTileLayer(
-    position: Position,
+    transform: Transform,
     layer: Layer,
     sheet: TiledSheetData,
     scalingFactor: number,
@@ -77,22 +77,22 @@ function renderTileLayer(
             y,
             sheet.tilewidth,
             sheet.tileheight,
-            position.x + (i % layer.width) * (sheet.tilewidth * scalingFactor),
-            position.y + Math.floor(i / layer.width) * (sheet.tileheight * scalingFactor),
+            transform.position.x + (i % layer.width) * (sheet.tilewidth * scalingFactor),
+            transform.position.y + Math.floor(i / layer.width) * (sheet.tileheight * scalingFactor),
             sheet.tilewidth * scalingFactor,
             sheet.tileheight * scalingFactor,
         );
     }
 }
 
-function renderTiledMap(position: Position, map: TiledMap, ctx: CanvasRenderingContext2D): void {
+function renderTiledMap(Transform: Transform, map: TiledMap, ctx: CanvasRenderingContext2D): void {
     for (const layer of map.data.layers) {
         switch (layer.type) {
             case 'imagelayer':
-                renderImageLayer(position, layer, ctx);
+                renderImageLayer(Transform, layer, ctx);
                 break;
             case 'tilelayer':
-                renderTileLayer(position, layer, map.spriteSheet, map.options.scale, ctx);
+                renderTileLayer(Transform, layer, map.spriteSheet, map.options.scale, ctx);
                 break;
         }
     }
@@ -102,30 +102,30 @@ export default (ctx: CanvasRenderingContext2D): Renderer => (scene: Scene): void
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    let camera = null;
-    const cameras = scene.getEntitiesWith('Camera');
+    let cam: Camera = null;
+    const cameras = scene.getEntitiesWith(camera);
     if (cameras.length > 0) {
-        camera = cameras[0].get('Camera')
+        cam = cameras[0].get(camera)
     }
 
-    let renderPosition;
-    for (const currentEntity of scene.getEntitiesWith('Position')) {
-        const position = currentEntity.get('Position');
-        renderPosition = new Position(position.x, position.y);
-        if (camera) {
-            renderPosition.x = ctx.canvas.width / 2 + position.x - camera.centerX + camera.offsetX;
-            renderPosition.y = ctx.canvas.height / 2 + position.y - camera.centerY + camera.offsetY;
+    let renderTransform;
+    for (const currentEntity of scene.getEntitiesWith(transform)) {
+        const tf = currentEntity.get(transform);
+        renderTransform = transform(tf).data;
+        if (cam) {
+            renderTransform.position.x = ctx.canvas.width / 2 + tf.position.x - cam.centerX + cam.offsetX;
+            renderTransform.position.y = ctx.canvas.height / 2 + tf.position.y - cam.centerY + cam.offsetY;
         }
 
-        if (currentEntity.hasComponent('Box')) renderBox(renderPosition, currentEntity.get('Box'), ctx);
+        if (currentEntity.hasComponent(box)) renderBox(renderTransform, currentEntity.get(box), ctx);
 
-        if (currentEntity.hasComponent('Label')) renderLabel(renderPosition, currentEntity.get('Label'), ctx);
+        if (currentEntity.hasComponent(label)) renderLabel(renderTransform, currentEntity.get(label), ctx);
 
-        if (currentEntity.hasComponent('Sprite')) renderSprite(renderPosition, currentEntity.get('Sprite'), ctx);
+        if (currentEntity.hasComponent(sprite)) renderSprite(renderTransform, currentEntity.get(sprite), ctx);
 
-        if (currentEntity.hasComponent('AnimatedSprite'))
-            renderAnimatedSprite(renderPosition, currentEntity.get('AnimatedSprite'), ctx);
+        if (currentEntity.hasComponent(animatedSprite))
+            renderAnimatedSprite(renderTransform, currentEntity.get(animatedSprite), ctx);
 
-        if (currentEntity.hasComponent('TiledMap')) renderTiledMap(renderPosition, currentEntity.get('TiledMap'), ctx);
+        if (currentEntity.hasComponent(tiledMap)) renderTiledMap(renderTransform, currentEntity.get(tiledMap), ctx);
     }
 };

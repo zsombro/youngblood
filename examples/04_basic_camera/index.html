@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
     <head>
         <meta charset="UTF-8">
@@ -23,43 +24,46 @@
         <script>
             const movementSystem = {
                 systemId: 'movementSystem',
-                requiredComponents: ['Position', 'Velocity', 'InputMapping'],
+                requiredComponents: ['transform', 'velocity', 'inputMapping'],
                 update: entity => {
-                    entity.Velocity = { x: 0, y: 0 };
+                    const transform = entity.get(yb.transform);
+                    const velocity = entity.get(yb.velocity);
+                    entity.velocity.x = 0;
+                    entity.velocity.y = 0;
 
-					if (entity.InputMapping.down)
-						entity.Velocity.y = 1;
-					if (entity.InputMapping.up)
-						entity.Velocity.y = -1;
-					if (entity.InputMapping.left)
-						entity.Velocity.x = -1;
-					if (entity.InputMapping.right)
-						entity.Velocity.x = 1;
+					if (entity.inputMapping.down)
+						entity.velocity.y = 1;
+					if (entity.inputMapping.up)
+						entity.velocity.y = -1;
+					if (entity.inputMapping.left)
+						entity.velocity.x = -1;
+					if (entity.inputMapping.right)
+						entity.velocity.x = 1;
                 }
             }
 
             const player = () => [
-                new yb.Camera({}),
-                new yb.Position(50, 50),
-                new yb.Velocity(0, 0),
-                new yb.Box(30, 30, 'rgb(0, 0, 0, 1)'),
-                new yb.InputMapping([
+                yb.camera({}),
+                yb.transform({ position: { x: 50, y: 50 } }),
+                yb.velocity({ x: 0, y: 0}),
+                yb.box({ width: 30, height: 30, fillStyle: 'rgb(0, 0, 0, 1)'}),
+                yb.inputMapping({ mapping: [
                     { name: 'up', code: 38 },
                     { name: 'down', code: 40 },
                     { name: 'left', code: 37 },
                     { name: 'right', code: 39 }
-                ])
+                ]})
             ];
 
             const comparisonObject = () => [
-                new yb.Position(10, 10),
-                new yb.Box(15, 15, 'rgb(255, 0, 0, 1)')
+                yb.transform({ position: { x: 10, y: 10 } }),
+                yb.box({ width: 15, height: 15, fillStyle: 'rgb(0, 0, 0, 1)'})
             ];
 
             const scene = {
                 sceneId: 'main',
                 alwaysInitialize: true,
-                systems: [yb.CameraMovementSystem, movementSystem],
+                systems: [movementSystem],
                 entities: [player, comparisonObject],
             }
 
