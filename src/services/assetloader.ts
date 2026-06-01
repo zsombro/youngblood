@@ -16,7 +16,17 @@ type Asset
 
 type AssetFunction = (url: string) => Asset;
 
-const audioContext = new AudioContext();
+let audioContext: AudioContext | null = null;
+
+function getAudioContext(): AudioContext {
+    if (typeof AudioContext === 'undefined') {
+        throw new Error('AudioContext is not available in this environment');
+    }
+
+    if (!audioContext) audioContext = new AudioContext();
+
+    return audioContext;
+}
 
 function fetchImage(url: string): Promise<HTMLImageElement> {
     return new Promise(
@@ -32,7 +42,7 @@ function fetchImage(url: string): Promise<HTMLImageElement> {
 async function fetchAudio(url: string): Promise<AudioBuffer> {
     return fetch(url)
         .then((response: Response): Promise<ArrayBuffer> => response.arrayBuffer())
-        .then((buffer: ArrayBuffer): Promise<AudioBuffer> => audioContext.decodeAudioData(buffer));
+    .then((buffer: ArrayBuffer): Promise<AudioBuffer> => getAudioContext().decodeAudioData(buffer));
 }
 
 async function fetchObject(url: string): Promise<unknown> {

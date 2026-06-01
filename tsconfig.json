@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
-    "rootDir": "./src",
-    "outDir": "lib",
     "sourceMap": true,
+    "skipLibCheck": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "module": "commonjs",
-    "target": "es2025",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ES2020",
     "jsx": "react",
-    "declaration": true,
-    "declarationDir": "typings",
+    "declaration": false,
+    "noEmit": true,
     "experimentalDecorators": true,
     "lib": [
-      "es2017",
+      "ES2020",
       "dom"
     ]
   },
@@ -22,6 +22,6 @@
   ],
   "exclude": [
     "node_modules",
-    "./lib/*"
+    "dist"
   ]
 }

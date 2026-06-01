@@ -1,5 +1,4 @@
-import 'mocha';
-import { expect } from 'chai';
+import { describe, expect, it } from 'vitest';
 
 import Entity from './entity';
 import { Scene, SceneOptions, ISceneServices } from './scene';

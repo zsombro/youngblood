@@ -23,8 +23,9 @@
     <button onclick="init()">Start</button>
     This Start button is necessary, because in web browsers, automatic audio playback is only permitted as a result of a direct user action
 	<canvas id="canvas"></canvas>
-	<script src="../../bundle/youngblood.js"></script>
-	<script>
+    <script type="module">
+        import * as yb from '../../dist/youngblood.mjs';
+
         async function init() {
             const ctx = new AudioContext()
             const response = await fetch('campfire_song.mp3')
@@ -45,7 +46,8 @@
                         })
                     }
                 }
-            }
+                            <script type="module">
+                                import * as yb from '../../dist/youngblood.mjs';
 
             const scene1 = {
                 sceneId: 'scene1',

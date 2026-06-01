@@ -1,35 +1,41 @@
 import Game from './game';
-import { Scene, SceneOptions, SceneInitCallback, ISceneServices } from './scene';
+import { Scene } from './scene';
+import type { SceneOptions, SceneInitCallback, ISceneServices } from './scene';
 import Entity from './entity';
 
 import {
     component,
     transform,
-    Transform,
     velocity,
-    Vector2,
     sprite,
-    Sprite,
     animatedSprite,
+    box,
+    inputMapping,
+    label,
+    camera,
+} from './components/component';
+import type {
+    Transform,
+    Vector2,
+    Sprite,
     AnimatedSprite,
     AnimatedSpriteOptions,
     AnimationSheet,
-    box,
     Box,
-    inputMapping,
     InputMapping,
-    label,
     Label,
-    camera,
     Camera,
 } from './components/component';
 
-import tiledMap, { TiledMapData, TiledSheetData, TiledMap } from './components/tiledMap';
+import tiledMap from './components/tiledMap';
+import type { TiledMapData, TiledSheetData, TiledMap } from './components/tiledMap';
 
-import Component from './components/component';
+import type Component from './components/component';
 
-import { CameraMovementSystem, InputMappingSystem, System } from './system';
-import { PhysicsSystem, PhysicsObject, physicsObject } from './systems/physicsSystem';
+import { CameraMovementSystem, InputMappingSystem } from './system';
+import type { System } from './system';
+import { PhysicsSystem, physicsObject } from './systems/physicsSystem';
+import type { PhysicsObject } from './systems/physicsSystem';
 
 export {
     Game,

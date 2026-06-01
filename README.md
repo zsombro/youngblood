@@ -6,9 +6,10 @@ simple to use and understand. The JavaScript code for setting it up is just a fe
 
 ```javascript
 <canvas></canvas>
-<script src="youngblood.js"></script>
-<script>
-  new yb.Game()
+<script type="module">
+  import { Game } from 'youngblood';
+
+  new Game()
     .startRendering();
 </script>
 ```
@@ -20,7 +21,7 @@ You can also find the package on NPM, which means that you can use it from a pro
 And then importing the stuff you need in your code:
 
 ```javascript
-import { Game } from `youngblood`;
+import { Game } from 'youngblood';
 ```
 
 # Getting Started
@@ -35,6 +36,6 @@ To start working on the code, you just have to
 
 1. Clone the repo
 2. `npm install`
-3. `npm build`
+3. `npm run build`
 
 At this point, you should be able to run the examples included with this codebase! If you would like to contribute, [please read the contribution guide](https://github.com/zsombro/youngblood/blob/master/CONTRIBUTING.md) before doing so!

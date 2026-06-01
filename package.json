@@ -3,13 +3,24 @@
   "version": "0.7.10",
   "description": "A simple game development framework for web browsers.",
   "repository": "github:zsombro/youngblood",
-  "main": "bundle/youngblood.js",
-  "typings": "typings/main.d.ts",
+  "main": "./dist/youngblood.mjs",
+  "module": "./dist/youngblood.mjs",
+  "types": "./dist/main.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/youngblood.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "clean": "shx rm -rf bundles lib lib-esm typings",
-    "build": "set NODE_OPTIONS=--openssl-legacy-provider && npm run clean && tsc && tsc -m es6 --outDir lib-esm && webpack --mode=production",
-    "test": "karma start karma.conf.js --single-run",
-    "coverage": "nyc -r text -e .ts -x \"src/**/*/*.test.ts\" npm run test"
+    "clean": "shx rm -rf dist coverage",
+    "build": "npm run clean && vite build",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "game",
@@ -25,32 +36,23 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.3",
+    "@types/node": "^24.0.0",
     "@types/matter-js": "^0.19.1",
-    "@types/mocha": "^5.2.7",
+    "@vitest/coverage-v8": "^3.2.4",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^1.7.0",
-    "babel-preset-es2015": "^6.24.1",
-    "chai": "^4.2.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.2.0",
     "eslint-plugin-prettier": "^3.0.1",
     "jshint": "^2.9.4",
-    "karma": "^6.3.16",
-    "karma-firefox-launcher": "^1.3.0",
-    "karma-mocha": "^2.0.1",
-    "karma-spec-reporter": "0.0.32",
-    "karma-typescript": "^5.0.3",
-    "mocha": "^6.2.0",
-    "nyc": "^14.1.1",
+    "jsdom": "^26.1.0",
     "prettier": "^1.17.0",
     "shx": "^0.3.2",
-    "terser-webpack-plugin": "^5.3.6",
-    "ts-loader": "^9.4.2",
     "ts-node": "^8.4.1",
     "typescript": "^6.0.3",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.1"
+    "vite": "^7.0.0",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "matter-js": "^0.19.0"

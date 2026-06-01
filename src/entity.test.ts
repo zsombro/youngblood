@@ -1,5 +1,4 @@
-import 'mocha';
-import { expect } from 'chai';
+import { describe, expect, it } from 'vitest';
 
 import Entity from './entity';
 import Component, { component } from './components/component';
@@ -15,7 +14,7 @@ describe('Entity', (): void => {
     });
 
     it('should use IDs if provided', (): void => {
-        const e = new Entity();
+        const e = new Entity('aaa');
 
         expect(e.id).to.be.equal('aaa');
     });

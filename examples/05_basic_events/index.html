@@ -17,8 +17,9 @@
     </head>
     <body>
         <canvas id="canvas"></canvas>
-        <script src="../../bundle/youngblood.js"></script>
-        <script>
+        <script type="module">
+            import * as yb from '../../dist/youngblood.mjs';
+
             const objectSpawningSystem = {
                 systemId: 'objectSpawningSystem',
                 requiredComponents: [],
@@ -57,3 +58,5 @@
         </script>
     </body>
 </html>
+        <script type="module">
+            import * as yb from '../../dist/youngblood.mjs';
