@@ -79,7 +79,7 @@ async function fetchTiledSet(url: string): Promise<TiledSheetData> {
 export function getExtension(url: string): string {
     const extensions = url.match(/\.[a-zA-Z0-9]+/g);
 
-    return extensions[extensions.length - 1];
+    return extensions ? extensions[extensions.length - 1] : '';
 }
 
 export default class AssetLoader {

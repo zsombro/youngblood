@@ -49,7 +49,19 @@ function renderAnimatedSprite(transform: Transform, sprite: AnimatedSprite, ctx:
     }
 }
 
+function renderMissingLayer(layer: Layer, message: string, ctx: CanvasRenderingContext2D): void {
+    ctx.fillStyle = 'magenta';
+    ctx.fillRect(layer.x, layer.y, layer.width, layer.height);
+    ctx.fillStyle = 'black';
+    ctx.fillText(message, layer.x + 10, layer.y + 20);
+}
+
 function renderImageLayer(Transform: Transform, layer: Layer, ctx: CanvasRenderingContext2D): void {
+    if (!layer.image) {
+        renderMissingLayer(layer, 'Image not found', ctx);
+        return;
+    };
+
     ctx.drawImage(layer.image, layer.x, layer.y, ctx.canvas.width, ctx.canvas.height);
 }
 
@@ -67,6 +79,11 @@ function renderTileLayer(
     scalingFactor: number,
     ctx: CanvasRenderingContext2D,
 ): void {
+    if (!layer.data) {
+        renderMissingLayer(layer, 'Tile data not found', ctx);
+        return;
+    };
+
     for (let i = 0; i < layer.data.length; i++) {
         if (layer.data[i] === 0) continue;
 
@@ -102,16 +119,16 @@ export default (ctx: CanvasRenderingContext2D): Renderer => (scene: Scene): void
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    let cam: Camera = null;
+    let cam: Camera | null = null;
     const cameras = scene.getEntitiesWith(camera);
     if (cameras.length > 0) {
         cam = cameras[0].get(camera)
     }
 
-    let renderTransform;
     for (const currentEntity of scene.getEntitiesWith(transform)) {
         const tf = currentEntity.get(transform);
-        renderTransform = transform(tf).data;
+        const renderTransform = transform(tf).data;
+        if (!renderTransform) continue;
         if (cam) {
             renderTransform.position.x = ctx.canvas.width / 2 + tf.position.x - cam.centerX + cam.offsetX;
             renderTransform.position.y = ctx.canvas.height / 2 + tf.position.y - cam.centerY + cam.offsetY;

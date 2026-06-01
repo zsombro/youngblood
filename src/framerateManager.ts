@@ -6,11 +6,11 @@ export interface FrameData {
 export type FrameFunction = (frameData: FrameData) => void;
 
 export default class FramerateManager {
-    private fps: number;
-    private interval: number;
-    private then: number;
-    private now: number;
-    private delta: number;
+    private fps: number = 0;
+    private interval: number = 0;
+    private then: number = 0;
+    private now: number = 0;
+    private delta: number = 0;
 
     private currentFrame: number = 0;
 

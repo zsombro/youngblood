@@ -19,10 +19,10 @@ import { ScriptSystem } from "./systems/scriptsystem";
 import { PhysicsSystem } from "./systems/physicsSystem";
 
 export default class Game {
-	private renderer: Renderer;
+	private renderer: Renderer | null;
 	private services: ISceneServices;
 	private gameScenes: { [index: string]: Scene };
-	private currentScene: Scene;
+	private currentScene: Scene | null;
 	private framerateManager: FramerateManager;
 	private eventManager: EventManager;
 
@@ -66,6 +66,8 @@ export default class Game {
 				throw new Error("No canvas element was found in the document");
 
 			const ctx = canvas.getContext("2d");
+			if (!ctx)
+				throw new Error("2D rendering context could not be created");
 			ctx.imageSmoothingEnabled = false;
 			this.setRenderer(render(ctx));
 		}
@@ -127,9 +129,9 @@ export default class Game {
 	 * @param sceneId The sceneId you provided when registering the System
 	 * @returns The scene itself before it's deleted, just in case
 	 */
-	public removeScene(sceneId: string): Scene {
+	public removeScene(sceneId: string): Scene | null {
 		const scene = this.gameScenes[sceneId];
-		this.gameScenes[sceneId] = undefined;
+		delete this.gameScenes[sceneId];
 
 		return scene;
 	}
@@ -158,6 +160,7 @@ export default class Game {
 
 		this.framerateManager.processFrame((frameData): void => {
 			if (!this.currentScene) return;
+			if (!this.renderer) return;
 
 			this.update(frameData);
 			this.renderer(this.currentScene);
@@ -165,25 +168,29 @@ export default class Game {
 	}
 
 	private update(frameData: FrameData): void {
-		for (let i = 0; i < this.currentScene.systems.length; i++) {
-			const system = this.currentScene.systems[i];
+		if (!this.currentScene) return;
+		const scene = this.currentScene;
 
-			system.onBeforeUpdate?.(this.currentScene, this.services, frameData)
+		for (let i = 0; i < scene.systems.length; i++) {
+			const system = scene.systems[i];
+
+			system.onBeforeUpdate?.(scene, this.services, frameData)
 
 			// Systems that have no component requirements will run once per frame
 			if (system.requiredComponents.length === 0) {
-				system.update(null, this.currentScene, this.services, frameData);
+				// No-entity systems run once per frame with a null entity marker.
+				system.update(null as unknown as Entity, scene, this.services, frameData);
 				continue;
 			}
 
-			for (let j = 0; j < this.currentScene.gameEntities.length; j++) {
-				const entity: Entity = this.currentScene.gameEntities[j];
+			for (let j = 0; j < scene.gameEntities.length; j++) {
+				const entity: Entity = scene.gameEntities[j];
 
 				if (
 					system.requiredComponents &&
 					entity.hasComponents(system.requiredComponents)
 				)
-					system.update(entity, this.currentScene, this.services, frameData);
+					system.update(entity, scene, this.services, frameData);
 			}
 		}
 

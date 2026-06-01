@@ -22,7 +22,7 @@ export default class Entity {
     }
 
     public removeComponent(component: string | ComponentFunction<any>): void {
-        this[ctype(component)] = undefined;
+        delete this[ctype(component)];
     }
 
     public hasComponent(component: string | ComponentFunction<any>): boolean {

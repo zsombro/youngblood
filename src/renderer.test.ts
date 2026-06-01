@@ -7,7 +7,7 @@ import { TiledSheetData } from './components/tiledMap';
 describe('Renderer', (): void => {
     it('should translate tile IDs to coordinates', (): void => {
         const data: TiledSheetData = {
-            image: null,
+            image: new Image(),
             imageheight: 128,
             imagewidth: 128,
             tileheight: 16,

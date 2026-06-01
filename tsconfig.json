@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
+    "rootDir": "./src",
     "outDir": "lib",
     "sourceMap": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "module": "commonjs",
-    "target": "es5",
+    "target": "es2025",
     "jsx": "react",
     "declaration": true,
     "declarationDir": "typings",

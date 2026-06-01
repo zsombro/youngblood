@@ -35,8 +35,8 @@ export class Scene {
     public systems: System[];
     public gameEntities: Entity[];
 
-    private options: SceneOptions = null;
-    private services: ISceneServices = null;
+    private options: SceneOptions | null = null;
+    private services: ISceneServices | null = null;
 
     public constructor(options: SceneOptions, services: ISceneServices) {
         this.id = options.sceneId;
@@ -51,8 +51,8 @@ export class Scene {
     }
 
     public initialize(context: Scene, services: ISceneServices): void {
-        if (this.options.systems) this.registerSystems(this.options.systems);
-        if (this.options.entities) this.options.entities.forEach((entity): void => this.addEntity(entity(services)));
+        if (this.options?.systems) this.registerSystems(this.options.systems);
+        if (this.options?.entities) this.options.entities.forEach((entity): void => this.addEntity(entity(services)));
 
         this.initCallback(context, services);
         this.initialized = true;
@@ -70,7 +70,7 @@ export class Scene {
     }
 
     public unregisterSystem(id: String): void {
-        this.systems[this.systems.findIndex(e => e.id === id)] = undefined
+        delete this.systems[this.systems.findIndex(e => e.id === id)];
     }
 
     public addEntity(entity: Entity | Component<any>[]): void {
@@ -82,11 +82,11 @@ export class Scene {
             this.gameEntities.push(e);
         }
 
-        this.services.event.dispatch('scene.entity_added', entity);
+        this.services?.event.dispatch('scene.entity_added', entity);
     }
 
     public removeEntity(id: string): void {
-        this.gameEntities[this.gameEntities.findIndex(e => e.id === id)] = undefined
+        delete this.gameEntities[this.gameEntities.findIndex(e => e.id === id)]
     }
 
     public getEntitiesWith(component: string | ComponentFunction<any>): Entity[] {

@@ -1,14 +1,13 @@
 import EventManager from "./eventmanager";
 
 export default class AudioManager {
-	private audioContext: AudioContext;
-	private channels: { [id: string]: AudioChannel };
-	private masterVolume: GainNode;
+	private audioContext: AudioContext | null = null;
+	private channels: { [id: string]: AudioChannel } = {};
+	private masterVolume: GainNode | null = null;
 
 	public constructor() {
 		try {
 			this.audioContext = new AudioContext();
-			this.channels = {};
 
 			this.masterVolume = this.audioContext.createGain();
 			this.masterVolume.connect(this.audioContext.destination);
@@ -27,6 +26,11 @@ export default class AudioManager {
 	public createChannel(id: string) {
 		if (this.channels[id]) {
 			console.error(`Channel ID ${id} already exists`)
+			return
+		}
+
+		if (!this.audioContext || !this.masterVolume) {
+			console.error('Audio manager is not initialized')
 			return
 		}
 		
@@ -52,7 +56,10 @@ export default class AudioManager {
 
 	private batchedChannelOperation(channelIds: string[], callback: (c: AudioChannel) => void): void {
 		if (channelIds) {
-			channelIds.forEach(id => callback(this.channels[id]))
+			channelIds.forEach(id => {
+				const channel = this.channels[id]
+				if (channel) callback(channel)
+			})
 		} else {
 			Object.values(this.channels).forEach(c => callback(c))
 		}
@@ -62,10 +69,10 @@ export default class AudioManager {
 class AudioChannel {
 	name: string
 	context: AudioContext
-	buffer: AudioBuffer
+	buffer: AudioBuffer | null
 
 	private audioNode: GainNode
-	private playing: AudioBufferSourceNode
+	private playing: AudioBufferSourceNode | null
 	private startedPlayingAt: number
 	private pausedAt: number
 
@@ -77,6 +84,7 @@ class AudioChannel {
 		this.audioNode.connect(masterChannel)
 
 		this.playing = null
+		this.startedPlayingAt = 0
 		this.pausedAt = 0
 	}
 
@@ -104,12 +112,16 @@ class AudioChannel {
 	}
 
 	pause() {
+		if (!this.playing) return
+
 		this.pausedAt = Date.now() - this.startedPlayingAt
 		this.playing.disconnect()
 		this.playing = null
 	}
 	
 	setLoop(newValue: boolean) {
+		if (!this.playing) return
+
 		this.playing.loop = newValue
 	}
 
