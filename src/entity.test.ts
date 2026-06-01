@@ -35,6 +35,7 @@ describe('Entity', (): void => {
         e.removeComponent('c1');
 
         expect(e['c1']).to.be.undefined;
+        expect(e.hasOwnProperty('c1')).to.be.false;
     });
 
     it('should be able to test for multiple components', (): void => {
