@@ -18,6 +18,7 @@
   "scripts": {
     "clean": "shx rm -rf dist coverage",
     "build": "npm run clean && vite build",
+    "dev": "vite",
     "test": "vitest run",
     "coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit"

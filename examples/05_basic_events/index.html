@@ -18,22 +18,22 @@
     <body>
         <canvas id="canvas"></canvas>
         <script type="module">
-            import * as yb from '../../dist/youngblood.mjs';
+            import { Game, Entity, transform, box, label } from '../../src/main.ts';
 
             const objectSpawningSystem = {
-                systemId: 'objectSpawningSystem',
+                id: 'objectSpawningSystem',
                 requiredComponents: [],
                 update(entity, scene, services) {
                     services.event.on('spawn_object', position => {
-                        const e = new yb.Entity()
-                        e.addComponent(yb.transform({ position }))
-                        e.addComponent(yb.box({ width: 30, height: 30, fillStyle: 'rgb(0, 0, 0, 1)'}))
+                        const e = new Entity()
+                        e.addComponent(transform({ position }))
+                        e.addComponent(box({ width: 30, height: 30, fillStyle: 'rgb(0, 0, 0, 1)'}))
 
                         scene.addEntity(e)
                     })
 
                     services.event.on('input.keyup', e => {
-                        scene.addEntity([yb.transform({ position: { x: Math.random() * 100, y: Math.random() * 100}}), yb.label({ txt: e.code, color: '#f00' })])
+                        scene.addEntity([transform({ position: { x: Math.random() * 100, y: Math.random() * 100}}), label({ txt: e.code, color: '#f00' })])
                     })
                 }
             }
@@ -52,11 +52,9 @@
                 }
             }
 
-            new yb.Game()
+            new Game()
                 .addScene(scene)
                 .startRendering()
         </script>
     </body>
 </html>
-        <script type="module">
-            import * as yb from '../../dist/youngblood.mjs';

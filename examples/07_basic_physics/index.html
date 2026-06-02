@@ -8,18 +8,18 @@
 <body>
     <canvas></canvas>
 	<script type="module">
-		import * as yb from '../../dist/youngblood.mjs';
+		import { Game, transform, box, physicsObject } from '../../src/main.ts';
 
         const actor = () => [
-            yb.transform({ position: { x: 10, y: 10 }}),
-			yb.box({ width: 30, height: 30, fillStyle: 'rgb(255, 0, 0, 1)'}),
-            yb.physicsObject({ width: 30, height: 30, bodyType: 'kinetic'})
+            transform({ position: { x: 10, y: 10 }}),
+			box({ width: 30, height: 30, fillStyle: 'rgb(255, 0, 0, 1)'}),
+            physicsObject({ width: 30, height: 30, bodyType: 'kinetic'})
         ]
 
         const ground = () => [
-            yb.transform({ position: { x: 10, y: 100 }}),
-            yb.box({ width: 300, height: 30, fillStyle: 'rgb(0, 255, 0, 1)'}),
-            yb.physicsObject({ width: 300, height: 30, bodyType: 'static'})
+            transform({ position: { x: 10, y: 100 }}),
+            box({ width: 300, height: 30, fillStyle: 'rgb(0, 255, 0, 1)'}),
+            physicsObject({ width: 300, height: 30, bodyType: 'static'})
         ]
 
         const scene = {
@@ -28,11 +28,9 @@
             entities: [actor, ground]
         }
 
-        new yb.Game()
+        new Game()
             .addScene(scene)
             .startRendering()
     </script>
 </body>
 </html>
-    <script type="module">
-        import * as yb from '../../dist/youngblood.mjs';

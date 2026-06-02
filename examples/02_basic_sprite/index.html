@@ -22,16 +22,16 @@
 <body>
 	<canvas id="canvas"></canvas>
 	<script type="module">
-		import * as yb from '../../dist/youngblood.mjs';
+		import { Game, Entity, transform, sprite } from '../../src/main.ts';
 
 		var init = function (context, services) {
 
-			var sprite = new Image();
-			sprite.src = "sprite1.png";
+			var spr = new Image();
+			spr.src = "sprite1.png";
 
-			var e = new yb.Entity();
-			e.addComponent(new yb.transform({ position: { x: 10, y: 10 }}));
-			e.addComponent(new yb.sprite({ spriteSource: sprite }));
+			var e = new Entity();
+			e.addComponent(transform({ position: { x: 10, y: 10 }}));
+			e.addComponent(sprite({ spriteSource: spr }));
 
 			context.addEntity(e);
 		}
@@ -42,7 +42,7 @@
 			alwaysInitialize: true
 		};
 
-		new yb.Game()
+		new Game()
 			.addScene(mainScene)
 			.startRendering();
 	</script>

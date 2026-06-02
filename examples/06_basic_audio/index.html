@@ -24,9 +24,9 @@
     This Start button is necessary, because in web browsers, automatic audio playback is only permitted as a result of a direct user action
 	<canvas id="canvas"></canvas>
     <script type="module">
-        import * as yb from '../../dist/youngblood.mjs';
+        import { Game, transform, label } from '../../src/main.ts';
 
-        async function init() {
+        const init = async function() {
             const ctx = new AudioContext()
             const response = await fetch('campfire_song.mp3')
             const buffer = await response.arrayBuffer()
@@ -46,8 +46,7 @@
                         })
                     }
                 }
-                            <script type="module">
-                                import * as yb from '../../dist/youngblood.mjs';
+            }
 
             const scene1 = {
                 sceneId: 'scene1',
@@ -55,8 +54,8 @@
                 systems: [ sceneSwitchSystem('scene2') ],
                 entities: [
                     () => [
-                        yb.transform({ position: { x: 100, y: 100 } }),
-                        yb.label({ txt: 'Press A to switch scene',color: 'black' }),
+                        transform({ position: { x: 100, y: 100 } }),
+                        label({ txt: 'Press A to switch scene',color: 'black' }),
                     ]
                 ],
                 init(context, services) {
@@ -76,18 +75,20 @@
                 systems: [ sceneSwitchSystem('scene1') ],
                 entities: [
                 () => [
-                        yb.transform({ position: { x: 100, y: 100 } }),
-                        yb.label({ txt: 'Press A to return to the original scene',color: 'black' }),
+                        transform({ position: { x: 100, y: 100 } }),
+                        label({ txt: 'Press A to return to the original scene',color: 'black' }),
                     ]
                 ]
             }
 
-            new yb.Game()
+            new Game()
                 .addScene(scene1)
                 .addScene(scene2)
                 .startRendering();
 
         }
+
+        window.init = init;
         </script>
 </body>
 

@@ -22,36 +22,45 @@
 <body>
 	<canvas id="canvas"></canvas>
 	<script type="module">
-		import * as yb from '../../dist/youngblood.mjs';
+		import {
+			Game,
+			transform,
+			velocity,
+			box,
+			inputMapping,
+		} from '../../src/main.ts';
 
 		var canvas = document.getElementById('canvas');
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
 
 		const movementSystem = {
-			systemId: 'movementSystem',
+			id: 'movementSystem',
 			requiredComponents: ['transform', 'velocity', 'inputMapping'],
 			update: (entity, scene, services, frameData) => {
-					entity.velocity = { x: 0, y: 0 };
-					const input = entity.get(yb.inputMapping);
+					const vel = entity.get(velocity);
+					const input = entity.get(inputMapping);
 
-					if (entity.inputMapping.down)
-						entity.velocity.y = 1;
-					if (entity.inputMapping.up)
-						entity.velocity.y = -1;
-					if (entity.inputMapping.left)
-						entity.velocity.x = -1;
-					if (entity.inputMapping.right)
-						entity.velocity.x = 1;
+					vel.x = 0;
+					vel.y = 0;
+
+					if (input.down)
+						vel.y = 1;
+					if (input.up)
+						vel.y = -1;
+					if (input.left)
+						vel.x = -1;
+					if (input.right)
+						vel.x = 1;
 				}
 
 		}
 
 		const player = () => [
-			yb.transform({ position: { x: 10, y: 10 }}),
-			yb.velocity({ x: 0, y: 0}),
-			yb.box({ width: 30, height: 30, fillStyle: 'rgb(0, 0, 0, 1)'}),
-			yb.inputMapping({ mapping: [
+			transform({ position: { x: 10, y: 10 }}),
+			velocity({ x: 0, y: 0}),
+			box({ width: 30, height: 30, fillStyle: 'rgb(0, 0, 0, 1)'}),
+			inputMapping({ mapping: [
 				{ name: 'up', code: 38 },
 				{ name: 'down', code: 40 },
 				{ name: 'left', code: 37 },
@@ -59,16 +68,16 @@
 			]})
 		]
 
-		var scene = {
+		const scene = {
 			sceneId: 'main',
 			alwaysInitialize: true,
 			systems: [movementSystem],
 			entities: [player]
 		};
 
-		new yb.Game()
-			<script type="module">
-				import * as yb from '../../dist/youngblood.mjs';
+		new Game()
+			.addScene(scene)
+			.startRendering();
 
 	</script>
 </body>

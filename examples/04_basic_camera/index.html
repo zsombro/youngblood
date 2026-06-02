@@ -21,34 +21,35 @@
     <body>
         <canvas id="canvas"></canvas>
         <script type="module">
-            import * as yb from '../../dist/youngblood.mjs';
+            import { Game, camera, transform, velocity, box, inputMapping } from '../../src/main.ts';
 
             const movementSystem = {
-                systemId: 'movementSystem',
+                id: 'movementSystem',
                 requiredComponents: ['transform', 'velocity', 'inputMapping'],
                 update: entity => {
-                    const transform = entity.get(yb.transform);
-                    const velocity = entity.get(yb.velocity);
-                    entity.velocity.x = 0;
-                    entity.velocity.y = 0;
+                    const vel = entity.get(velocity);
+                    const input = entity.get(inputMapping);
 
-					if (entity.inputMapping.down)
-						entity.velocity.y = 1;
-					if (entity.inputMapping.up)
-						entity.velocity.y = -1;
-					if (entity.inputMapping.left)
-						entity.velocity.x = -1;
-					if (entity.inputMapping.right)
-						entity.velocity.x = 1;
+                    vel.x = 0;
+                    vel.y = 0;
+
+                    if (input.down)
+                        vel.y = 1;
+                    if (input.up)
+                        vel.y = -1;
+                    if (input.left)
+                        vel.x = -1;
+                    if (input.right)
+                        vel.x = 1;
                 }
             }
 
             const player = () => [
-                yb.camera({}),
-                yb.transform({ position: { x: 50, y: 50 } }),
-                yb.velocity({ x: 0, y: 0}),
-                yb.box({ width: 30, height: 30, fillStyle: 'rgb(0, 0, 0, 1)'}),
-                yb.inputMapping({ mapping: [
+                camera({}),
+                transform({ position: { x: 50, y: 50 } }),
+                velocity({ x: 0, y: 0}),
+                box({ width: 30, height: 30, fillStyle: 'rgb(0, 0, 0, 1)'}),
+                inputMapping({ mapping: [
                     { name: 'up', code: 38 },
                     { name: 'down', code: 40 },
                     { name: 'left', code: 37 },
@@ -57,9 +58,8 @@
             ];
 
             const comparisonObject = () => [
-                <script type="module">
-                    import * as yb from '../../dist/youngblood.mjs';
-
+                transform({ position: { x: 250, y: 120 } }),
+                box({ width: 30, height: 30, fillStyle: 'rgb(255, 0, 0, 1)' }),
             ];
 
             const scene = {
@@ -69,7 +69,7 @@
                 entities: [player, comparisonObject],
             }
 
-            new yb.Game()
+            new Game()
                 .addScene(scene)
                 .startRendering();
         </script>
