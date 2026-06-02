@@ -2,6 +2,7 @@ import Game from './game';
 import { Scene } from './scene';
 import type { SceneOptions, SceneInitCallback, ISceneServices } from './scene';
 import Entity from './entity';
+import EntityManager from './entityManager';
 
 import {
     component,
@@ -45,6 +46,7 @@ export {
     SceneInitCallback,
     System,
     Entity,
+    EntityManager,
     component, Component,
     transform, Transform,
     velocity, Vector2,

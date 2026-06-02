@@ -57,4 +57,15 @@ describe('Scene', (): void => {
             scene.registerSystem(system);
         }).to.throw(/has already been registered/g);
     });
+
+    it('should expose the entity array through getEntityArray', (): void => {
+        const scene = new Scene({ sceneId: 'test' }, mockSceneServices);
+        const entity = new Entity('entity-test');
+
+        scene.addEntity(entity);
+
+        expect(scene.getEntityArray()).to.equal(scene.gameEntities);
+        expect(scene.getEntityArray().length).to.equal(1);
+        expect(scene.getEntityArray()[0].id).to.equal('entity-test');
+    });
 });

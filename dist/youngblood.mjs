@@ -1,4 +1,4 @@
-import { Engine as f, Bodies as b, Composite as x } from "matter-js";
+import { Engine as f, Bodies as v, Composite as x } from "matter-js";
 const c = (i) => typeof i == "function" ? i().type : i;
 class m {
   constructor(e = crypto.randomUUID()) {
@@ -19,8 +19,8 @@ class m {
   hasComponents(e) {
     let t = e.length;
     if (!t) return !1;
-    for (var s = 0; s < t; s++)
-      if (!this.hasComponent(e[s])) return !1;
+    for (var n = 0; n < t; n++)
+      if (!this.hasComponent(e[n])) return !1;
     return !0;
   }
   get(e) {
@@ -28,12 +28,43 @@ class m {
   }
 }
 class E {
+  constructor() {
+    this.entitiesArray = [], this.entitiesObject = {}, this.idToIndex = {};
+  }
+  get entities() {
+    return this.entitiesArray;
+  }
+  addEntity(e) {
+    if (this.entitiesObject[e.id] != null)
+      throw new Error(`Entity with ID ${e.id} has already been registered!`);
+    const t = this.entitiesArray.push(e) - 1;
+    this.entitiesObject[e.id] = e, this.idToIndex[e.id] = t;
+  }
+  removeEntity(e) {
+    const t = this.idToIndex[e];
+    if (t == null)
+      return !1;
+    const n = this.entitiesArray.length - 1;
+    if (t !== n) {
+      const s = this.entitiesArray[n];
+      this.entitiesArray[t] = s, this.idToIndex[s.id] = t;
+    }
+    return this.entitiesArray.pop(), delete this.entitiesObject[e], delete this.idToIndex[e], !0;
+  }
+  findEntityById(e) {
+    return this.entitiesObject[e];
+  }
+}
+class M {
   constructor(e, t) {
     this.options = null, this.services = null, this.id = e.sceneId, this.initialized = !1, this.alwaysInitialize = e.alwaysInitialize ?? !0, this.initCallback = e.init ?? (() => {
-    }), this.options = e, this.services = t, this.gameEntities = [], this.systems = [];
+    }), this.options = e, this.services = t, this.entityManager = new E(), this.systems = [];
+  }
+  get gameEntities() {
+    return this.entityManager.entities;
   }
   initialize(e, t) {
-    this.options?.systems && this.registerSystems(this.options.systems), this.options?.entities && this.options.entities.forEach((s) => this.addEntity(s(t))), this.initCallback(e, t), this.initialized = !0;
+    this.options?.systems && this.registerSystems(this.options.systems), this.options?.entities && this.options.entities.forEach((n) => this.addEntity(n(t))), this.initCallback(e, t), this.initialized = !0;
   }
   registerSystem(e) {
     if (this.systems.map((t) => t.id).includes(e.id))
@@ -48,21 +79,24 @@ class E {
   }
   addEntity(e) {
     if (e instanceof m)
-      this.gameEntities.push(e);
+      this.entityManager.addEntity(e);
     else {
       const t = new m();
-      t.addComponents(e), this.gameEntities.push(t);
+      t.addComponents(e), this.entityManager.addEntity(t);
     }
     this.services?.event.dispatch("scene.entity_added", e);
   }
   removeEntity(e) {
-    delete this.gameEntities[this.gameEntities.findIndex((t) => t.id === e)];
+    this.entityManager.removeEntity(e);
+  }
+  findEntityById(e) {
+    return this.entityManager.findEntityById(e);
   }
   getEntitiesWith(e) {
     return this.gameEntities.filter((t) => t.hasComponent(e));
   }
 }
-class M {
+class A {
   constructor(e) {
     this.pressedKeys = [], window.addEventListener(
       "keydown",
@@ -105,9 +139,9 @@ class k {
       console.error("Audio manager is not initialized");
       return;
     }
-    this.channels[e] = new A(e, this.audioContext, this.masterVolume);
+    this.channels[e] = new I(e, this.audioContext, this.masterVolume);
   }
-  playSound(e, t = "default", s = !1) {
+  playSound(e, t = "default", n = !1) {
     this.channels[t].loadSound(e), this.channels[t].play();
   }
   pausePlayback(e) {
@@ -120,15 +154,15 @@ class k {
     this.channels[e].setVolume(t);
   }
   batchedChannelOperation(e, t) {
-    e ? e.forEach((s) => {
-      const n = this.channels[s];
-      n && t(n);
-    }) : Object.values(this.channels).forEach((s) => t(s));
+    e ? e.forEach((n) => {
+      const s = this.channels[n];
+      s && t(s);
+    }) : Object.values(this.channels).forEach((n) => t(n));
   }
 }
-class A {
-  constructor(e, t, s) {
-    this.name = e, this.context = t, this.buffer = null, this.audioNode = t.createGain(), this.audioNode.connect(s), this.playing = null, this.startedPlayingAt = 0, this.pausedAt = 0;
+class I {
+  constructor(e, t, n) {
+    this.name = e, this.context = t, this.buffer = null, this.audioNode = t.createGain(), this.audioNode.connect(n), this.playing = null, this.startedPlayingAt = 0, this.pausedAt = 0;
   }
   loadSound(e) {
     this.buffer = e;
@@ -161,36 +195,36 @@ function T() {
 function p(i) {
   return new Promise(
     (e, t) => {
-      const s = new Image();
-      s.onload = () => e(s), s.onerror = (n) => t(n), s.src = i;
+      const n = new Image();
+      n.onload = () => e(n), n.onerror = (s) => t(s), n.src = i;
     }
   );
 }
-async function I(i) {
+async function j(i) {
   return fetch(i).then((e) => e.arrayBuffer()).then((e) => T().decodeAudioData(e));
 }
-async function j(i) {
+async function B(i) {
   return fetch(i).then((e) => e.json());
 }
 async function L(i) {
-  const t = await (await fetch(i)).json(), s = {
+  const t = await (await fetch(i)).json(), n = {
     width: t.width,
     height: t.height,
     layers: []
   };
-  for (const n of t.layers)
-    switch (n.type) {
+  for (const s of t.layers)
+    switch (s.type) {
       case "imagelayer":
-        s.layers.push({ ...n, image: await p(n.image) });
+        n.layers.push({ ...s, image: await p(s.image) });
         break;
       case "tilelayer":
-        s.layers.push({ ...n, data: n.data });
+        n.layers.push({ ...s, data: s.data });
         break;
       case "objectgroup":
-        s.layers.push({ ...n, objects: n.objects });
+        n.layers.push({ ...s, objects: s.objects });
         break;
     }
-  return s;
+  return n;
 }
 async function F(i) {
   const t = await (await fetch(i)).json();
@@ -199,20 +233,20 @@ async function F(i) {
     image: await p(t.image)
   };
 }
-function B(i) {
+function O(i) {
   const e = i.match(/\.[a-zA-Z0-9]+/g);
   return e ? e[e.length - 1] : "";
 }
 class P {
   constructor() {
-    this.taskQueueLength = 0, this.completedTasks = 0, this.assets = {}, this.loaders = {}, this.registerLoader("image", p), this.registerLoader("audio", I), this.registerLoader("json", j), this.registerLoader("tiled-map", L), this.registerLoader("tiled-set", F);
+    this.taskQueueLength = 0, this.completedTasks = 0, this.assets = {}, this.loaders = {}, this.registerLoader("image", p), this.registerLoader("audio", j), this.registerLoader("json", B), this.registerLoader("tiled-map", L), this.registerLoader("tiled-set", F);
   }
   registerLoader(e, t) {
     this.loaders[e] = t;
   }
   async load(e) {
-    const n = (await (await fetch(e)).json()).assets;
-    return this.completedTasks = 0, this.taskQueueLength = n.length, await Promise.all(n.map(this.fetchAsset.bind(this))), this.assets;
+    const s = (await (await fetch(e)).json()).assets;
+    return this.completedTasks = 0, this.taskQueueLength = s.length, await Promise.all(s.map(this.fetchAsset.bind(this))), this.assets;
   }
   progress() {
     return this.completedTasks / this.taskQueueLength;
@@ -221,105 +255,105 @@ class P {
     return this.assets[e];
   }
   async fetchAsset(e) {
-    const t = B(e.url), s = e.url.replace(t, "");
-    this.assets[s] = await this.loaders[e.type](e.url), this.completedTasks++;
+    const t = O(e.url), n = e.url.replace(t, "");
+    this.assets[n] = await this.loaders[e.type](e.url), this.completedTasks++;
   }
 }
-function r(i, e) {
+function o(i, e) {
   return (t) => e ? { type: i, data: { ...e, ...t } } : { type: i, data: t };
 }
-const h = r("transform", { position: { x: 0, y: 0 }, rotation: 0, scale: 1 }), q = r("velocity", { x: 0, y: 0 }), g = r("label", { txt: "", color: "white", font: "10px verdana", isVisible: !0 }), y = r("sprite"), w = r("animatedSprite"), S = r("box"), Q = (i) => {
+const h = o("transform", { position: { x: 0, y: 0 }, rotation: 0, scale: 1 }), q = o("velocity", { x: 0, y: 0 }), g = o("label", { txt: "", color: "white", font: "10px verdana", isVisible: !0 }), y = o("sprite"), w = o("animatedSprite"), S = o("box"), Q = (i) => {
   const e = {};
   if (!i) return { type: "inputMapping", data: { mapping: [] } };
   for (var t = 0; t < i.mapping.length; t++)
     e[i.mapping[t].name] = !1;
   return { type: "inputMapping", data: { ...i, ...e } };
-}, u = r("camera", {
+}, u = o("camera", {
   centerX: 0,
   centerY: 0,
   offsetX: 0,
   offsetY: 0,
   drag: 0
-}), l = r("tiledMap");
+}), l = o("tiledMap");
 function V(i, e, t) {
   t.fillStyle = e.fillStyle, t.fillRect(i.position.x, i.position.y, e.width, e.height);
 }
-function z(i, e, t) {
+function D(i, e, t) {
   e.isVisible && (t.fillStyle = e.color, t.font = e.font, t.fillText(e.txt, i.position.x, i.position.y));
 }
-function D(i, e, t) {
+function z(i, e, t) {
   t.drawImage(e.spriteSource, i.position.x, i.position.y);
 }
-function O(i, e, t) {
-  const s = e.animationSheet[e.animationName];
+function N(i, e, t) {
+  const n = e.animationSheet[e.animationName];
   e.flip && (t.translate(i.position.x, 0), t.scale(-1, 1)), t.drawImage(
     e.spriteSource,
-    s.startX + e.currentFrame * s.frameWidth,
-    s.startY,
-    s.frameWidth,
-    s.frameHeight,
-    e.flip ? -e.scale * s.frameWidth : i.position.x,
+    n.startX + e.currentFrame * n.frameWidth,
+    n.startY,
+    n.frameWidth,
+    n.frameHeight,
+    e.flip ? -e.scale * n.frameWidth : i.position.x,
     i.position.y,
-    s.frameWidth * e.scale,
-    s.frameHeight * e.scale
-  ), e.flip && t.setTransform(1, 0, 0, 1, 0, 0), e.isPlaying && (e.currentFrame >= s.frames - 1 ? e.currentFrame = 0 : e.currentFrame++);
+    n.frameWidth * e.scale,
+    n.frameHeight * e.scale
+  ), e.flip && t.setTransform(1, 0, 0, 1, 0, 0), e.isPlaying && (e.currentFrame >= n.frames - 1 ? e.currentFrame = 0 : e.currentFrame++);
 }
 function C(i, e, t) {
   t.fillStyle = "magenta", t.fillRect(i.x, i.y, i.width, i.height), t.fillStyle = "black", t.fillText(e, i.x + 10, i.y + 20);
 }
-function N(i, e, t) {
+function W(i, e, t) {
   if (!e.image) {
     C(e, "Image not found", t);
     return;
   }
   t.drawImage(e.image, e.x, e.y, t.canvas.width, t.canvas.height);
 }
-function W(i, e) {
+function $(i, e) {
   return {
     x: i % e.columns * e.tilewidth - e.tilewidth,
     y: Math.floor(i / e.columns) * e.tileheight
   };
 }
-function K(i, e, t, s, n) {
+function K(i, e, t, n, s) {
   if (!e.data) {
-    C(e, "Tile data not found", n);
+    C(e, "Tile data not found", s);
     return;
   }
   for (let a = 0; a < e.data.length; a++) {
     if (e.data[a] === 0) continue;
-    const { x: o, y: v } = W(e.data[a], t);
-    n.drawImage(
+    const { x: r, y: b } = $(e.data[a], t);
+    s.drawImage(
       t.image,
-      o,
-      v,
+      r,
+      b,
       t.tilewidth,
       t.tileheight,
-      i.position.x + a % e.width * (t.tilewidth * s),
-      i.position.y + Math.floor(a / e.width) * (t.tileheight * s),
-      t.tilewidth * s,
-      t.tileheight * s
+      i.position.x + a % e.width * (t.tilewidth * n),
+      i.position.y + Math.floor(a / e.width) * (t.tileheight * n),
+      t.tilewidth * n,
+      t.tileheight * n
     );
   }
 }
 function R(i, e, t) {
-  for (const s of e.data.layers)
-    switch (s.type) {
+  for (const n of e.data.layers)
+    switch (n.type) {
       case "imagelayer":
-        N(i, s, t);
+        W(i, n, t);
         break;
       case "tilelayer":
-        K(i, s, e.spriteSheet, e.options.scale, t);
+        K(i, n, e.spriteSheet, e.options.scale, t);
         break;
     }
 }
 const X = (i) => (e) => {
   i.fillStyle = "white", i.fillRect(0, 0, i.canvas.width, i.canvas.height);
   let t = null;
-  const s = e.getEntitiesWith(u);
-  s.length > 0 && (t = s[0].get(u));
-  for (const n of e.getEntitiesWith(h)) {
-    const a = n.get(h), o = h(a).data;
-    o && (t && (o.position.x = i.canvas.width / 2 + a.position.x - t.centerX + t.offsetX, o.position.y = i.canvas.height / 2 + a.position.y - t.centerY + t.offsetY), n.hasComponent(S) && V(o, n.get(S), i), n.hasComponent(g) && z(o, n.get(g), i), n.hasComponent(y) && D(o, n.get(y), i), n.hasComponent(w) && O(o, n.get(w), i), n.hasComponent(l) && R(o, n.get(l), i));
+  const n = e.getEntitiesWith(u);
+  n.length > 0 && (t = n[0].get(u));
+  for (const s of e.getEntitiesWith(h)) {
+    const a = s.get(h), r = h(a).data;
+    r && (t && (r.position.x = i.canvas.width / 2 + a.position.x - t.centerX + t.offsetX, r.position.y = i.canvas.height / 2 + a.position.y - t.centerY + t.offsetY), s.hasComponent(S) && V(r, s.get(S), i), s.hasComponent(g) && D(r, s.get(g), i), s.hasComponent(y) && z(r, s.get(y), i), s.hasComponent(w) && N(r, s.get(w), i), s.hasComponent(l) && R(r, s.get(l), i));
   }
 };
 class Y {
@@ -336,30 +370,30 @@ class Y {
     return this.fps;
   }
 }
-const $ = {
+const _ = {
   id: "velocitySystem",
   requiredComponents: ["transform", "velocity"],
   update: function(i) {
     const e = i.get(h), t = i.get(q);
     e.position.x += t.x, e.position.y += t.y;
   }
-}, _ = {
+}, G = {
   id: "inputMappingSystem",
   requiredComponents: ["inputMapping"],
   update: function(i, e, t) {
-    const s = i.get(Q);
-    for (let n = 0; n < s.mapping.length; n++) {
-      const a = s.mapping[n];
-      s[a.name] = t.input.isPressed(a.code);
+    const n = i.get(Q);
+    for (let s = 0; s < n.mapping.length; s++) {
+      const a = n.mapping[s];
+      n[a.name] = t.input.isPressed(a.code);
     }
   }
-}, G = {
+}, U = {
   id: "tiledMapSystem",
   requiredComponents: ["tiledMap", "transform", "inputMapping"],
   update: function(i) {
     i.get(l);
   }
-}, U = {
+}, H = {
   id: "cameraMovementSystem",
   requiredComponents: ["transform", "camera"],
   update: function(i) {
@@ -367,12 +401,12 @@ const $ = {
     t.centerX = e.position.x, t.centerY = e.position.y;
   }
 };
-class H {
+class Z {
   constructor() {
     this.dispatchQueue = [], this.executionQueue = [];
   }
   on(e, t) {
-    this.executionQueue.filter((s) => s.event === e).forEach((s) => t(s.params));
+    this.executionQueue.filter((n) => n.event === e).forEach((n) => t(n.params));
   }
   dispatch(e, t) {
     this.dispatchQueue.push({ event: e, params: t });
@@ -381,48 +415,48 @@ class H {
     this.executionQueue = this.dispatchQueue, this.dispatchQueue = [];
   }
 }
-const Z = {
+const J = {
   id: "audioSystem",
   requiredComponents: [],
   update(i, e, t) {
-    t.event.on("audio.create_channel", (s) => {
-      t.audio.createChannel(s.id);
-    }), t.event.on("audio.set_channel_volume", (s) => {
-      t.audio.setChannelVolume(s.id, s.value);
-    }), t.event.on("audio.play_sound", (s) => {
-      t.audio.playSound(s.audioBuffer, s.channelId);
-    }), t.event.on("audio.pause", (s) => {
-      t.audio.pausePlayback(s.channels);
-    }), t.event.on("audio.resume", (s) => {
-      t.audio.continuePlayback(s.channels);
+    t.event.on("audio.create_channel", (n) => {
+      t.audio.createChannel(n.id);
+    }), t.event.on("audio.set_channel_volume", (n) => {
+      t.audio.setChannelVolume(n.id, n.value);
+    }), t.event.on("audio.play_sound", (n) => {
+      t.audio.playSound(n.audioBuffer, n.channelId);
+    }), t.event.on("audio.pause", (n) => {
+      t.audio.pausePlayback(n.channels);
+    }), t.event.on("audio.resume", (n) => {
+      t.audio.continuePlayback(n.channels);
     });
   }
-}, J = {
+}, ee = {
   id: "scriptSystem",
   requiredComponents: ["script"],
-  update(i, e, t, s) {
-    i.get(ee).update(i);
+  update(i, e, t, n) {
+    i.get(te).update(i);
   }
-}, ee = r("script"), te = r("physicsObject");
-class ie {
+}, te = o("script"), ie = o("physicsObject");
+class ne {
   constructor() {
     this.id = "PhysicsSystem", this.requiredComponents = ["transform", "physicsObject"], this.engine = f.create(), this.worldBodyCache = {};
   }
-  update(e, t, s, n) {
-    const a = e.get(h).position, o = e.get(te);
-    this.worldBodyCache[e.id] || (this.worldBodyCache[e.id] = b.rectangle(a.x, a.y, o.width, o.height, { isStatic: o.bodyType === "static" }), x.add(this.engine.world, this.worldBodyCache[e.id])), e.get(h).position.x = this.worldBodyCache[e.id].position.x, e.get(h).position.y = this.worldBodyCache[e.id].position.y;
+  update(e, t, n, s) {
+    const a = e.get(h).position, r = e.get(ie);
+    this.worldBodyCache[e.id] || (this.worldBodyCache[e.id] = v.rectangle(a.x, a.y, r.width, r.height, { isStatic: r.bodyType === "static" }), x.add(this.engine.world, this.worldBodyCache[e.id])), e.get(h).position.x = this.worldBodyCache[e.id].position.x, e.get(h).position.y = this.worldBodyCache[e.id].position.y;
   }
-  onBeforeUpdate(e, t, s) {
-    f.update(this.engine, s.delta);
+  onBeforeUpdate(e, t, n) {
+    f.update(this.engine, n.delta);
   }
 }
-class ne {
+class ae {
   /**
    * Returns a new `Game` instance.
    */
   constructor() {
-    this.renderer = null, this.framerateManager = new Y(60), this.eventManager = new H(), this.gameScenes = {}, this.currentScene = null, this.services = {
-      input: new M(this.eventManager),
+    this.renderer = null, this.framerateManager = new Y(60), this.eventManager = new Z(), this.gameScenes = {}, this.currentScene = null, this.services = {
+      input: new A(this.eventManager),
       audio: new k(),
       assets: new P(),
       event: {
@@ -446,10 +480,10 @@ class ne {
       const t = this.getCanvas(e);
       if (!t)
         throw new Error("No canvas element was found in the document");
-      const s = t.getContext("2d");
-      if (!s)
+      const n = t.getContext("2d");
+      if (!n)
         throw new Error("2D rendering context could not be created");
-      s.imageSmoothingEnabled = !1, this.setRenderer(X(s));
+      n.imageSmoothingEnabled = !1, this.setRenderer(X(n));
     }
     this.startSystem(), console.info(`Started rendering at ${this.framerateManager.framerate}fps`);
   }
@@ -474,15 +508,15 @@ class ne {
    * initialized.
    */
   addScene(e) {
-    const t = new E(e, this.services);
+    const t = new M(e, this.services);
     return t.registerSystems([
-      Z,
       J,
-      $,
+      ee,
       _,
-      U,
       G,
-      new ie()
+      H,
+      U,
+      new ne()
     ]), this.gameScenes[e.sceneId] = t, this.currentScene == null && this.switchToScene(e.sceneId), console.info(`Scene added: ${e.sceneId}`), this;
   }
   /**
@@ -510,15 +544,15 @@ class ne {
   update(e) {
     if (!this.currentScene) return;
     const t = this.currentScene;
-    for (let s = 0; s < t.systems.length; s++) {
-      const n = t.systems[s];
-      if (n.onBeforeUpdate?.(t, this.services, e), n.requiredComponents.length === 0) {
-        n.update(null, t, this.services, e);
+    for (let n = 0; n < t.systems.length; n++) {
+      const s = t.systems[n];
+      if (s.onBeforeUpdate?.(t, this.services, e), s.requiredComponents.length === 0) {
+        s.update(null, t, this.services, e);
         continue;
       }
       for (let a = 0; a < t.gameEntities.length; a++) {
-        const o = t.gameEntities[a];
-        n.requiredComponents && o.hasComponents(n.requiredComponents) && n.update(o, t, this.services, e);
+        const r = t.gameEntities[a];
+        s.requiredComponents && r.hasComponents(s.requiredComponents) && s.update(r, t, this.services, e);
       }
     }
     this.eventManager.emptyQueue();
@@ -533,19 +567,20 @@ class ne {
   }
 }
 export {
-  U as CameraMovementSystem,
+  H as CameraMovementSystem,
   m as Entity,
-  ne as Game,
-  _ as InputMappingSystem,
-  ie as PhysicsSystem,
-  E as Scene,
+  E as EntityManager,
+  ae as Game,
+  G as InputMappingSystem,
+  ne as PhysicsSystem,
+  M as Scene,
   w as animatedSprite,
   S as box,
   u as camera,
-  r as component,
+  o as component,
   Q as inputMapping,
   g as label,
-  te as physicsObject,
+  ie as physicsObject,
   y as sprite,
   l as tiledMap,
   h as transform,

@@ -32,9 +32,10 @@ export declare class Scene {
     initCallback: SceneInitCallback;
     alwaysInitialize: boolean;
     systems: System[];
-    gameEntities: Entity[];
+    get gameEntities(): Entity[];
     private options;
     private services;
+    private entityManager;
     constructor(options: SceneOptions, services: ISceneServices);
     initialize(context: Scene, services: ISceneServices): void;
     registerSystem(system: System): void;
@@ -42,5 +43,6 @@ export declare class Scene {
     unregisterSystem(id: String): void;
     addEntity(entity: Entity | Component<any>[]): void;
     removeEntity(id: string): void;
+    findEntityById(id: string): Entity | undefined;
     getEntitiesWith(component: string | ComponentFunction<any>): Entity[];
 }

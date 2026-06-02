@@ -12,4 +12,10 @@ describe('Game', (): void => {
         expect(scene?.systems.map(s => s.id)).to.contain('inputMappingSystem');
         expect(scene?.systems.map(s => s.id)).to.contain('cameraMovementSystem');
     });
+
+    it('should return null when trying to remove a non-existing Scene', (): void => {
+        const game = new Game();
+
+        expect(game.removeScene('missing')).to.equal(null);
+    });
 });

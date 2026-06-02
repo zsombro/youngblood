@@ -130,8 +130,15 @@ export default class Game {
 	 * @returns The scene itself before it's deleted, just in case
 	 */
 	public removeScene(sceneId: string): Scene | null {
-		const scene = this.gameScenes[sceneId];
+		const scene = this.gameScenes[sceneId] ?? null;
+
+		if (!scene)
+			return null;
+
 		delete this.gameScenes[sceneId];
+
+		if (this.currentScene?.id === sceneId)
+			this.currentScene = null;
 
 		return scene;
 	}
@@ -173,6 +180,7 @@ export default class Game {
 
 		for (let i = 0; i < scene.systems.length; i++) {
 			const system = scene.systems[i];
+			const entities = scene.getEntityArray();
 
 			system.onBeforeUpdate?.(scene, this.services, frameData)
 
@@ -183,8 +191,8 @@ export default class Game {
 				continue;
 			}
 
-			for (let j = 0; j < scene.gameEntities.length; j++) {
-				const entity: Entity = scene.gameEntities[j];
+			for (let j = 0; j < entities.length; j++) {
+				const entity: Entity = entities[j];
 
 				if (
 					system.requiredComponents &&

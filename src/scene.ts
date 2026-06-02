@@ -6,6 +6,7 @@ import AudioManager from './services/audiomanager';
 import AssetLoader from './services/assetloader';
 import { Component } from './main';
 import { ComponentFunction } from './components/component';
+import EntityManager from './entityManager';
 
 export interface SceneOptions {
     sceneId: string;
@@ -33,20 +34,27 @@ export class Scene {
     public initCallback: SceneInitCallback;
     public alwaysInitialize: boolean;
     public systems: System[];
-    public gameEntities: Entity[];
+    public get gameEntities(): Entity[] {
+        return this.entityManager.entities;
+    }
+
+    public getEntityArray(): Entity[] {
+        return this.entityManager.entities;
+    }
 
     private options: SceneOptions | null = null;
     private services: ISceneServices | null = null;
+    private entityManager: EntityManager;
 
     public constructor(options: SceneOptions, services: ISceneServices) {
         this.id = options.sceneId;
         this.initialized = false;
         this.alwaysInitialize = options.alwaysInitialize ?? true;
-        this.initCallback = options.init ?? ((): void => {});
+        this.initCallback = options.init ?? ((): void => { });
         this.options = options;
         this.services = services;
 
-        this.gameEntities = [];
+        this.entityManager = new EntityManager();
         this.systems = [];
     }
 
@@ -70,26 +78,40 @@ export class Scene {
     }
 
     public unregisterSystem(id: String): void {
-        delete this.systems[this.systems.findIndex(e => e.id === id)];
+        const index = this.systems.findIndex(e => e.id === id);
+
+        if (index === -1)
+            return;
+
+        const lastIndex = this.systems.length - 1;
+
+        if (index !== lastIndex)
+            this.systems[index] = this.systems[lastIndex];
+
+        this.systems.pop();
     }
 
     public addEntity(entity: Entity | Component<any>[]): void {
         if (entity instanceof Entity) {
-            this.gameEntities.push(entity);
+            this.entityManager.addEntity(entity);
         } else {
             const e = new Entity();
             e.addComponents(entity);
-            this.gameEntities.push(e);
+            this.entityManager.addEntity(e);
         }
 
         this.services?.event.dispatch('scene.entity_added', entity);
     }
 
     public removeEntity(id: string): void {
-        delete this.gameEntities[this.gameEntities.findIndex(e => e.id === id)]
+        this.services?.event.dispatch('scene.entity_removed', this.entityManager.removeEntity(id));
+    }
+
+    public findEntityById(id: string): Entity | undefined {
+        return this.entityManager.findEntityById(id);
     }
 
     public getEntitiesWith(component: string | ComponentFunction<any>): Entity[] {
-        return this.gameEntities.filter(e => e.hasComponent(component))
+        return this.getEntityArray().filter(e => e.hasComponent(component))
     }
 }
