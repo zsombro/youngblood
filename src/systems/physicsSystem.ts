@@ -25,6 +25,7 @@ export class PhysicsSystem implements System {
 
     private engine = Engine.create()
     private worldBodyCache: { [key: string]: Body } = {}
+    private lastDelta = 0
 
     update(e: Entity, scene: Scene, sceneServices: ISceneServices, frameData: FrameData) {
         const { position, rotation } = e.get(transform)
@@ -41,6 +42,7 @@ export class PhysicsSystem implements System {
     }
 
     onBeforeUpdate(scene: Scene, services: ISceneServices, frameData: FrameData) {
-        Engine.update(this.engine, frameData.delta)
+        Engine.update(this.engine, frameData.delta, this.lastDelta ? frameData.delta / this.lastDelta : 1)
+        this.lastDelta = frameData.delta
     }
 }
