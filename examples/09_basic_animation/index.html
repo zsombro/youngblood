@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                margin: 0px;
+                padding: 0px;
+                overflow: hidden;
+            }
+
+            canvas {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas"></canvas>
+        <script type="module">
+            import { Game, Entity, camera, transform, animatedSprite } from '../../src/main.ts';
+
+            const canvas = document.getElementById('canvas');
+
+            const updateCanvasSize = () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            };
+
+            updateCanvasSize();
+            window.addEventListener('resize', updateCanvasSize);
+
+            const loadImage = src => {
+                const image = new Image();
+                image.src = src;
+
+                return new Promise((resolve, reject) => {
+                    image.onload = () => resolve(image);
+                    image.onerror = reject;
+                });
+            };
+
+            const loadJson = async src => {
+                const response = await fetch(src);
+                return response.json();
+            };
+
+            const cameraEntity = () => {
+                const e = new Entity('camera');
+                e.addComponents([
+                    transform({ position: { x: canvas.width / 2, y: canvas.height / 2 }, rotation: 0, scale: 1, zIndex: 0 }),
+                    camera(),
+                ]);
+                return e;
+            };
+
+            const minotaurEntity = (minotaurImage, minotaurSheet) => {
+                const animationName = 'running';
+                const animation = minotaurSheet[animationName];
+                const scale = 3;
+
+                const spriteWidth = animation.frameWidth * scale;
+                const spriteHeight = animation.frameHeight * scale;
+
+                const e = new Entity('minotaur');
+                e.addComponents([
+                    transform({
+                        position: {
+                            x: (canvas.width - spriteWidth) / 2,
+                            y: (canvas.height - spriteHeight) / 2,
+                        },
+                        rotation: 0,
+                        scale: 1,
+                        zIndex: 1,
+                    }),
+                    animatedSprite({
+                        spriteSource: minotaurImage,
+                        animationSheet: minotaurSheet,
+                        currentFrame: 0,
+                        animationName,
+                        scale,
+                        loop: true,
+                        isPlaying: true,
+                        flip: false,
+                    }),
+                ]);
+                return e;
+            };
+
+            const start = async () => {
+                const [minotaurImage, minotaurSheet] = await Promise.all([
+                    loadImage('./128x80Minotaur_FullSheet.png'),
+                    loadJson('./minotaur.json'),
+                ]);
+
+                const scene = {
+                    sceneId: 'basicAnimation',
+                    alwaysInitialize: true,
+                    systems: [],
+                    entities: [cameraEntity, () => minotaurEntity(minotaurImage, minotaurSheet)],
+                };
+
+                const game = new Game();
+                game.addScene(scene).setFramerate(10).startRendering('#canvas');
+            };
+
+            start();
+        </script>
+    </body>
+</html>

@@ -22,9 +22,9 @@
         <div id="stats"></div>
         <canvas id="canvas"></canvas>
         <script type="module">
-            import { Game, Entity, camera, transform, velocity, box } from '../../src/main.ts';
+            import { Game, Entity, camera, transform, velocity, animatedSprite } from '../../src/main.ts';
 
-            const ENTITY_COUNT = 10000;
+            const ENTITY_COUNT = 100;
             const MAX_SPEED = 1.8;
 
             const canvas = document.getElementById('canvas');
@@ -46,6 +46,21 @@
             stats.style.fontFamily = 'monospace';
             stats.style.fontSize = '12px';
 
+            const loadImage = src => {
+                const image = new Image();
+                image.src = src;
+
+                return new Promise((resolve, reject) => {
+                    image.onload = () => resolve(image);
+                    image.onerror = reject;
+                });
+            };
+
+            const loadJson = async src => {
+                const response = await fetch(src);
+                return response.json();
+            };
+
             const cameraEntity = () => {
                 const e = new Entity('stress-camera');
                 e.addComponents([
@@ -55,56 +70,86 @@
                 return e;
             };
 
-            const bounceSystem = {
-                id: 'bounceSystem',
-                requiredComponents: ['transform', 'velocity', 'box'],
-                update: entity => {
-                    const tf = entity.get(transform);
-                    const vel = entity.get(velocity);
-                    const b = entity.get(box);
+            const start = async () => {
+                stats.textContent = 'loading minotaur assets...';
 
-                    tf.rotation += 1;
+                const [minotaurImage, minotaurSheet] = await Promise.all([
+                    loadImage('./128x80Minotaur_FullSheet.png'),
+                    loadJson('./minotaur.json'),
+                ]);
 
-                    if (tf.position.x <= 0 && vel.x < 0) vel.x *= -1;
-                    if (tf.position.x + b.width >= canvas.width && vel.x > 0) vel.x *= -1;
-                    if (tf.position.y <= 0 && vel.y < 0) vel.y *= -1;
-                    if (tf.position.y + b.height >= canvas.height && vel.y > 0) vel.y *= -1;
-                },
+                const animationName = 'running';
+                const running = minotaurSheet[animationName];
+                const minScale = 1;
+                const maxScale = 3;
+
+                const bounceSystem = {
+                    id: 'bounceSystem',
+                    requiredComponents: ['transform', 'velocity', 'animatedSprite'],
+                    update: entity => {
+                        const tf = entity.get(transform);
+                        const vel = entity.get(velocity);
+                        const spriteData = entity.get(animatedSprite);
+
+                        const currentAnimation = spriteData.animationSheet[spriteData.animationName];
+                        const width = currentAnimation.frameWidth * spriteData.scale;
+                        const height = currentAnimation.frameHeight * spriteData.scale;
+
+                        tf.rotation += 1;
+
+                        if (tf.position.x <= 0 && vel.x < 0) vel.x *= -1;
+                        if (tf.position.x + width >= canvas.width && vel.x > 0) vel.x *= -1;
+                        if (tf.position.y <= 0 && vel.y < 0) vel.y *= -1;
+                        if (tf.position.y + height >= canvas.height && vel.y > 0) vel.y *= -1;
+                    },
+                };
+
+                const entities = [];
+                for (let i = 0; i < ENTITY_COUNT; i++) {
+                    entities.push(() => {
+                        const speedX = (Math.random() * 2 - 1) * MAX_SPEED;
+                        const speedY = (Math.random() * 2 - 1) * MAX_SPEED;
+                        const scale = minScale + Math.random() * (maxScale - minScale);
+                        const width = running.frameWidth * scale;
+                        const height = running.frameHeight * scale;
+
+                        return [
+                            transform({
+                                position: {
+                                    x: Math.random() * (canvas.width - width),
+                                    y: Math.random() * (canvas.height - height),
+                                },
+                                rotation: 0,
+                                scale: 1,
+                                zIndex: 0,
+                            }),
+                            velocity({ x: speedX, y: speedY }),
+                            animatedSprite({
+                                spriteSource: minotaurImage,
+                                animationSheet: minotaurSheet,
+                                currentFrame: 0,
+                                animationName,
+                                scale,
+                                loop: true,
+                                isPlaying: true,
+                                flip: false,
+                            }),
+                        ];
+                    });
+                }
+
+                const scene = {
+                    sceneId: 'stressTest',
+                    alwaysInitialize: true,
+                    systems: [bounceSystem],
+                    entities: [cameraEntity, ...entities],
+                };
+
+                const game = new Game();
+                game.addScene(scene).startRendering('#canvas');
             };
 
-            const entities = [];
-            for (let i = 0; i < ENTITY_COUNT; i++) {
-                entities.push(() => {
-                    const size = 4 + Math.floor(Math.random() * 8);
-                    const speedX = (Math.random() * 2 - 1) * MAX_SPEED;
-                    const speedY = (Math.random() * 2 - 1) * MAX_SPEED;
-                    const color = `hsl(${Math.floor(Math.random() * 360)} 70% 45%)`;
-
-                    return [
-                        transform({
-                            position: {
-                                x: Math.random() * (canvas.width - size),
-                                y: Math.random() * (canvas.height - size),
-                            },
-                            rotation: 0,
-                            scale: 1,
-                            zIndex: 0,
-                        }),
-                        velocity({ x: speedX, y: speedY }),
-                        box({ width: size, height: size, fillStyle: color }),
-                    ];
-                });
-            }
-
-            const scene = {
-                sceneId: 'stressTest',
-                alwaysInitialize: true,
-                systems: [bounceSystem],
-                entities: [cameraEntity, ...entities],
-            };
-
-            const game = new Game();
-            game.addScene(scene).startRendering('#canvas');
+            start();
 
             let frameCounter = 0;
             let lastSampleTime = performance.now();

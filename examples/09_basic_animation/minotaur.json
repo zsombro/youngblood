@@ -1,0 +1,9 @@
+{
+    "running": {
+        "startX": 0,
+        "startY": 80,
+        "frameWidth": 128,
+        "frameHeight": 80,
+        "frames": 8
+    }
+}
