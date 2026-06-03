@@ -11,7 +11,7 @@
 		import { Game, transform, box, physicsObject } from '../../src/main.ts';
 
         const actor = () => [
-            transform({ position: { x: 10, y: 10 }}),
+            transform({ position: { x: 10, y: 10 }, rotation: 50 }),
 			box({ width: 30, height: 30, fillStyle: 'rgb(255, 0, 0, 1)'}),
             physicsObject({ width: 30, height: 30, bodyType: 'kinetic'})
         ]

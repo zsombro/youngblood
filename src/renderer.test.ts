@@ -35,6 +35,7 @@ function createMockContext(): CanvasRenderingContext2D {
         save: (): void => {},
         restore: (): void => {},
         translate: (): void => {},
+        rotate: (): void => {},
         scale: (): void => {},
         setTransform: (): void => {},
     } as unknown as CanvasRenderingContext2D;
@@ -185,5 +186,43 @@ describe('Renderer', (): void => {
         const boxDraw = drawCalls.find(call => call[2] === 5 && call[3] === 5);
         expect(cameraTranslate).to.deep.equal([50, 25]);
         expect(boxDraw).to.deep.equal([10, 20, 5, 5]);
+    });
+
+    it('should rotate entities when transform.rotation is set', (): void => {
+        const rotateCalls: number[] = [];
+        const ctx = createMockContext();
+        ctx.rotate = (angle: number): void => {
+            rotateCalls.push(angle);
+        };
+
+        const scene = createScene();
+        scene.addEntity([
+            transform({ position: { x: 10, y: 20 }, rotation: 90, scale: 1 }),
+            box({ width: 5, height: 5, fillStyle: 'black' }),
+        ]);
+
+        const renderer = render(ctx);
+        renderer(scene);
+
+        expect(rotateCalls[0]).toBeCloseTo(Math.PI / 2, 6);
+    });
+
+    it('should not rotate entities when transform.rotation is 0', (): void => {
+        const rotateCalls: number[] = [];
+        const ctx = createMockContext();
+        ctx.rotate = (angle: number): void => {
+            rotateCalls.push(angle);
+        };
+
+        const scene = createScene();
+        scene.addEntity([
+            transform({ position: { x: 10, y: 20 }, rotation: 0, scale: 1 }),
+            box({ width: 5, height: 5, fillStyle: 'black' }),
+        ]);
+
+        const renderer = render(ctx);
+        renderer(scene);
+
+        expect(rotateCalls).to.deep.equal([]);
     });
 });

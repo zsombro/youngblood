@@ -18,6 +18,7 @@ export type ComponentFunction<T> = ReturnType<typeof component<T>>
 
 export interface Transform {
     position: Vector2
+    // Rotation is stored in degrees. Integrations convert to radians as needed.
     rotation: number
     scale: number
     zIndex?: number

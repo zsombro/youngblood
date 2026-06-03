@@ -30,7 +30,7 @@
 			spr.src = "sprite1.png";
 
 			var e = new Entity();
-			e.addComponent(transform({ position: { x: 10, y: 10 }}));
+			e.addComponent(transform({ position: { x: 10, y: 10 }, rotation: 45 }));
 			e.addComponent(sprite({ spriteSource: spr }));
 
 			context.addEntity(e);
@@ -38,7 +38,7 @@
 
 		var mainScene = {
 			sceneId: 'main',
-			init: init,
+			init,
 			alwaysInitialize: true
 		};
 

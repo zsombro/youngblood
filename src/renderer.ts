@@ -57,31 +57,61 @@ export function getSortedRenderEntities(scene: Scene, cache: RenderOrderCache): 
     return cache.entities;
 }
 
+const degToRad = (degrees: number): number => degrees * (Math.PI / 180);
+
+function withEntityRotation(
+    tf: Transform,
+    ctx: CanvasRenderingContext2D,
+    draw: (x: number, y: number) => void,
+): void {
+    const rotation = Number(tf.rotation ?? 0);
+
+    if (!Number.isFinite(rotation) || rotation === 0) {
+        draw(tf.position.x, tf.position.y);
+        return;
+    }
+
+    ctx.save();
+    ctx.translate(tf.position.x, tf.position.y);
+    ctx.rotate(degToRad(rotation));
+    draw(0, 0);
+    ctx.restore();
+}
+
 function renderBox(transform: Transform, b: Box, ctx: CanvasRenderingContext2D): void {
     ctx.fillStyle = b.fillStyle;
-    ctx.fillRect(transform.position.x, transform.position.y, b.width, b.height);
+    withEntityRotation(transform, ctx, (x, y): void => {
+        ctx.fillRect(x, y, b.width, b.height);
+    });
 }
 
 function renderLabel(transform: Transform, l: Label, ctx: CanvasRenderingContext2D): void {
     if (l.isVisible) {
         ctx.fillStyle = l.color;
         ctx.font = l.font;
-        ctx.fillText(l.txt, transform.position.x, transform.position.y);
+        withEntityRotation(transform, ctx, (x, y): void => {
+            ctx.fillText(l.txt, x, y);
+        });
     }
 }
 
 function renderSprite(transform: Transform, s: Sprite, ctx: CanvasRenderingContext2D): void {
-    ctx.drawImage(s.spriteSource, transform.position.x, transform.position.y);
+    withEntityRotation(transform, ctx, (x, y): void => {
+        ctx.drawImage(s.spriteSource, x, y);
+    });
 }
 
 function renderAnimatedSprite(transform: Transform, sprite: AnimatedSprite, ctx: CanvasRenderingContext2D): void {
     const f: Animation = sprite.animationSheet[sprite.animationName];
 
-    if (sprite.flip) {
-        ctx.save();
-        ctx.translate(transform.position.x, 0);
+    ctx.save();
+    ctx.translate(transform.position.x, transform.position.y);
+
+    if (transform.rotation)
+        ctx.rotate(degToRad(transform.rotation));
+
+    if (sprite.flip)
         ctx.scale(-1, 1);
-    }
 
     ctx.drawImage(
         sprite.spriteSource,
@@ -89,13 +119,13 @@ function renderAnimatedSprite(transform: Transform, sprite: AnimatedSprite, ctx:
         f.startY,
         f.frameWidth,
         f.frameHeight,
-        sprite.flip ? -sprite.scale * f.frameWidth : transform.position.x,
-        transform.position.y,
+        sprite.flip ? -sprite.scale * f.frameWidth : 0,
+        0,
         f.frameWidth * sprite.scale,
         f.frameHeight * sprite.scale,
     );
 
-    if (sprite.flip) ctx.restore();
+    ctx.restore();
 
     if (sprite.isPlaying) {
         if (sprite.currentFrame >= f.frames - 1) sprite.currentFrame = 0;

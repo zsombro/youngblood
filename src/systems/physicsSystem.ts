@@ -16,6 +16,9 @@ export interface PhysicsObject {
 
 export const physicsObject = component<PhysicsObject>('physicsObject')
 
+const degToRad = (degrees: number): number => degrees * (Math.PI / 180)
+const radToDeg = (radians: number): number => radians * (180 / Math.PI)
+
 export class PhysicsSystem implements System {
     id: string = 'PhysicsSystem'
     requiredComponents = ['transform', 'physicsObject']
@@ -24,16 +27,17 @@ export class PhysicsSystem implements System {
     private worldBodyCache: { [key: string]: Body } = {}
 
     update(e: Entity, scene: Scene, sceneServices: ISceneServices, frameData: FrameData) {
-        const pos = e.get(transform).position
+        const { position, rotation } = e.get(transform)
         const physObject = e.get(physicsObject)
 
         if (!this.worldBodyCache[e.id]) {
-            this.worldBodyCache[e.id] = Bodies.rectangle(pos.x, pos.y, physObject.width, physObject.height, { isStatic: physObject.bodyType === 'static' })
+            this.worldBodyCache[e.id] = Bodies.rectangle(position.x, position.y, physObject.width, physObject.height, { angle: degToRad(rotation), isStatic: physObject.bodyType === 'static' })
             Composite.add(this.engine.world, this.worldBodyCache[e.id])
         }
 
         e.get(transform).position.x = this.worldBodyCache[e.id].position.x;
         e.get(transform).position.y = this.worldBodyCache[e.id].position.y;
+        e.get(transform).rotation = radToDeg(this.worldBodyCache[e.id].angle);
     }
 
     onBeforeUpdate(scene: Scene, services: ISceneServices, frameData: FrameData) {

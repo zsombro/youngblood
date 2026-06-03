@@ -24,7 +24,7 @@
         <script type="module">
             import { Game, Entity, camera, transform, velocity, box } from '../../src/main.ts';
 
-            const ENTITY_COUNT = 1000;
+            const ENTITY_COUNT = 10000;
             const MAX_SPEED = 1.8;
 
             const canvas = document.getElementById('canvas');
@@ -62,6 +62,8 @@
                     const tf = entity.get(transform);
                     const vel = entity.get(velocity);
                     const b = entity.get(box);
+
+                    tf.rotation += 1;
 
                     if (tf.position.x <= 0 && vel.x < 0) vel.x *= -1;
                     if (tf.position.x + b.width >= canvas.width && vel.x > 0) vel.x *= -1;
