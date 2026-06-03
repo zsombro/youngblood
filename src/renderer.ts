@@ -11,6 +11,19 @@ export interface RenderOrderCache {
     entities: Entity[];
 }
 
+export function ensureSceneCamera(scene: Scene, initializedScenes: WeakSet<Scene>): void {
+    if (initializedScenes.has(scene))
+        return;
+
+    if (scene.getEntitiesWith(camera).length === 0) {
+        const cameraEntity = new Entity();
+        cameraEntity.addComponents([transform(), camera()]);
+        scene.addEntity(cameraEntity);
+    }
+
+    initializedScenes.add(scene);
+}
+
 export function createRenderOrderCache(): RenderOrderCache {
     return {
         scene: null,
@@ -157,25 +170,26 @@ function renderTiledMap(Transform: Transform, map: TiledMap, ctx: CanvasRenderin
 
 export default (ctx: CanvasRenderingContext2D): Renderer => {
     const renderOrderCache = createRenderOrderCache();
+    const initializedScenes = new WeakSet<Scene>();
 
     return (scene: Scene): void => {
+        ensureSceneCamera(scene, initializedScenes);
+
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-        let cam: Camera | null = null;
         const cameras = scene.getEntitiesWith(camera);
-        if (cameras.length > 0) {
-            cam = cameras[0].get(camera)
-        }
+        const cam = cameras[0]?.get(camera) as Camera | undefined;
+
+        if (!cam)
+            return;
 
         for (const currentEntity of getSortedRenderEntities(scene, renderOrderCache)) {
             const tf = currentEntity.get(transform);
             const renderTransform = transform(tf).data;
             if (!renderTransform) continue;
-            if (cam) {
-                renderTransform.position.x = ctx.canvas.width / 2 + tf.position.x - cam.centerX + cam.offsetX;
-                renderTransform.position.y = ctx.canvas.height / 2 + tf.position.y - cam.centerY + cam.offsetY;
-            }
+            renderTransform.position.x = ctx.canvas.width / 2 + tf.position.x - cam.centerX + cam.offsetX;
+            renderTransform.position.y = ctx.canvas.height / 2 + tf.position.y - cam.centerY + cam.offsetY;
 
             if (currentEntity.hasComponent(box)) renderBox(renderTransform, currentEntity.get(box), ctx);
 

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import Entity from './entity';
-import { transform } from './components/component';
-import { getTilesheetCoordinateById, getSortedRenderEntities, createRenderOrderCache } from './renderer';
+import render, { ensureSceneCamera, getTilesheetCoordinateById, getSortedRenderEntities, createRenderOrderCache } from './renderer';
+import { box, camera, transform } from './components/component';
 import { TiledSheetData } from './components/tiledMap';
 import { ISceneServices, Scene } from './scene';
 
@@ -22,6 +22,20 @@ function createEntity(id: string, zIndex: number): Entity {
     const entity = new Entity(id);
     entity.addComponent(transform({ position: { x: 0, y: 0 }, rotation: 0, scale: 1, zIndex }));
     return entity;
+}
+
+function createMockContext(): CanvasRenderingContext2D {
+    return {
+        canvas: { width: 100, height: 50 },
+        fillStyle: 'white',
+        font: '',
+        fillRect: (): void => {},
+        fillText: (): void => {},
+        drawImage: (): void => {},
+        translate: (): void => {},
+        scale: (): void => {},
+        setTransform: (): void => {},
+    } as unknown as CanvasRenderingContext2D;
 }
 
 describe('Renderer', (): void => {
@@ -110,5 +124,58 @@ describe('Renderer', (): void => {
         const afterRemove = getSortedRenderEntities(scene, cache);
         expect(afterRemove).not.to.equal(afterZIndexChange);
         expect(afterRemove.map(entity => entity.id)).to.deep.equal(['b', 'a']);
+    });
+
+    it('should inject a default camera entity on first scene render when missing', (): void => {
+        const scene = createScene();
+        const renderer = render(createMockContext());
+
+        expect(scene.getEntitiesWith(camera).length).to.equal(0);
+
+        renderer(scene);
+
+        expect(scene.getEntitiesWith(camera).length).to.equal(1);
+    });
+
+    it('should not inject duplicate default cameras on subsequent renders', (): void => {
+        const scene = createScene();
+        const renderer = render(createMockContext());
+
+        renderer(scene);
+        renderer(scene);
+
+        expect(scene.getEntitiesWith(camera).length).to.equal(1);
+    });
+
+    it('should keep existing camera without injecting a new one', (): void => {
+        const scene = createScene();
+        const initializedScenes = new WeakSet<Scene>();
+        const existingCameraEntity = createEntity('existing-camera', 0);
+        existingCameraEntity.addComponent(camera());
+        scene.addEntity(existingCameraEntity);
+
+        ensureSceneCamera(scene, initializedScenes);
+
+        expect(scene.getEntitiesWith(camera).length).to.equal(1);
+    });
+
+    it('should always use camera-relative coordinates during rendering', (): void => {
+        const drawCalls: number[][] = [];
+        const ctx = createMockContext();
+        ctx.fillRect = (...args: number[]): void => {
+            drawCalls.push(args);
+        };
+
+        const scene = createScene();
+        scene.addEntity([
+            transform({ position: { x: 10, y: 20 }, rotation: 0, scale: 1 }),
+            box({ width: 5, height: 5, fillStyle: 'black' }),
+        ]);
+
+        const renderer = render(ctx);
+        renderer(scene);
+
+        const boxDraw = drawCalls.find(call => call[2] === 5 && call[3] === 5);
+        expect(boxDraw).to.deep.equal([60, 45, 5, 5]);
     });
 });
