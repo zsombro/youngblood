@@ -20,9 +20,10 @@ export interface Transform {
     position: Vector2
     rotation: number
     scale: number
+    zIndex?: number
 }
 
-export const transform = component<Transform>('transform', { position: { x: 0, y: 0 }, rotation: 0, scale: 1 })
+export const transform = component<Transform>('transform', { position: { x: 0, y: 0 }, rotation: 0, scale: 1, zIndex: 0 })
 
 export interface Vector2 {
     x: number

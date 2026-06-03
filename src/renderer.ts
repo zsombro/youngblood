@@ -1,8 +1,48 @@
 import { AnimatedSprite, Animation, Box, Transform, Label, Sprite, transform, Camera, camera, box, label, sprite, animatedSprite } from './components/component';
+import Entity from './entity';
 import { Scene } from './scene';
 import tiledMap, { Layer, TiledSheetData, TiledMap } from './components/tiledMap';
 
 export type Renderer = (entity: Scene) => void;
+
+export interface RenderOrderCache {
+    scene: Scene | null;
+    signature: string;
+    entities: Entity[];
+}
+
+export function createRenderOrderCache(): RenderOrderCache {
+    return {
+        scene: null,
+        signature: '',
+        entities: [],
+    };
+}
+
+function getEntityZIndex(entity: Entity): number {
+    const tf = entity.get(transform) as Transform | undefined;
+    const z = Number(tf?.zIndex ?? 0);
+
+    return Number.isFinite(z) ? z : 0;
+}
+
+function getRenderOrderSignature(entities: Entity[]): string {
+    return entities.map(entity => `${entity.id}:${getEntityZIndex(entity)}`).join('|');
+}
+
+export function getSortedRenderEntities(scene: Scene, cache: RenderOrderCache): Entity[] {
+    const entitiesWithTransform = scene.getEntitiesWith(transform);
+    const signature = getRenderOrderSignature(entitiesWithTransform);
+
+    if (cache.scene === scene && cache.signature === signature)
+        return cache.entities;
+
+    cache.scene = scene;
+    cache.signature = signature;
+    cache.entities = [...entitiesWithTransform].sort((a, b) => getEntityZIndex(a) - getEntityZIndex(b));
+
+    return cache.entities;
+}
 
 function renderBox(transform: Transform, b: Box, ctx: CanvasRenderingContext2D): void {
     ctx.fillStyle = b.fillStyle;
@@ -115,34 +155,38 @@ function renderTiledMap(Transform: Transform, map: TiledMap, ctx: CanvasRenderin
     }
 }
 
-export default (ctx: CanvasRenderingContext2D): Renderer => (scene: Scene): void => {
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+export default (ctx: CanvasRenderingContext2D): Renderer => {
+    const renderOrderCache = createRenderOrderCache();
 
-    let cam: Camera | null = null;
-    const cameras = scene.getEntitiesWith(camera);
-    if (cameras.length > 0) {
-        cam = cameras[0].get(camera)
-    }
+    return (scene: Scene): void => {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    for (const currentEntity of scene.getEntitiesWith(transform)) {
-        const tf = currentEntity.get(transform);
-        const renderTransform = transform(tf).data;
-        if (!renderTransform) continue;
-        if (cam) {
-            renderTransform.position.x = ctx.canvas.width / 2 + tf.position.x - cam.centerX + cam.offsetX;
-            renderTransform.position.y = ctx.canvas.height / 2 + tf.position.y - cam.centerY + cam.offsetY;
+        let cam: Camera | null = null;
+        const cameras = scene.getEntitiesWith(camera);
+        if (cameras.length > 0) {
+            cam = cameras[0].get(camera)
         }
 
-        if (currentEntity.hasComponent(box)) renderBox(renderTransform, currentEntity.get(box), ctx);
+        for (const currentEntity of getSortedRenderEntities(scene, renderOrderCache)) {
+            const tf = currentEntity.get(transform);
+            const renderTransform = transform(tf).data;
+            if (!renderTransform) continue;
+            if (cam) {
+                renderTransform.position.x = ctx.canvas.width / 2 + tf.position.x - cam.centerX + cam.offsetX;
+                renderTransform.position.y = ctx.canvas.height / 2 + tf.position.y - cam.centerY + cam.offsetY;
+            }
 
-        if (currentEntity.hasComponent(label)) renderLabel(renderTransform, currentEntity.get(label), ctx);
+            if (currentEntity.hasComponent(box)) renderBox(renderTransform, currentEntity.get(box), ctx);
 
-        if (currentEntity.hasComponent(sprite)) renderSprite(renderTransform, currentEntity.get(sprite), ctx);
+            if (currentEntity.hasComponent(label)) renderLabel(renderTransform, currentEntity.get(label), ctx);
 
-        if (currentEntity.hasComponent(animatedSprite))
-            renderAnimatedSprite(renderTransform, currentEntity.get(animatedSprite), ctx);
+            if (currentEntity.hasComponent(sprite)) renderSprite(renderTransform, currentEntity.get(sprite), ctx);
 
-        if (currentEntity.hasComponent(tiledMap)) renderTiledMap(renderTransform, currentEntity.get(tiledMap), ctx);
-    }
+            if (currentEntity.hasComponent(animatedSprite))
+                renderAnimatedSprite(renderTransform, currentEntity.get(animatedSprite), ctx);
+
+            if (currentEntity.hasComponent(tiledMap)) renderTiledMap(renderTransform, currentEntity.get(tiledMap), ctx);
+        }
+    };
 };

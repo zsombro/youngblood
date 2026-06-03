@@ -23,6 +23,15 @@
         <script type="module">
             import { Game, camera, transform, velocity, box, inputMapping } from '../../src/main.ts';
 
+            const canvas = document.getElementById('canvas');
+            const updateCanvasSize = () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            };
+
+            updateCanvasSize();
+            window.addEventListener('resize', updateCanvasSize);
+
             const movementSystem = {
                 id: 'movementSystem',
                 requiredComponents: ['transform', 'velocity', 'inputMapping'],
@@ -57,16 +66,26 @@
                 ]})
             ];
 
-            const comparisonObject = () => [
-                transform({ position: { x: 250, y: 120 } }),
-                box({ width: 30, height: 30, fillStyle: 'rgb(255, 0, 0, 1)' }),
+            const comparisonSmall = () => [
+                transform({ position: { x: 200, y: 90 } }),
+                box({ width: 20, height: 20, fillStyle: 'rgb(255, 0, 0, 1)' }),
+            ];
+
+            const comparisonMedium = () => [
+                transform({ position: { x: 280, y: 140 } }),
+                box({ width: 40, height: 40, fillStyle: 'rgb(0, 120, 255, 1)' }),
+            ];
+
+            const comparisonLarge = () => [
+                transform({ position: { x: 360, y: 70 } }),
+                box({ width: 70, height: 70, fillStyle: 'rgb(0, 200, 120, 1)' }),
             ];
 
             const scene = {
                 sceneId: 'main',
                 alwaysInitialize: true,
                 systems: [movementSystem],
-                entities: [player, comparisonObject],
+                entities: [comparisonSmall, comparisonMedium, comparisonLarge, player],
             }
 
             new Game()
