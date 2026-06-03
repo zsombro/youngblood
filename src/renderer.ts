@@ -78,6 +78,7 @@ function renderAnimatedSprite(transform: Transform, sprite: AnimatedSprite, ctx:
     const f: Animation = sprite.animationSheet[sprite.animationName];
 
     if (sprite.flip) {
+        ctx.save();
         ctx.translate(transform.position.x, 0);
         ctx.scale(-1, 1);
     }
@@ -94,7 +95,7 @@ function renderAnimatedSprite(transform: Transform, sprite: AnimatedSprite, ctx:
         f.frameHeight * sprite.scale,
     );
 
-    if (sprite.flip) ctx.setTransform(1, 0, 0, 1, 0, 0);
+    if (sprite.flip) ctx.restore();
 
     if (sprite.isPlaying) {
         if (sprite.currentFrame >= f.frames - 1) sprite.currentFrame = 0;
@@ -184,12 +185,16 @@ export default (ctx: CanvasRenderingContext2D): Renderer => {
         if (!cam)
             return;
 
+        const cameraOffsetX = ctx.canvas.width / 2 - cam.centerX + cam.offsetX;
+        const cameraOffsetY = ctx.canvas.height / 2 - cam.centerY + cam.offsetY;
+
+        ctx.save();
+        ctx.translate(cameraOffsetX, cameraOffsetY);
+
         for (const currentEntity of getSortedRenderEntities(scene, renderOrderCache)) {
             const tf = currentEntity.get(transform);
-            const renderTransform = transform(tf).data;
+            const renderTransform = tf;
             if (!renderTransform) continue;
-            renderTransform.position.x = ctx.canvas.width / 2 + tf.position.x - cam.centerX + cam.offsetX;
-            renderTransform.position.y = ctx.canvas.height / 2 + tf.position.y - cam.centerY + cam.offsetY;
 
             if (currentEntity.hasComponent(box)) renderBox(renderTransform, currentEntity.get(box), ctx);
 
@@ -202,5 +207,7 @@ export default (ctx: CanvasRenderingContext2D): Renderer => {
 
             if (currentEntity.hasComponent(tiledMap)) renderTiledMap(renderTransform, currentEntity.get(tiledMap), ctx);
         }
+
+        ctx.restore();
     };
 };

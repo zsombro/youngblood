@@ -32,6 +32,8 @@ function createMockContext(): CanvasRenderingContext2D {
         fillRect: (): void => {},
         fillText: (): void => {},
         drawImage: (): void => {},
+        save: (): void => {},
+        restore: (): void => {},
         translate: (): void => {},
         scale: (): void => {},
         setTransform: (): void => {},
@@ -161,9 +163,13 @@ describe('Renderer', (): void => {
 
     it('should always use camera-relative coordinates during rendering', (): void => {
         const drawCalls: number[][] = [];
+        const translateCalls: number[][] = [];
         const ctx = createMockContext();
         ctx.fillRect = (...args: number[]): void => {
             drawCalls.push(args);
+        };
+        ctx.translate = (...args: number[]): void => {
+            translateCalls.push(args);
         };
 
         const scene = createScene();
@@ -175,7 +181,9 @@ describe('Renderer', (): void => {
         const renderer = render(ctx);
         renderer(scene);
 
+        const cameraTranslate = translateCalls.find(call => call[0] === 50 && call[1] === 25);
         const boxDraw = drawCalls.find(call => call[2] === 5 && call[3] === 5);
-        expect(boxDraw).to.deep.equal([60, 45, 5, 5]);
+        expect(cameraTranslate).to.deep.equal([50, 25]);
+        expect(boxDraw).to.deep.equal([10, 20, 5, 5]);
     });
 });
