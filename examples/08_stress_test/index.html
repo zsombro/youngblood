@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                margin: 0px;
+                padding: 0px;
+                overflow: hidden;
+            }
+
+            canvas {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="stats"></div>
+        <canvas id="canvas"></canvas>
+        <script type="module">
+            import { Game, Entity, camera, transform, velocity, box } from '../../src/main.ts';
+
+            const ENTITY_COUNT = 1000;
+            const MAX_SPEED = 1.8;
+
+            const canvas = document.getElementById('canvas');
+            const stats = document.getElementById('stats');
+
+            const updateCanvasSize = () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            };
+
+            updateCanvasSize();
+            window.addEventListener('resize', updateCanvasSize);
+
+            stats.style.position = 'fixed';
+            stats.style.top = '8px';
+            stats.style.left = '8px';
+            stats.style.padding = '6px 8px';
+            stats.style.background = 'rgba(255, 255, 255, 0.85)';
+            stats.style.fontFamily = 'monospace';
+            stats.style.fontSize = '12px';
+
+            const cameraEntity = () => {
+                const e = new Entity('stress-camera');
+                e.addComponents([
+                    transform({ position: { x: canvas.width / 2, y: canvas.height / 2 }, rotation: 0, scale: 1, zIndex: 0 }),
+                    camera(),
+                ]);
+                return e;
+            };
+
+            const bounceSystem = {
+                id: 'bounceSystem',
+                requiredComponents: ['transform', 'velocity', 'box'],
+                update: entity => {
+                    const tf = entity.get(transform);
+                    const vel = entity.get(velocity);
+                    const b = entity.get(box);
+
+                    if (tf.position.x <= 0 && vel.x < 0) vel.x *= -1;
+                    if (tf.position.x + b.width >= canvas.width && vel.x > 0) vel.x *= -1;
+                    if (tf.position.y <= 0 && vel.y < 0) vel.y *= -1;
+                    if (tf.position.y + b.height >= canvas.height && vel.y > 0) vel.y *= -1;
+                },
+            };
+
+            const entities = [];
+            for (let i = 0; i < ENTITY_COUNT; i++) {
+                entities.push(() => {
+                    const size = 4 + Math.floor(Math.random() * 8);
+                    const speedX = (Math.random() * 2 - 1) * MAX_SPEED;
+                    const speedY = (Math.random() * 2 - 1) * MAX_SPEED;
+                    const color = `hsl(${Math.floor(Math.random() * 360)} 70% 45%)`;
+
+                    return [
+                        transform({
+                            position: {
+                                x: Math.random() * (canvas.width - size),
+                                y: Math.random() * (canvas.height - size),
+                            },
+                            rotation: 0,
+                            scale: 1,
+                            zIndex: 0,
+                        }),
+                        velocity({ x: speedX, y: speedY }),
+                        box({ width: size, height: size, fillStyle: color }),
+                    ];
+                });
+            }
+
+            const scene = {
+                sceneId: 'stressTest',
+                alwaysInitialize: true,
+                systems: [bounceSystem],
+                entities: [cameraEntity, ...entities],
+            };
+
+            const game = new Game();
+            game.addScene(scene).startRendering('#canvas');
+
+            let frameCounter = 0;
+            let lastSampleTime = performance.now();
+            let currentFps = 0;
+
+            const updateStats = now => {
+                frameCounter++;
+
+                const elapsed = now - lastSampleTime;
+                if (elapsed >= 250) {
+                    currentFps = Math.round((frameCounter * 1000) / elapsed);
+                    frameCounter = 0;
+                    lastSampleTime = now;
+                    stats.textContent = `entities: ${ENTITY_COUNT} | fps: ${currentFps}`;
+                }
+
+                requestAnimationFrame(updateStats);
+            };
+
+            requestAnimationFrame(updateStats);
+        </script>
+    </body>
+</html>
