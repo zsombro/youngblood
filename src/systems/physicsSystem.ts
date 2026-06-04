@@ -1,5 +1,5 @@
 import { System } from "../system";
-import Component, { component, transform } from "../components/component";
+import { component, transform } from "../components/component";
 import Entity from "../entity";
 
 import { Bodies, Body, Composite, Engine } from 'matter-js';
@@ -25,16 +25,39 @@ export class PhysicsSystem implements System {
 
     private engine = Engine.create()
     private worldBodyCache: { [key: string]: Body } = {}
-    private lastDelta = 0
+    private lastDelta = 1
+
+    private addBodyForEntity(entity: Entity) {
+        if (this.worldBodyCache[entity.id] || !entity.hasComponents(this.requiredComponents))
+            return
+
+        const { position, rotation } = entity.get(transform)
+        const physObject = entity.get(physicsObject)
+
+        const body = Bodies.rectangle(position.x, position.y, physObject.width, physObject.height, {
+            angle: degToRad(rotation),
+            isStatic: physObject.bodyType === 'static',
+        })
+
+        this.worldBodyCache[entity.id] = body
+        Composite.add(this.engine.world, body)
+    }
+
+    private removeBodyForEntity(entity: Entity | null) {
+        if (!entity)
+            return
+
+        const body = this.worldBodyCache[entity.id]
+        if (!body)
+            return
+
+        Composite.remove(this.engine.world, body)
+        delete this.worldBodyCache[entity.id]
+    }
 
     update(e: Entity, scene: Scene, sceneServices: ISceneServices, frameData: FrameData) {
-        const { position, rotation } = e.get(transform)
-        const physObject = e.get(physicsObject)
-
-        if (!this.worldBodyCache[e.id]) {
-            this.worldBodyCache[e.id] = Bodies.rectangle(position.x, position.y, physObject.width, physObject.height, { angle: degToRad(rotation), isStatic: physObject.bodyType === 'static' })
-            Composite.add(this.engine.world, this.worldBodyCache[e.id])
-        }
+        if (!this.worldBodyCache[e.id])
+            return
 
         e.get(transform).position.x = this.worldBodyCache[e.id].position.x;
         e.get(transform).position.y = this.worldBodyCache[e.id].position.y;
@@ -42,7 +65,15 @@ export class PhysicsSystem implements System {
     }
 
     onBeforeUpdate(scene: Scene, services: ISceneServices, frameData: FrameData) {
-        Engine.update(this.engine, frameData.delta, this.lastDelta ? frameData.delta / this.lastDelta : 1)
+        services.event.on('scene.entity_added', (entity: Entity) => {
+            this.addBodyForEntity(entity)
+        })
+
+        services.event.on('scene.entity_removed', (entity: Entity | null) => {
+            this.removeBodyForEntity(entity)
+        })
+
+        Engine.update(this.engine, frameData.delta, frameData.delta / this.lastDelta)
         this.lastDelta = frameData.delta
     }
 }

@@ -92,15 +92,18 @@ export class Scene {
     }
 
     public addEntity(entity: Entity | Component<any>[]): void {
+        let newEntity: Entity
+
         if (entity instanceof Entity) {
-            this.entityManager.addEntity(entity);
+            newEntity = entity
         } else {
-            const e = new Entity();
-            e.addComponents(entity);
-            this.entityManager.addEntity(e);
+            newEntity = new Entity();
+            newEntity.addComponents(entity);
         }
 
-        this.services?.event.dispatch('scene.entity_added', entity);
+        this.entityManager.addEntity(newEntity);
+
+        this.services?.event.dispatch('scene.entity_added', newEntity);
     }
 
     public removeEntity(id: string): void {
