@@ -5,7 +5,7 @@ import AudioManager from "./services/audiomanager";
 import AssetLoader from "./services/assetloader";
 
 import Entity from "./entity";
-import render, { Renderer } from "./renderer";
+import render, { Renderer } from "./renderer/renderer";
 import FramerateManager, { FrameData } from "./framerateManager";
 import {
 	CameraMovementSystem,

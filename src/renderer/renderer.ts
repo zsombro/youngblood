@@ -1,7 +1,7 @@
-import { AnimatedSprite, Animation, Box, Transform, Label, Sprite, transform, Camera, camera, box, label, sprite, animatedSprite } from './components/component';
-import Entity from './entity';
-import { Scene } from './scene';
-import tiledMap, { Layer, TiledSheetData, TiledMap } from './components/tiledMap';
+import { AnimatedSprite, Animation, Box, Transform, Label, Sprite, transform, Camera, camera, box, label, sprite, animatedSprite } from '../components/component';
+import Entity from '../entity';
+import { Scene } from '../scene';
+import tiledMap, { Layer, TiledSheetData, TiledMap } from '../components/tiledMap';
 
 export type Renderer = (entity: Scene) => void;
 

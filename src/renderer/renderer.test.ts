@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import Entity from './entity';
+import Entity from '../entity';
 import render, { ensureSceneCamera, getTilesheetCoordinateById, getSortedRenderEntities, createRenderOrderCache } from './renderer';
-import { box, camera, transform } from './components/component';
-import { TiledSheetData } from './components/tiledMap';
-import { ISceneServices, Scene } from './scene';
+import { box, camera, transform } from '../components/component';
+import { TiledSheetData } from '../components/tiledMap';
+import { ISceneServices, Scene } from '../scene';
 
 const mockSceneServices = {
     input: {},
